@@ -1,0 +1,7 @@
+﻿services:
+  warehousemanagerserver:
+    image: warehousemanagerserver
+    build:
+      context: .
+      dockerfile: Dockerfile
+
