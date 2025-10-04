@@ -129,6 +129,9 @@ public partial class WarehouseContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(40)
                 .HasColumnName("username");
+            entity.HasMany(e => e.Warehouses)
+                .WithMany(p => p.Users)
+                .UsingEntity(j => j.ToTable("UserWarehouses"));
         });
 
         modelBuilder.Entity<UserPermission>(entity =>
@@ -154,6 +157,8 @@ public partial class WarehouseContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(40)
                 .HasColumnName("name");
+            entity.HasMany(e => e.Users)
+                .WithMany(p => p.Warehouses);
         });
 
         OnModelCreatingPartial(modelBuilder);

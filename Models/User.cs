@@ -13,4 +13,6 @@ public class User
     public string Salt { get; set; } = null!;
 
     public DateTime? JoinDate { get; set; }
+    
+    public ICollection<Warehouse> Warehouses { get; set; } = new List<Warehouse>();
 }
