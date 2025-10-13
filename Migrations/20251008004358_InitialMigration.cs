@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace WarehouseManager.Migrations
+namespace WarehouseManagerServer.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration
@@ -30,6 +30,19 @@ namespace WarehouseManager.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "permissions",
+                columns: table => new
+                {
+                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    warehouse_id = table.Column<int>(type: "integer", nullable: false),
+                    permissions = table.Column<int[]>(type: "permission_enum[]", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("permissions_pkey", x => new { x.user_id, x.warehouse_id });
+                });
+
+            migrationBuilder.CreateTable(
                 name: "suppliers",
                 columns: table => new
                 {
@@ -41,19 +54,6 @@ namespace WarehouseManager.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("suppliers_pkey", x => x.supplier_id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "user_permissions",
-                columns: table => new
-                {
-                    user_id = table.Column<int>(type: "integer", nullable: false),
-                    warehouse_id = table.Column<int>(type: "integer", nullable: false),
-                    permissions = table.Column<int[]>(type: "permission_enum[]", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("user_permissions_pkey", x => new { x.user_id, x.warehouse_id });
                 });
 
             migrationBuilder.CreateTable(
@@ -93,7 +93,6 @@ namespace WarehouseManager.Migrations
                     product_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "text", nullable: false),
-                    sku = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     warehouse_id = table.Column<int>(type: "integer", nullable: false),
                     category_id = table.Column<int>(type: "integer", nullable: true),
                     unit_price = table.Column<decimal>(type: "numeric(12,2)", precision: 12, scale: 2, nullable: false, defaultValueSql: "1"),
@@ -110,6 +109,30 @@ namespace WarehouseManager.Migrations
                     table.ForeignKey(
                         name: "products_warehouse_id_fkey",
                         column: x => x.warehouse_id,
+                        principalTable: "warehouses",
+                        principalColumn: "warehouse_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserWarehouses",
+                columns: table => new
+                {
+                    UsersUserId = table.Column<int>(type: "integer", nullable: false),
+                    WarehousesWarehouseId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserWarehouses", x => new { x.UsersUserId, x.WarehousesWarehouseId });
+                    table.ForeignKey(
+                        name: "FK_UserWarehouses_users_UsersUserId",
+                        column: x => x.UsersUserId,
+                        principalTable: "users",
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserWarehouses_warehouses_WarehousesWarehouseId",
+                        column: x => x.WarehousesWarehouseId,
                         principalTable: "warehouses",
                         principalColumn: "warehouse_id",
                         onDelete: ReferentialAction.Cascade);
@@ -152,10 +175,9 @@ namespace WarehouseManager.Migrations
                 column: "warehouse_id");
 
             migrationBuilder.CreateIndex(
-                name: "products_sku_key",
-                table: "products",
-                column: "sku",
-                unique: true);
+                name: "IX_UserWarehouses_WarehousesWarehouseId",
+                table: "UserWarehouses",
+                column: "WarehousesWarehouseId");
         }
 
         /// <inheritdoc />
@@ -165,16 +187,19 @@ namespace WarehouseManager.Migrations
                 name: "movements");
 
             migrationBuilder.DropTable(
+                name: "permissions");
+
+            migrationBuilder.DropTable(
                 name: "suppliers");
 
             migrationBuilder.DropTable(
-                name: "user_permissions");
-
-            migrationBuilder.DropTable(
-                name: "users");
+                name: "UserWarehouses");
 
             migrationBuilder.DropTable(
                 name: "products");
+
+            migrationBuilder.DropTable(
+                name: "users");
 
             migrationBuilder.DropTable(
                 name: "categories");
