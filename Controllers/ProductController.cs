@@ -1,21 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WarehouseManagerServer.Types.Enums;
 using WarehouseManagerServer.Models;
 using WarehouseManagerServer.Services.Interfaces;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Movement
+/* Route: api/Product
  * Endpoints:
- *      - api/Movement: GET, POST
- *      - api/Movement/json: GET
- *      - api/Movement/[MovementId]: GET, PUT, DELETE
+ *      - api/Product: GET, POST
+ *      - api/Product/json: GET
+ *      - api/Product/[ProductId]: GET, PUT, DELETE
+ *      - api/Product/warehouse/[WarehouseId]: GET
  */
 
 [ApiController]
 [Route("api/[controller]")]
-public class MovementController(IMovementService service): ControllerBase
+public class ProductController(IProductService service): ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -27,13 +27,14 @@ public class MovementController(IMovementService service): ControllerBase
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
-        var model = new Movement
+        var model = new Product
         {
-            MovementId = 0,
             ProductId = 0,
-            Quantity = 1,
-            MovementTypeEnum = MovementTypeEnum.In,
-            Date = DateTime.Now
+            Name = "Product",
+            WarehouseId = 0,
+            CategoryId = 0,
+            UnitPrice = 1,
+            Quantity = 0
         };
         return Ok(model);
     }
@@ -53,16 +54,30 @@ public class MovementController(IMovementService service): ControllerBase
         }
     }
 
-    [Authorize]
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Movement content)
+    [HttpGet("warehouse/{warehouseId:int:min(1)}")]
+    public async Task<IActionResult> GetByWarehouseId([FromRoute] int warehouseId)
     {
         try
         {
-            content.MovementId = 0; // Ignore id in input
+            var content = await service.FilterAsync(e => e.WarehouseId == warehouseId);
+            return Ok(content);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] Product content)
+    {
+        try
+        {
+            content.ProductId = 0; // Ignore id in input
             
             var newContent = await service.AddAsync(content);
-            return CreatedAtAction(nameof(GetById), new { id = newContent.MovementId }, newContent);
+            return CreatedAtAction(nameof(GetById), new { id = newContent.ProductId }, newContent);
         }
         catch (Exception e)
         {
@@ -72,11 +87,11 @@ public class MovementController(IMovementService service): ControllerBase
 
     [Authorize]
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Movement updatedContent)
+    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Product updatedContent)
     {
         try
         {
-            if (id != updatedContent.MovementId)
+            if (id != updatedContent.ProductId)
                 return BadRequest();
 
             var existingContent = await service.GetByKeyAsync(id);

@@ -5,17 +5,17 @@ using WarehouseManagerServer.Services.Interfaces;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Warehouse
+/* Route: api/User
  * Endpoints:
- *      - api/Warehouse: GET, POST
- *      - api/Warehouse/json: GET
- *      - api/Warehouse/[WarehouseId]: GET, PUT, DELETE
- *      - api/Warehouse/[WarehouseId]/users: GET
+ *      - api/User: GET, POST
+ *      - api/User/json: GET
+ *      - api/User/[UserId]: GET, PUT, DELETE
+ *      - api/User/[UserId]/warehouses: GET
  */
 
 [ApiController]
 [Route("api/[controller]")]
-public class WarehouseController(IWarehouseService service): Controller
+public class UserController(IUserService service): ControllerBase
 {
         [Authorize]
         [HttpGet]
@@ -28,15 +28,16 @@ public class WarehouseController(IWarehouseService service): Controller
         [HttpGet("json")]
         public IActionResult GetSampleJson()
         {
-            var model = new Warehouse
+            var model = new User
             {
-                WarehouseId = 0,
-                Name = "Warehouse"
+                UserId = 0,
+                Username = "User",
+                Email = "User@gmail.com",
+                JoinDate = DateTime.Now
             };
             return Ok(model);
         }
-    
-        [Authorize]
+        
         [HttpGet("{id:int:min(1)}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
@@ -53,12 +54,12 @@ public class WarehouseController(IWarehouseService service): Controller
         }
 
         [Authorize]
-        [HttpGet("{id:int:min(1)}/users")]
-        public async Task<IActionResult> GetWarehouseUsers([FromRoute] int id)
+        [HttpGet("{id:int:min(1)}/warehouses")]
+        public async Task<IActionResult> GetUserWarehouses([FromRoute] int id)
         {
             try
             {
-                var content = await service.GetWarehouseUsersAsync(id);
+                var content = await service.GetUserWarehousesAsync(id);
                 return Ok(content);
             }
             catch (Exception e)
@@ -69,14 +70,14 @@ public class WarehouseController(IWarehouseService service): Controller
     
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Warehouse content)
+        public async Task<IActionResult> Post([FromBody] User content)
         {
             try
             {
-                content.WarehouseId = 0; // Ignore id in input
+                content.UserId = 0; // Ignore id in input
                 
                 var newContent = await service.AddAsync(content);
-                return CreatedAtAction(nameof(GetById), new { id = newContent.WarehouseId }, newContent);
+                return CreatedAtAction(nameof(GetById), new { id = newContent.UserId }, newContent);
             }
             catch (Exception e)
             {
@@ -86,11 +87,11 @@ public class WarehouseController(IWarehouseService service): Controller
     
         [Authorize]
         [HttpPut("{id:int:min(1)}")]
-        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Warehouse updatedContent)
+        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] User updatedContent)
         {
             try
             {
-                if (id != updatedContent.WarehouseId)
+                if (id != updatedContent.UserId)
                     return BadRequest();
     
                 var existingContent = await service.GetByKeyAsync(id);
