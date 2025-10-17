@@ -8,7 +8,7 @@ namespace WarehouseManagerServer.Repositories;
 
 public class MovementRepository(WarehouseContext context): IMovementRepository
 {
-    public async Task<IEnumerable<Movement>> GetAllAsync() 
+    public async Task<List<Movement>> GetAllAsync() 
     {
         return await context.Movements.ToListAsync();
     }
@@ -18,7 +18,7 @@ public class MovementRepository(WarehouseContext context): IMovementRepository
         return await context.Movements.FindAsync(movementId);
     }
 
-    public async Task<IEnumerable<Movement>> FilterAsync(params Expression<Func<Movement, bool>>[] filters)
+    public async Task<List<Movement>> FilterAsync(params Expression<Func<Movement, bool>>[] filters)
     {
         var query = context.Movements.AsQueryable();
         query = filters.Aggregate(query, (current, filter) => current.Where(filter));

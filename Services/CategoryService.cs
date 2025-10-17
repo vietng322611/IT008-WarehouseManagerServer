@@ -6,7 +6,7 @@ namespace WarehouseManagerServer.Services;
 
 public class CategoryService(ICategoryRepository categoryRepository): ICategoryService
 {
-    public Task<IEnumerable<Category>> GetAllAsync() 
+    public Task<List<Category>> GetAllAsync() 
         => categoryRepository.GetAllAsync();
     public Task<Category?> GetByKeyAsync(int categoryId) 
         => categoryRepository.GetByKeyAsync(categoryId);

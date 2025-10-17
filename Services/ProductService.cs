@@ -7,11 +7,11 @@ namespace WarehouseManagerServer.Services;
 
 public class ProductService(IProductRepository productRepository): IProductService
 {
-    public Task<IEnumerable<Product>> GetAllAsync()
+    public Task<List<Product>> GetAllAsync()
         => productRepository.GetAllAsync();
     public Task<Product?> GetByKeyAsync(int productId)
         => productRepository.GetByKeyAsync(productId);
-    public Task<IEnumerable<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters)
+    public Task<List<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters)
         => productRepository.FilterAsync(filters);
     public Task<Product> AddAsync(Product product)
         => productRepository.AddAsync(product);

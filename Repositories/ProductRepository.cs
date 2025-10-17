@@ -8,7 +8,7 @@ namespace WarehouseManagerServer.Repositories;
 
 public class ProductRepository(WarehouseContext context): IProductRepository
 {
-    public async Task<IEnumerable<Product>> GetAllAsync()
+    public async Task<List<Product>> GetAllAsync()
     {
         return await context.Products.ToListAsync();
     }
@@ -18,7 +18,7 @@ public class ProductRepository(WarehouseContext context): IProductRepository
         return await context.Products.FindAsync(productId);
     }
     
-    public async Task<IEnumerable<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters)
+    public async Task<List<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters)
     {
         var query = context.Products.AsQueryable();
         query = filters.Aggregate(query, (current, filter) => current.Where(filter));

@@ -7,7 +7,7 @@ namespace WarehouseManagerServer.Repositories;
 
 public class SupplierRepository(WarehouseContext context): ISupplierRepository
 {
-    public async Task<IEnumerable<Supplier>> GetAllAsync()
+    public async Task<List<Supplier>> GetAllAsync()
     {
         return await context.Suppliers.ToListAsync();
     }

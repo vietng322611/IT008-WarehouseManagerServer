@@ -6,7 +6,7 @@ namespace WarehouseManagerServer.Services;
 
 public class SupplierService(ISupplierRepository supplierRepository): ISupplierService
 {
-    public Task<IEnumerable<Supplier>> GetAllAsync() 
+    public Task<List<Supplier>> GetAllAsync() 
         => supplierRepository.GetAllAsync();
     public Task<Supplier?> GetByKeyAsync(int supplierId) 
         => supplierRepository.GetByKeyAsync(supplierId);

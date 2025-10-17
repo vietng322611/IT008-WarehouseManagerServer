@@ -8,7 +8,7 @@ namespace WarehouseManagerServer.Repositories;
 
 public class PermissionRepository(WarehouseContext context): IUserPermissionRepository
 {
-    public async Task<IEnumerable<Permission>> GetAllAsync()
+    public async Task<List<Permission>> GetAllAsync()
     {
         return await context.Permissions.ToListAsync();
     }
@@ -18,7 +18,7 @@ public class PermissionRepository(WarehouseContext context): IUserPermissionRepo
         return await context.Permissions.FindAsync(userId, warehouseId);
     }
     
-    public async Task<IEnumerable<Permission>> FilterAsync(params Expression<Func<Permission, bool>>[] filters) 
+    public async Task<List<Permission>> FilterAsync(params Expression<Func<Permission, bool>>[] filters) 
     {
         var query = context.Permissions.AsQueryable();
         query = filters.Aggregate(query, (current, filter) => current.Where(filter));

@@ -7,11 +7,11 @@ namespace WarehouseManagerServer.Services;
 
 public class PermissionService(IUserPermissionRepository userPermissionRepository): IUserPermissionService
 {
-    public Task<IEnumerable<Permission>> GetAllAsync()
+    public Task<List<Permission>> GetAllAsync()
         => userPermissionRepository.GetAllAsync();
     public Task<Permission?> GetByKeyAsync(int userId, int warehouseId)
         => userPermissionRepository.GetByKeyAsync(userId, warehouseId);
-    public Task<IEnumerable<Permission>> FilterAsync(params Expression<Func<Permission, bool>>[] filters)
+    public Task<List<Permission>> FilterAsync(params Expression<Func<Permission, bool>>[] filters)
         => userPermissionRepository.FilterAsync(filters);
     public Task<Permission> AddAsync(Permission permission)
         => userPermissionRepository.AddAsync(permission);
