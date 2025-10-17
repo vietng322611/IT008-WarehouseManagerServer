@@ -7,7 +7,7 @@ namespace WarehouseManagerServer.Repositories;
 
 public class WarehouseRepository(WarehouseContext context): IWarehouseRepository
 {
-    public async Task<IEnumerable<Warehouse>> GetAllAsync()
+    public async Task<List<Warehouse>> GetAllAsync()
     {
         return await context.Warehouses.ToListAsync();
     }
@@ -17,11 +17,18 @@ public class WarehouseRepository(WarehouseContext context): IWarehouseRepository
         return await context.Warehouses.FindAsync(warehouseId);
     }
     
-    public async Task<IEnumerable<User>> GetWarehouseUsersAsync(int warehouseId)
+    public async Task<List<UserDto>> GetWarehouseUsersAsync(int warehouseId)
     {
         return await context.Warehouses
             .Where(e => e.WarehouseId == warehouseId)
             .SelectMany(p => p.Users)
+            .Select(u => new UserDto
+            {
+                UserId = u.UserId,
+                Username = u.Username,
+                Email = u.Email,
+                JoinDate = u.JoinDate
+            })
             .ToListAsync();
     }
     
