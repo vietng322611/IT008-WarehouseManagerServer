@@ -1,4 +1,4 @@
-﻿using WarehouseManagerServer.Enums;
+﻿using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Models;
 
