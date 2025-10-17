@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using WarehouseManagerServer.Data;
+
 namespace WarehouseManagerServer;
 
 public class Program
@@ -6,18 +9,27 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowBlazor", policy =>
+                policy.WithOrigins("https://localhost:5000") //change this to your Blazor app URL to allow connecting to blazor app
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+        });
+        
+        builder.Services.AddDbContext<WarehouseContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddControllers();
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        builder.Services.AddOpenApi();
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
 
         app.UseHttpsRedirection();
