@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WarehouseManagerServer.Data;
+using WarehouseManagerServer.Extensions;
 
 namespace WarehouseManagerServer;
 
@@ -9,19 +10,17 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddCors(options =>
-        {
-            options.AddPolicy("AllowBlazor", policy =>
-                policy.WithOrigins("https://localhost:5000") //change this to your Blazor app URL to allow connecting to blazor app
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-        });
-        
         builder.Services.AddDbContext<WarehouseContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
         builder.Services.AddControllers();
+
+        builder.Services.AddOpenApi();
+        builder.Services.AddSwaggerGen();
+
+        // Register Repositories and Services
+        builder.Services.RegisterRepositories();
+        builder.Services.RegisterServices();
 
         var app = builder.Build();
 
@@ -35,7 +34,6 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 
