@@ -1,9 +1,9 @@
 ﻿using System.Linq.Expressions;
 using WarehouseManagerServer.Models;
 
-namespace WarehouseManagerServer.Services.Interfaces;
+namespace WarehouseManagerServer.Repositories.Interfaces;
 
-public interface IUserPermissionService
+public interface IPermissionRepository
 {
     Task<List<Permission>> GetAllAsync();
     Task<Permission?> GetByKeyAsync(int userId, int warehouseId);

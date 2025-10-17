@@ -6,7 +6,7 @@ using WarehouseManagerServer.Repositories.Interfaces;
 
 namespace WarehouseManagerServer.Repositories;
 
-public class PermissionRepository(WarehouseContext context): IUserPermissionRepository
+public class PermissionRepository(WarehouseContext context): IPermissionRepository
 {
     public async Task<List<Permission>> GetAllAsync()
     {

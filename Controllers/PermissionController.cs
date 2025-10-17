@@ -17,7 +17,7 @@ namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PermissionController(IUserPermissionService service): ControllerBase
+public class PermissionController(IPermissionService service): ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
