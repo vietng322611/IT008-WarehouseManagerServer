@@ -15,111 +15,111 @@ namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class WarehouseController(IWarehouseService service): Controller
+public class WarehouseController(IWarehouseService service) : Controller
 {
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var content = await service.GetAllAsync();
+        return Ok(content);
+    }
+
+    [HttpGet("json")]
+    public IActionResult GetSampleJson()
+    {
+        var model = new Warehouse
         {
-            var content = await service.GetAllAsync();
+            WarehouseId = 0,
+            Name = "Warehouse"
+        };
+        return Ok(model);
+    }
+
+    [Authorize]
+    [HttpGet("{id:int:min(1)}")]
+    public async Task<IActionResult> GetById([FromRoute] int id)
+    {
+        try
+        {
+            var content = await service.GetByKeyAsync(id);
+            if (content == null) return NotFound();
             return Ok(content);
         }
-        
-        [HttpGet("json")]
-        public IActionResult GetSampleJson()
+        catch (Exception e)
         {
-            var model = new Warehouse
-            {
-                WarehouseId = 0,
-                Name = "Warehouse"
-            };
-            return Ok(model);
+            return StatusCode(500, e.Message);
         }
-    
-        [Authorize]
-        [HttpGet("{id:int:min(1)}")]
-        public async Task<IActionResult> GetById([FromRoute] int id)
-        {
-            try
-            {
-                var content = await service.GetByKeyAsync(id);
-                if (content == null) return NotFound();
-                return Ok(content);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
-        }
+    }
 
-        [Authorize]
-        [HttpGet("{id:int:min(1)}/users")]
-        public async Task<IActionResult> GetWarehouseUsers([FromRoute] int id)
+    [Authorize]
+    [HttpGet("{id:int:min(1)}/users")]
+    public async Task<IActionResult> GetWarehouseUsers([FromRoute] int id)
+    {
+        try
         {
-            try
-            {
-                var content = await service.GetWarehouseUsersAsync(id);
-                return Ok(content);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
+            var content = await service.GetWarehouseUsersAsync(id);
+            return Ok(content);
         }
-    
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Warehouse content)
+        catch (Exception e)
         {
-            try
-            {
-                content.WarehouseId = 0; // Ignore id in input
-                
-                var newContent = await service.AddAsync(content);
-                return CreatedAtAction(nameof(GetById), new { id = newContent.WarehouseId }, newContent);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
+            return StatusCode(500, e.Message);
         }
-    
-        [Authorize]
-        [HttpPut("{id:int:min(1)}")]
-        public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Warehouse updatedContent)
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] Warehouse content)
+    {
+        try
         {
-            try
-            {
-                if (id != updatedContent.WarehouseId)
-                    return BadRequest();
-    
-                var existingContent = await service.GetByKeyAsync(id);
-                if (existingContent == null)
-                    return NotFound();
-    
-                await service.UpdateAsync(updatedContent);
-                return NoContent();
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
+            content.WarehouseId = 0; // Ignore id in input
+
+            var newContent = await service.AddAsync(content);
+            return CreatedAtAction(nameof(GetById), new { id = newContent.WarehouseId }, newContent);
         }
-    
-        [Authorize]
-        [HttpDelete("{id:int:min(1)}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        catch (Exception e)
         {
-            try
-            {
-                var success = await service.DeleteAsync(id);
-                if (success)
-                    return NoContent();
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpPut("{id:int:min(1)}")]
+    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Warehouse updatedContent)
+    {
+        try
+        {
+            if (id != updatedContent.WarehouseId)
+                return BadRequest();
+
+            var existingContent = await service.GetByKeyAsync(id);
+            if (existingContent == null)
                 return NotFound();
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
+
+            await service.UpdateAsync(updatedContent);
+            return NoContent();
         }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [Authorize]
+    [HttpDelete("{id:int:min(1)}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        try
+        {
+            var success = await service.DeleteAsync(id);
+            if (success)
+                return NoContent();
+            return NotFound();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
 }

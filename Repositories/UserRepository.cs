@@ -5,20 +5,20 @@ using WarehouseManagerServer.Repositories.Interfaces;
 
 namespace WarehouseManagerServer.Repositories;
 
-public class UserRepository(WarehouseContext context): IUserRepository
+public class UserRepository(WarehouseContext context) : IUserRepository
 {
     public async Task<List<UserDto>> GetAllAsync()
     {
         return await context.Users.Select(e => new UserDto
-            {
-                UserId = e.UserId,
-                Username = e.Username,
-                Email = e.Email,
-                JoinDate = e.JoinDate
-            }).ToListAsync();
+        {
+            UserId = e.UserId,
+            Username = e.Username,
+            Email = e.Email,
+            JoinDate = e.JoinDate
+        }).ToListAsync();
     }
-    
-    public async Task<UserDto?> GetByKeyAsync(int userId) 
+
+    public async Task<UserDto?> GetByKeyAsync(int userId)
     {
         var user = await context.Users.FindAsync(userId);
         if (user == null) return null;
@@ -31,7 +31,7 @@ public class UserRepository(WarehouseContext context): IUserRepository
             JoinDate = user.JoinDate
         };
     }
-    
+
     public async Task<List<Warehouse>> GetUserWarehousesAsync(int userId)
     {
         return await context.Users
@@ -39,8 +39,8 @@ public class UserRepository(WarehouseContext context): IUserRepository
             .SelectMany(u => u.Warehouses)
             .ToListAsync();
     }
-    
-    public async Task<UserDto> AddAsync(User user) 
+
+    public async Task<UserDto> AddAsync(User user)
     {
         context.Users.Add(user);
         await context.SaveChangesAsync();
@@ -52,12 +52,12 @@ public class UserRepository(WarehouseContext context): IUserRepository
             JoinDate = user.JoinDate
         };
     }
-    
-    public async Task<UserDto?> UpdateAsync(User user) 
+
+    public async Task<UserDto?> UpdateAsync(User user)
     {
         var oldUser = await context.Users.FindAsync(user.UserId);
         if (oldUser == null) return null;
-        
+
         context.Users.Update(user);
         await context.SaveChangesAsync();
         return new UserDto
@@ -68,8 +68,8 @@ public class UserRepository(WarehouseContext context): IUserRepository
             JoinDate = user.JoinDate
         };
     }
-    
-    public async Task<bool> DeleteAsync(int userId) 
+
+    public async Task<bool> DeleteAsync(int userId)
     {
         var oldUser = await context.Users.FindAsync(userId);
         if (oldUser == null) return false;

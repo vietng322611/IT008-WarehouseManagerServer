@@ -17,7 +17,7 @@ namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PermissionController(IPermissionService service): ControllerBase
+public class PermissionController(IPermissionService service) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -25,7 +25,7 @@ public class PermissionController(IPermissionService service): ControllerBase
         var content = await service.GetAllAsync();
         return Ok(content);
     }
-    
+
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
@@ -91,7 +91,7 @@ public class PermissionController(IPermissionService service): ControllerBase
         {
             content.UserId = 0; // Ignore ids in input
             content.WarehouseId = 0;
-            
+
             var newContent = await service.AddAsync(content);
             return CreatedAtAction(nameof(GetByIds), new
             {
@@ -108,7 +108,7 @@ public class PermissionController(IPermissionService service): ControllerBase
     [Authorize]
     [HttpPut("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
     public async Task<IActionResult> Put(
-        [FromRoute] int userId, 
+        [FromRoute] int userId,
         [FromRoute] int warehouseId,
         [FromBody] Permission updatedContent)
     {

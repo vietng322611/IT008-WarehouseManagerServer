@@ -14,7 +14,7 @@ namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CategoryController(ICategoryService service): ControllerBase
+public class CategoryController(ICategoryService service) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -56,7 +56,7 @@ public class CategoryController(ICategoryService service): ControllerBase
         try
         {
             content.CategoryId = 0; // Ignore id in input
-            
+
             var newContent = await service.AddAsync(content);
             return CreatedAtAction(nameof(GetById), new { id = newContent.CategoryId }, newContent);
         }

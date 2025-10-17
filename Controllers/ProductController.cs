@@ -15,7 +15,7 @@ namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ProductController(IProductService service): ControllerBase
+public class ProductController(IProductService service) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -23,7 +23,7 @@ public class ProductController(IProductService service): ControllerBase
         var content = await service.GetAllAsync();
         return Ok(content);
     }
-    
+
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
@@ -75,7 +75,7 @@ public class ProductController(IProductService service): ControllerBase
         try
         {
             content.ProductId = 0; // Ignore id in input
-            
+
             var newContent = await service.AddAsync(content);
             return CreatedAtAction(nameof(GetById), new { id = newContent.ProductId }, newContent);
         }
