@@ -1,8 +1,6 @@
 ﻿
 # API endpoints for IT008 project
 
----
-
 ## Table of Content
 - [How to get Json template](#how-to-get-json-template)
 - [Authentication](#authentication)
@@ -13,12 +11,9 @@
 - [Supplier](#movement)
 - [Users](#users)
 - [Warehouse](#warehouse)
----
 
 ## How to get json template
 > Json templates can be get by send a `GET` request to `api/[endpoint]/json`
-
----
 
 ### Authentication
 ```
