@@ -160,5 +160,7 @@ public partial class WarehouseContext : DbContext
         OnModelCreatingPartial(modelBuilder);
     }
 
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
