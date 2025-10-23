@@ -7,7 +7,7 @@ namespace WarehouseManagerServer.Controllers;
 
 /* Route: api/Product
  * Endpoints:
- *      - api/Product: GET, POST
+ *      - api/Product: POST
  *      - api/Product/json: GET
  *      - api/Product/[ProductId]: GET, PUT, DELETE
  *      - api/Product/warehouse/[WarehouseId]: GET
@@ -17,12 +17,12 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/[controller]")]
 public class ProductController(IProductService service) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var content = await service.GetAllAsync();
-        return Ok(content);
-    }
+    // [HttpGet]
+    // public async Task<IActionResult> GetAll()
+    // {
+    //     var content = await service.GetAllAsync();
+    //     return Ok(content);
+    // }
 
     [HttpGet("json")]
     public IActionResult GetSampleJson()

@@ -7,7 +7,7 @@ namespace WarehouseManagerServer.Controllers;
 
 /* Route: api/User
  * Endpoints:
- *      - api/User: GET, POST
+ *      - api/User: POST
  *      - api/User/json: GET
  *      - api/User/[UserId]: GET, PUT, DELETE
  *      - api/User/[UserId]/warehouses: GET
@@ -17,13 +17,13 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/[controller]")]
 public class UserController(IUserService service) : ControllerBase
 {
-    [Authorize]
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var content = await service.GetAllAsync();
-        return Ok(content);
-    }
+    // [Authorize]
+    // [HttpGet]
+    // public async Task<IActionResult> GetAll()
+    // {
+    //     var content = await service.GetAllAsync();
+    //     return Ok(content);
+    // }
 
     [HttpGet("json")]
     public IActionResult GetSampleJson()
@@ -38,6 +38,7 @@ public class UserController(IUserService service) : ControllerBase
         return Ok(model);
     }
 
+    [Authorize]
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {

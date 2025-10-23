@@ -8,7 +8,7 @@ namespace WarehouseManagerServer.Controllers;
 
 /* Route: api/Movement
  * Endpoints:
- *      - api/Movement: GET, POST
+ *      - api/Movement: POST
  *      - api/Movement/json: GET
  *      - api/Movement/[MovementId]: GET, PUT, DELETE
  */
@@ -17,12 +17,12 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/[controller]")]
 public class MovementController(IMovementService service) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var content = await service.GetAllAsync();
-        return Ok(content);
-    }
+    // [HttpGet]
+    // public async Task<IActionResult> GetAll()
+    // {
+    //     var content = await service.GetAllAsync();
+    //     return Ok(content);
+    // }
 
     [HttpGet("json")]
     public IActionResult GetSampleJson()
