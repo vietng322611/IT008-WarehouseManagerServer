@@ -49,8 +49,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Supplier content)
     {
@@ -66,8 +65,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Supplier updatedContent)
     {
@@ -88,8 +86,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

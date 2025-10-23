@@ -52,8 +52,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpGet("user/{userId:int:min(1)}")]
     public async Task<IActionResult> GetByUserId([FromRoute] int userId)
     {
@@ -67,8 +66,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpGet("warehouse/{warehouseId:int:min(1)}")]
     public async Task<IActionResult> GetByWarehouseId([FromRoute] int warehouseId)
     {
@@ -82,8 +80,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Permission content)
     {
@@ -104,8 +101,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpPut("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
     public async Task<IActionResult> Put(
         [FromRoute] int userId,
@@ -130,8 +126,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpDelete("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int userId, [FromRoute] int warehouseId)
     {

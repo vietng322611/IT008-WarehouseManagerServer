@@ -18,7 +18,6 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/[controller]")]
 public class UserController(IUserService service) : ControllerBase
 {
-    // [Authorize]
     // [HttpGet]
     // public async Task<IActionResult> GetAll()
     // {
@@ -37,8 +36,7 @@ public class UserController(IUserService service) : ControllerBase
             JoinDate = DateTime.Now
         });
     }
-
-    [Authorize]
+    
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
@@ -59,8 +57,7 @@ public class UserController(IUserService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpGet("{id:int:min(1)}/warehouses")]
     public async Task<IActionResult> GetUserWarehouses([FromRoute] int id)
     {
@@ -74,8 +71,7 @@ public class UserController(IUserService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] User content)
     {
@@ -100,8 +96,7 @@ public class UserController(IUserService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] User updatedContent)
     {
@@ -122,8 +117,7 @@ public class UserController(IUserService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

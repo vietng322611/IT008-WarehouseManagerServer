@@ -52,8 +52,7 @@ public class MovementController(IMovementService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Movement content)
     {
@@ -69,8 +68,7 @@ public class MovementController(IMovementService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Movement updatedContent)
     {
@@ -91,8 +89,7 @@ public class MovementController(IMovementService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-
-    [Authorize]
+    
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

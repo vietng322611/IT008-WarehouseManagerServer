@@ -49,7 +49,6 @@ public class CategoryController(ICategoryService service) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Category content)
     {
@@ -66,7 +65,6 @@ public class CategoryController(ICategoryService service) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Category updatedContent)
     {
@@ -88,7 +86,6 @@ public class CategoryController(ICategoryService service) : ControllerBase
         }
     }
 
-    [Authorize]
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
