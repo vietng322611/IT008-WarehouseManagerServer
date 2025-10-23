@@ -13,5 +13,6 @@ public static class ServiceExtension
         services.AddScoped<ISupplierService, SupplierService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IWarehouseService, WarehouseService>();
+        services.AddScoped<IAuthService, AuthService>();
     }
 }
