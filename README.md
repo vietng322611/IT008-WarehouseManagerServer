@@ -13,7 +13,7 @@
 - [Warehouse](#warehouse)
 
 ## How to get json template
-> Json templates can be get by send a `GET` request to `api/[endpoint]/json`
+Json templates can be get by send a `GET` request to `api/[endpoint]/json`
 
 ### Authentication
 ```
