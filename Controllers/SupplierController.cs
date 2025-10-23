@@ -7,9 +7,9 @@ namespace WarehouseManagerServer.Controllers;
 
 /* Route: api/Supplier
  * Endpoints:
- *      - api/Supplier: GET, POST
- *      - api/Supplier/json: GET
- *      - api/Supplier/[SupplierId]: GET, PUT, DELETE
+ * - GET, POST api/Supplier
+ * - GET api/Supplier/json
+ * - GET, PUT, DELETE api/Supplier/[SupplierId]
  */
 
 [ApiController]

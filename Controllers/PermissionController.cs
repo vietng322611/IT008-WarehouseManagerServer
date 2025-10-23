@@ -8,11 +8,11 @@ namespace WarehouseManagerServer.Controllers;
 
 /* Route: api/Permission
  * Endpoints:
- *      - api/Permission: POST
- *      - api/Permission/json: GET
- *      - api/Permission/[userId]-[WarehouseId]: GET, PUT, DELETE
- *      - api/Permission/user/[UserId]: GET
- *      - api/Permission/warehouse/[WarehouseId]: GET
+ * - POST api/Permission
+ * - GET api/Permission/json
+ * - GET, PUT, DELETE api/Permission/[userId]-[WarehouseId]
+ * - GET api/Permission/user/[UserId]
+ * - GET api/Permission/warehouse/[WarehouseId]
  */
 
 [ApiController]

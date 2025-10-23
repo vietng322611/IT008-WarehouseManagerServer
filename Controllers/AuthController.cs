@@ -5,6 +5,14 @@ using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
+/* Route: api/Auth
+ * Endpoints:
+ * - POST api/Auth/register
+ * - POST api/Auth/login
+ * - POST api/Auth/refresh
+ * - POST api/Auth/logout
+ */
+
 public class AuthController(IAuthService service) : ControllerBase
 {
     [HttpPost("register")]

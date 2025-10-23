@@ -7,9 +7,9 @@ namespace WarehouseManagerServer.Controllers;
 
 /* Route: api/Category
  * Endpoints:
- *      - api/Category: GET, POST
- *      - api/Category/json: GET
- *      - api/Category/[CategoryId]: GET, PUT, DELETE
+ * - GET, POST api/Category
+ * - GET api/Category/json
+ * - GET, PUT, DELETE api/Category/[CategoryId]
  */
 
 [ApiController]
