@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WarehouseManagerServer.Data;
 using WarehouseManagerServer.Models;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -28,14 +29,13 @@ public class UserController(IUserService service) : ControllerBase
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
-        var model = new User
+        return Ok(new UserDto
         {
             UserId = 0,
             Username = "User",
             Email = "User@gmail.com",
             JoinDate = DateTime.Now
-        };
-        return Ok(model);
+        });
     }
 
     [Authorize]
@@ -46,7 +46,13 @@ public class UserController(IUserService service) : ControllerBase
         {
             var content = await service.GetByKeyAsync(id);
             if (content == null) return NotFound();
-            return Ok(content);
+            return Ok(new UserDto
+            {
+                UserId = content.UserId,
+                Username = content.Username,
+                Email = content.Email,
+                JoinDate = content.JoinDate
+            });
         }
         catch (Exception e)
         {
@@ -78,7 +84,16 @@ public class UserController(IUserService service) : ControllerBase
             content.UserId = 0; // Ignore id in input
 
             var newContent = await service.AddAsync(content);
-            return CreatedAtAction(nameof(GetById), new { id = newContent.UserId }, newContent);
+            return CreatedAtAction(
+                nameof(GetById), 
+                new { id = newContent.UserId },
+                new UserDto
+                {
+                    UserId = content.UserId,
+                    Username = content.Username,
+                    Email = content.Email,
+                    JoinDate = content.JoinDate
+                });
         }
         catch (Exception e)
         {

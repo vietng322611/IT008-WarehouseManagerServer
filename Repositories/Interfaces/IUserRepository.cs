@@ -6,11 +6,11 @@ namespace WarehouseManagerServer.Repositories.Interfaces;
 
 public interface IUserRepository
 {
-    Task<List<UserDto>> GetAllAsync();
-    Task<UserDto?> GetByKeyAsync(int userId);
-    Task<UserDto?> GetByUniqueAsync(Expression<Func<User, bool>> condition);
+    Task<List<User>> GetAllAsync();
+    Task<User?> GetByKeyAsync(int userId);
+    Task<User?> GetByUniqueAsync(Expression<Func<User, bool>> condition);
     Task<List<Warehouse>> GetUserWarehousesAsync(int userId);
-    Task<UserDto> AddAsync(User user);
-    Task<UserDto?> UpdateAsync(User user);
+    Task<User> AddAsync(User user);
+    Task<User?> UpdateAsync(User user);
     Task<bool> DeleteAsync(int userId);
 }

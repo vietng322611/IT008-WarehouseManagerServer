@@ -5,10 +5,10 @@ namespace WarehouseManagerServer.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<List<UserDto>> GetAllAsync();
-    Task<UserDto?> GetByKeyAsync(int userId);
+    Task<List<User>> GetAllAsync();
+    Task<User?> GetByKeyAsync(int userId);
     Task<List<Warehouse>> GetUserWarehousesAsync(int userId);
-    Task<UserDto> AddAsync(User user);
-    Task<UserDto?> UpdateAsync(User user);
+    Task<User> AddAsync(User user);
+    Task<User?> UpdateAsync(User user);
     Task<bool> DeleteAsync(int userId);
 }

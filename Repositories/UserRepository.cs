@@ -8,37 +8,23 @@ namespace WarehouseManagerServer.Repositories;
 
 public class UserRepository(WarehouseContext context) : IUserRepository
 {
-    public async Task<List<UserDto>> GetAllAsync()
+    public async Task<List<User>> GetAllAsync()
     {
-        return await context.Users.Select(e => new UserDto
-        {
-            UserId = e.UserId,
-            Username = e.Username,
-            Email = e.Email,
-            JoinDate = e.JoinDate
-        }).ToListAsync();
+        return await context.Users.ToListAsync();
     }
 
-    public async Task<UserDto?> GetByKeyAsync(int userId)
+    public async Task<User?> GetByKeyAsync(int userId)
     {
         var user = await context.Users.FindAsync(userId);
-        if (user == null) return null;
-
-        return new UserDto
-        {
-            UserId = user.UserId,
-            Username = user.Username,
-            Email = user.Email,
-            JoinDate = user.JoinDate
-        };
+        return user;
     }
 
-    public async Task<UserDto?> GetByUniqueAsync(Expression<Func<User, bool>> condition)
+    public async Task<User?> GetByUniqueAsync(Expression<Func<User, bool>> condition)
     {
         var user = await context.Users.Where(condition).FirstOrDefaultAsync();
         if (user == null) return null;
 
-        return new UserDto
+        return new User
         {
             UserId = user.UserId,
             Username = user.Username,
@@ -55,33 +41,21 @@ public class UserRepository(WarehouseContext context) : IUserRepository
             .ToListAsync();
     }
 
-    public async Task<UserDto> AddAsync(User user)
+    public async Task<User> AddAsync(User user)
     {
         context.Users.Add(user);
         await context.SaveChangesAsync();
-        return new UserDto
-        {
-            UserId = user.UserId,
-            Username = user.Username,
-            Email = user.Email,
-            JoinDate = user.JoinDate
-        };
+        return user;
     }
 
-    public async Task<UserDto?> UpdateAsync(User user)
+    public async Task<User?> UpdateAsync(User user)
     {
         var oldUser = await context.Users.FindAsync(user.UserId);
         if (oldUser == null) return null;
 
         context.Users.Update(user);
         await context.SaveChangesAsync();
-        return new UserDto
-        {
-            UserId = user.UserId,
-            Username = user.Username,
-            Email = user.Email,
-            JoinDate = user.JoinDate
-        };
+        return user;
     }
 
     public async Task<bool> DeleteAsync(int userId)
