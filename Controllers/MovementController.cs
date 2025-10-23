@@ -8,9 +8,9 @@ namespace WarehouseManagerServer.Controllers;
 
 /* Route: api/Movement
  * Endpoints:
- *      - api/Movement: POST
- *      - api/Movement/json: GET
- *      - api/Movement/[MovementId]: GET, PUT, DELETE
+ * - POST api/Movement
+ * - GET api/Movement/json
+ * - GET, PUT, DELETE api/Movement/[MovementId] 
  */
 
 [ApiController]

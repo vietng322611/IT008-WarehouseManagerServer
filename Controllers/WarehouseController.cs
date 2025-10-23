@@ -7,10 +7,10 @@ namespace WarehouseManagerServer.Controllers;
 
 /* Route: api/Warehouse
  * Endpoints:
- *      - api/Warehouse: POST
- *      - api/Warehouse/json: GET
- *      - api/Warehouse/[WarehouseId]: GET, PUT, DELETE
- *      - api/Warehouse/[WarehouseId]/users: GET
+ * - POST api/Warehouse
+ * - GET api/Warehouse/json
+ * - GET, PUT, DELETE api/Warehouse/[WarehouseId]
+ * - GET api/Warehouse/[WarehouseId]/users
  */
 
 [ApiController]
