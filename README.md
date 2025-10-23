@@ -2,7 +2,7 @@
 # API endpoints for IT008 project
 
 ## Table of Content
-- [How to get Json template](#how-to-get-json-template)
+- [How to get JSON template](#how-to-get-json-template)
 - [Authentication](#authentication)
 - [Category](#category)
 - [Movement](#movement)
@@ -12,11 +12,16 @@
 - [Users](#users)
 - [Warehouse](#warehouse)
 
-## How to get json template
-Json templates can be get by send a `GET` request to `api/[endpoint]/json`
+## How to get JSON template
+JSON templates can be get by send a `GET` request to `api/[endpoint]/json`  
+For Authentication endpoints: `api/Auth/[endpoint]/json`
 
 ### Authentication
 ```
+GET   api/Auth/register/json
+GET   api/Auth/login/json
+GET   api/Auth/refresh/json
+GET   api/Auth/logout/json
 POST   api/Auth/register
 POST   api/Auth/login
 POST   api/Auth/refresh
