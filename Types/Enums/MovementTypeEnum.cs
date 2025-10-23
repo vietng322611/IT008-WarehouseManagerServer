@@ -1,4 +1,4 @@
-﻿namespace WarehouseManagerServer.Enums;
+﻿namespace WarehouseManagerServer.Types.Enums;
 
 public enum MovementTypeEnum
 {

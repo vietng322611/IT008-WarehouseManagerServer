@@ -1,8 +1,8 @@
-﻿using WarehouseManagerServer.Enums;
+﻿using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Models;
 
-public class UserPermission
+public class Permission
 {
     public int UserId { get; set; }
 

@@ -1,5 +1,9 @@
-﻿namespace WarehouseManagerServer.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
+namespace WarehouseManagerServer.Models;
+
+[Index(nameof(Username), IsUnique = true)]
+[Index(nameof(Email), IsUnique = true)]
 public class User
 {
     public int UserId { get; set; }
@@ -13,6 +17,7 @@ public class User
     public string Salt { get; set; } = null!;
 
     public DateTime? JoinDate { get; set; }
-    
+
     public ICollection<Warehouse> Warehouses { get; set; } = new List<Warehouse>();
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

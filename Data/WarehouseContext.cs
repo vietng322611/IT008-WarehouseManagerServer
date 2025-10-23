@@ -24,7 +24,7 @@ public partial class WarehouseContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
-    public virtual DbSet<UserPermission> UserPermissions { get; set; }
+    public virtual DbSet<Permission> Permissions { get; set; }
 
     public virtual DbSet<Warehouse> Warehouses { get; set; }
 
@@ -76,17 +76,13 @@ public partial class WarehouseContext : DbContext
 
             entity.HasIndex(e => e.CategoryId, "idx_products_category");
 
-            entity.HasIndex(e => e.Sku, "products_sku_key").IsUnique();
-
             entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Quantity)
                 .HasDefaultValue(0)
                 .HasColumnName("quantity");
-            entity.Property(e => e.Sku)
-                .HasMaxLength(50)
-                .HasColumnName("sku");
             entity.Property(e => e.UnitPrice)
                 .HasPrecision(12, 2)
                 .HasDefaultValueSql("1")
@@ -134,11 +130,11 @@ public partial class WarehouseContext : DbContext
                 .UsingEntity(j => j.ToTable("UserWarehouses"));
         });
 
-        modelBuilder.Entity<UserPermission>(entity =>
+        modelBuilder.Entity<Permission>(entity =>
         {
-            entity.HasKey(e => new { e.UserId, e.WarehouseId }).HasName("user_permissions_pkey");
+            entity.HasKey(e => new { e.UserId, e.WarehouseId }).HasName("permissions_pkey");
 
-            entity.ToTable("user_permissions");
+            entity.ToTable("permissions");
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
@@ -163,6 +159,8 @@ public partial class WarehouseContext : DbContext
 
         OnModelCreatingPartial(modelBuilder);
     }
+
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

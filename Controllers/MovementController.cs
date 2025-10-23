@@ -1,21 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WarehouseManagerServer.Types.Enums;
 using WarehouseManagerServer.Models;
 using WarehouseManagerServer.Services.Interfaces;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Warehouse
+/* Route: api/Movement
  * Endpoints:
- *      - api/Warehouse: POST
- *      - api/Warehouse/json: GET
- *      - api/Warehouse/[WarehouseId]: GET, PUT, DELETE
- *      - api/Warehouse/[WarehouseId]/users: GET
+ *      - api/Movement: POST
+ *      - api/Movement/json: GET
+ *      - api/Movement/[MovementId]: GET, PUT, DELETE
  */
 
 [ApiController]
 [Route("api/[controller]")]
-public class WarehouseController(IWarehouseService service) : Controller
+public class MovementController(IMovementService service) : ControllerBase
 {
     // [HttpGet]
     // public async Task<IActionResult> GetAll()
@@ -27,10 +27,13 @@ public class WarehouseController(IWarehouseService service) : Controller
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
-        var model = new Warehouse
+        var model = new Movement
         {
-            WarehouseId = 0,
-            Name = "Warehouse"
+            MovementId = 0,
+            ProductId = 0,
+            Quantity = 1,
+            MovementTypeEnum = MovementTypeEnum.In,
+            Date = DateTime.Now
         };
         return Ok(model);
     }
@@ -50,29 +53,15 @@ public class WarehouseController(IWarehouseService service) : Controller
         }
     }
 
-    [HttpGet("{id:int:min(1)}/users")]
-    public async Task<IActionResult> GetWarehouseUsers([FromRoute] int id)
-    {
-        try
-        {
-            var content = await service.GetWarehouseUsersAsync(id);
-            return Ok(content);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Warehouse content)
+    public async Task<IActionResult> Post([FromBody] Movement content)
     {
         try
         {
-            content.WarehouseId = 0; // Ignore id in input
+            content.MovementId = 0; // Ignore id in input
 
             var newContent = await service.AddAsync(content);
-            return CreatedAtAction(nameof(GetById), new { id = newContent.WarehouseId }, newContent);
+            return CreatedAtAction(nameof(GetById), new { id = newContent.MovementId }, newContent);
         }
         catch (Exception e)
         {
@@ -81,11 +70,11 @@ public class WarehouseController(IWarehouseService service) : Controller
     }
 
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Warehouse updatedContent)
+    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Movement updatedContent)
     {
         try
         {
-            if (id != updatedContent.WarehouseId)
+            if (id != updatedContent.MovementId)
                 return BadRequest();
 
             var existingContent = await service.GetByKeyAsync(id);

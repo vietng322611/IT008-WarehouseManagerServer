@@ -1,12 +1,15 @@
-﻿using WarehouseManagerServer.Models;
+﻿using System.Linq.Expressions;
+using WarehouseManagerServer.Data;
+using WarehouseManagerServer.Models;
 
 namespace WarehouseManagerServer.Repositories.Interfaces;
 
 public interface IUserRepository
 {
-    Task<IEnumerable<User>> GetAllAsync();
+    Task<List<User>> GetAllAsync();
     Task<User?> GetByKeyAsync(int userId);
-    Task<IEnumerable<Warehouse>> GetUserWarehousesAsync(int userId);
+    Task<User?> GetByUniqueAsync(Expression<Func<User, bool>> condition);
+    Task<List<Warehouse>> GetUserWarehousesAsync(int userId);
     Task<User> AddAsync(User user);
     Task<User?> UpdateAsync(User user);
     Task<bool> DeleteAsync(int userId);
