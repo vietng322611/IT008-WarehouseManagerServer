@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using WarehouseManagerServer.Data;
 using WarehouseManagerServer.Models;
 using WarehouseManagerServer.Repositories.Interfaces;
@@ -21,6 +22,20 @@ public class UserRepository(WarehouseContext context) : IUserRepository
     public async Task<UserDto?> GetByKeyAsync(int userId)
     {
         var user = await context.Users.FindAsync(userId);
+        if (user == null) return null;
+
+        return new UserDto
+        {
+            UserId = user.UserId,
+            Username = user.Username,
+            Email = user.Email,
+            JoinDate = user.JoinDate
+        };
+    }
+
+    public async Task<UserDto?> GetByUniqueAsync(Expression<Func<User, bool>> condition)
+    {
+        var user = await context.Users.Where(condition).FirstOrDefaultAsync();
         if (user == null) return null;
 
         return new UserDto
