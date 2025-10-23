@@ -67,7 +67,7 @@ public class ProductController(IProductService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Product content)
     {
@@ -83,7 +83,7 @@ public class ProductController(IProductService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Product updatedContent)
     {
@@ -104,7 +104,7 @@ public class ProductController(IProductService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

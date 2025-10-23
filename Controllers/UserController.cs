@@ -36,7 +36,7 @@ public class UserController(IUserService service) : ControllerBase
             JoinDate = DateTime.Now
         });
     }
-    
+
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
@@ -57,7 +57,7 @@ public class UserController(IUserService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpGet("{id:int:min(1)}/warehouses")]
     public async Task<IActionResult> GetUserWarehouses([FromRoute] int id)
     {
@@ -71,7 +71,7 @@ public class UserController(IUserService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] User content)
     {
@@ -81,7 +81,7 @@ public class UserController(IUserService service) : ControllerBase
 
             var newContent = await service.AddAsync(content);
             return CreatedAtAction(
-                nameof(GetById), 
+                nameof(GetById),
                 new { id = newContent.UserId },
                 new UserDto
                 {
@@ -96,7 +96,7 @@ public class UserController(IUserService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] User updatedContent)
     {
@@ -117,7 +117,7 @@ public class UserController(IUserService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
