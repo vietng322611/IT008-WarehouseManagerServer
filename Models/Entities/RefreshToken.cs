@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WarehouseManagerServer.Models;
+namespace WarehouseManagerServer.Models.Entities;
 
 public class RefreshToken
 {

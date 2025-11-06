@@ -1,4 +1,4 @@
-﻿namespace WarehouseManagerServer.Types.Enums;
+﻿namespace WarehouseManagerServer.Models.Enums;
 
 public enum RegisterEnum
 {
