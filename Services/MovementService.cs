@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using WarehouseManagerServer.Models.Entities;
+﻿using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -13,8 +12,8 @@ public class MovementService(IMovementRepository movementRepository) : IMovement
     public Task<Movement?> GetByKeyAsync(int movementId)
         => movementRepository.GetByKeyAsync(movementId);
 
-    public Task<List<Movement>> FilterAsync(params Expression<Func<Movement, bool>>[] filters)
-        => movementRepository.FilterAsync(filters);
+    // public Task<List<Movement>> FilterAsync(params Expression<Func<Movement, bool>>[] filters)
+    //     => movementRepository.FilterAsync(filters);
 
     public Task<Movement> AddAsync(Movement movement)
         => movementRepository.AddAsync(movement);
