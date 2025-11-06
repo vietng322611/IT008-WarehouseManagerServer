@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 
 namespace WarehouseManagerServer.Repositories;
 
 public class SupplierRepository(WarehouseContext context) : ISupplierRepository
 {
-    public async Task<List<Supplier>> GetAllAsync()
+    public async Task<List<Supplier>> GetByWarehouseAsync(int warehouseId)
     {
-        return await context.Suppliers.ToListAsync();
+        return await context.Suppliers.Where(p => p.WarehouseId == warehouseId).ToListAsync();
     }
 
     public async Task<Supplier?> GetByKeyAsync(int supplierId)

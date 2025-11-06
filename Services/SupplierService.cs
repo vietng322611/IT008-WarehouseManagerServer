@@ -1,4 +1,4 @@
-﻿using WarehouseManagerServer.Models;
+﻿using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -6,8 +6,8 @@ namespace WarehouseManagerServer.Services;
 
 public class SupplierService(ISupplierRepository supplierRepository) : ISupplierService
 {
-    public Task<List<Supplier>> GetAllAsync()
-        => supplierRepository.GetAllAsync();
+    public Task<List<Supplier>> GetByWarehouseAsync(int warehouseId)
+        => supplierRepository.GetByWarehouseAsync(warehouseId);
 
     public Task<Supplier?> GetByKeyAsync(int supplierId)
         => supplierRepository.GetByKeyAsync(supplierId);
