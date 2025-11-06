@@ -5,18 +5,6 @@ using WarehouseManagerServer.Services.Interfaces;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Auth
- * Endpoints:
- * - GET api/Auth/register/json
- * - GET api/Auth/login/json
- * - GET api/Auth/refresh/json
- * - GET api/Auth/logout/json
- * - POST api/Auth/register
- * - POST api/Auth/login
- * - POST api/Auth/refresh
- * - POST api/Auth/logout
- */
-
 [ApiController]
 [Route("api/auth")]
 public class AuthController(IAuthService service) : ControllerBase

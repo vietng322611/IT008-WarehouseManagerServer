@@ -1,9 +1,9 @@
-﻿
-# API endpoints for IT008 project
+﻿# API endpoints for IT008 project
 
 ---
 
 ## Table of Content
+
 - [How to get Json template](#how-to-get-json-template)
 - [Authentication](#authentication)
 - [Category](#category)
@@ -13,41 +13,46 @@
 - [Supplier](#movement)
 - [Users](#users)
 - [Warehouse](#warehouse)
+
 ---
 
 ## How to get json template
+
 > Json templates can be get by send a `GET` request to `api/[endpoint]/json`
 
 ---
 
 ### Authentication
+
 ```
-POST   api/Auth/register
-POST   api/Auth/login
-POST   api/Auth/refresh
-POST   api/Auth/logout
+POST   api/auth/register
+POST   api/auth/login
+POST   api/auth/refresh
+POST   api/auth/logout
 ```
 
 ### Category
+
 ```
-GET    api/Category
-GET    api/Category/json
-GET    api/Category/[CategoryId]
-POST   api/Category
-PUT    api/Category/[CategoryId]
-DELETE api/Category/[CategoryId]
+GET    api/warehouses/[WarehouseId]/categories
+GET    api/warehouses/[WarehouseId]/categories/[CategoryId]
+POST   api/warehouses/[WarehouseId]/categories
+PUT    api/warehouses/[WarehouseId]/categories/[CategoryId]
+DELETE api/warehouses/[WarehouseId]/categories/[CategoryId]
 ```
+
 ### Movement
+
 ```
-GET    api/Movement/json
-GET    api/Movement/[MovementId]
-POST   api/Movement
-PUT    api/Movement/[MovementId]
-DELETE api/Movement/[MovementId]
+GET    api/warehouses/[WarehouseId]/movements/[MovementId]
+POST   api/warehouses/[WarehouseId]/movements
+PUT    api/warehouses/[WarehouseId]/movements/[MovementId]
+DELETE api/warehouses/[WarehouseId]/movements/[MovementId]
 ```
+
 ### Permission
+
 ```
-GET    api/Permission/json
 GET    api/Permission/[userId]-[WarehouseId]
 GET    api/Permission/user/[UserId]
 GET    api/Permission/warehouse/[WarehouseId]
@@ -55,39 +60,44 @@ POST   api/Permission
 PUT    api/Permission/[userId]-[WarehouseId]
 DELETE api/Permission/[userId]-[WarehouseId]
 ```
+
 ### Product
-```
-GET    api/Product/json
-GET    api/Product/[ProductId]
-GET    api/Product/warehouse/[WarehouseId]
-POST   api/Product
-PUT    api/Product/[ProductId]
-DELETE api/Product/[ProductId]
 
 ```
+GET    api/warehouses/[WarehouseId]products/[ProductId]
+GET    api/warehouses/[WarehouseId]products/warehouse/[WarehouseId]
+POST   api/warehouses/[WarehouseId]products
+PUT    api/warehouses/[WarehouseId]products/[ProductId]
+DELETE api/warehouses/[WarehouseId]products/[ProductId]
+
+```
+
 ### Supplier
+
 ```
-GET    POST api/Supplier
-GET    api/Supplier/json
-GET    api/Supplier/[SupplierId]
-PUT    api/Supplier/[SupplierId]
-DELETE api/Supplier/[SupplierId]
+GET    api/warehouses/[WarehouseId]/suppliers
+GET    api/warehouses/[WarehouseId]/suppliers/[SupplierId]
+POST   api/warehouses/[WarehouseId]/suppliers
+PUT    api/warehouses/[WarehouseId]/suppliers/[SupplierId]
+DELETE api/warehouses/[WarehouseId]/suppliers/[SupplierId]
 ```
+
 ### User
+
 ```
-GET    api/User/json
-GET    api/User/[UserId]
-GET    api/User/[UserId]/warehouses
-POST   api/User
-PUT    api/User/[UserId]
-DELETE api/User/[UserId]
+GET    api/user/[UserId]
+GET    api/user/[UserId]/warehouses
+POST   api/user
+PUT    api/user/[UserId]
+DELETE api/user/[UserId]
 ```
+
 ### Warehouse
+
 ```
-GET    api/Warehouse/json
-GET    api/Warehouse/[WarehouseId]
-GET    api/Warehouse/[WarehouseId]/users
-POST   api/Warehouse
-PUT    api/Warehouse/[WarehouseId]
-DELETE api/Warehouse/[WarehouseId]
+GET    api/warehouse/[WarehouseId]
+GET    api/warehouse/[WarehouseId]/users
+POST   api/warehouse
+PUT    api/warehouse/[WarehouseId]
+DELETE api/warehouse/[WarehouseId]
 ```
