@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -7,8 +7,8 @@ namespace WarehouseManagerServer.Services;
 
 public class MovementService(IMovementRepository movementRepository) : IMovementService
 {
-    public Task<List<Movement>> GetAllAsync()
-        => movementRepository.GetAllAsync();
+    public Task<List<Movement>> GetByWarehouseAsync(int warehouseId)
+        => movementRepository.GetByWarehouseAsync(warehouseId);
 
     public Task<Movement?> GetByKeyAsync(int movementId)
         => movementRepository.GetByKeyAsync(movementId);
