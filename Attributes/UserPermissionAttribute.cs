@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using WarehouseManagerServer.Services.Interfaces;
 using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Attributes;

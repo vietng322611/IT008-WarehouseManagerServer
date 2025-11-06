@@ -9,7 +9,10 @@ namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
 [Route("api/warehouses")]
-public class WarehouseController(IWarehouseService service) : Controller
+public class WarehouseController(
+    IWarehouseService service,
+    IPermissionService permissionService
+    ) : Controller
 {
     [HttpGet("json")]
     public IActionResult GetSampleJson()
@@ -60,8 +63,20 @@ public class WarehouseController(IWarehouseService service) : Controller
         try
         {
             content.WarehouseId = 0; // Ignore id in input
-
             var newContent = await service.AddAsync(content);
+            
+            var userIdClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+
+            var userId = int.Parse(userIdClaim.Value);
+            
+            await permissionService.AddAsync(new Permission
+            {
+                UserId = userId,
+                WarehouseId = newContent.WarehouseId,
+                Permissions = [ PermissionEnum.Owner ]
+            });
             return CreatedAtAction(nameof(GetById), new { id = newContent.WarehouseId }, newContent);
         }
         catch (Exception e)

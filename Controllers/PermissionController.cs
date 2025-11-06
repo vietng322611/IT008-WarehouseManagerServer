@@ -92,14 +92,9 @@ public class PermissionController(IPermissionService service) : ControllerBase
         try
         {
             content.UserId = 0; // Ignore ids in input
-            content.WarehouseId = 0;
 
             var newContent = await service.AddAsync(content);
-            return CreatedAtAction(nameof(GetByIds), new
-            {
-                userId = newContent.UserId,
-                warehouseId = newContent.WarehouseId
-            }, newContent);
+            return CreatedAtAction(nameof(GetByIds), newContent);
         }
         catch (Exception e)
         {

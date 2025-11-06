@@ -62,7 +62,7 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
 
     public async Task<(bool, string)> Sync(int warehouseId, WarehouseSyncDto syncDto)
     {
-        using var transaction = await context.Database.BeginTransactionAsync();
+        await using var transaction = await context.Database.BeginTransactionAsync();
 
         try
         {
