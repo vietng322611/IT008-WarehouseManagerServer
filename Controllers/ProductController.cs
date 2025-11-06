@@ -1,29 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using WarehouseManagerServer.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Product
- * Endpoints:
- * - POST api/Product
- * - GET api/Product/json
- * - GET, PUT, DELETE api/Product/[ProductId] 
- * - GET api/Product/warehouse/[WarehouseId]
- */
-
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/warehouse/{warehouseId:int:min(1)}/products")]
 public class ProductController(IProductService service) : ControllerBase
 {
-    // [HttpGet]
-    // public async Task<IActionResult> GetAll()
-    // {
-    //     var content = await service.GetAllAsync();
-    //     return Ok(content);
-    // }
-
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
@@ -38,7 +24,16 @@ public class ProductController(IProductService service) : ControllerBase
         };
         return Ok(model);
     }
+    
+    [WarehousePermission(PermissionEnum.Read)]
+    [HttpGet]
+    public async Task<IActionResult> GetWarehouseProducts([FromRoute] int id)
+    {
+        var result = await service.GetByWarehouseAsync(id);
+        return Ok(result);
+    }
 
+    [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
@@ -54,20 +49,7 @@ public class ProductController(IProductService service) : ControllerBase
         }
     }
 
-    [HttpGet("warehouse/{warehouseId:int:min(1)}")]
-    public async Task<IActionResult> GetByWarehouseId([FromRoute] int warehouseId)
-    {
-        try
-        {
-            var content = await service.FilterAsync(e => e.WarehouseId == warehouseId);
-            return Ok(content);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
+    [WarehousePermission(PermissionEnum.Write)]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Product content)
     {
@@ -84,6 +66,7 @@ public class ProductController(IProductService service) : ControllerBase
         }
     }
 
+    [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Product updatedContent)
     {
@@ -105,6 +88,7 @@ public class ProductController(IProductService service) : ControllerBase
         }
     }
 
+    [WarehousePermission(PermissionEnum.Write)]
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

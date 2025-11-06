@@ -1,16 +1,16 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 
 namespace WarehouseManagerServer.Repositories;
 
 public class ProductRepository(WarehouseContext context) : IProductRepository
 {
-    public async Task<List<Product>> GetAllAsync()
+    public async Task<List<Product>> GetByWarehouseAsync(int warehouseId)
     {
-        return await context.Products.ToListAsync();
+        return await context.Products.Where(p => p.WarehouseId == warehouseId).ToListAsync();
     }
 
     public async Task<Product?> GetByKeyAsync(int productId)
