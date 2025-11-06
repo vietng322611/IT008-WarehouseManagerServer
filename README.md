@@ -11,14 +11,14 @@
 - [Permission](#movement)
 - [Product](#movement)
 - [Supplier](#movement)
-- [Users](#users)
+- [User](#user)
 - [Warehouse](#warehouse)
 
 ---
 
 ## How to get json template
 
-> Json templates can be get by send a `GET` request to `api/[endpoint]/json`
+> Json templates are available at `api/[endpoint]/json`
 
 ---
 
