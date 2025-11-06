@@ -1,4 +1,4 @@
-﻿namespace WarehouseManagerServer.Data;
+﻿namespace WarehouseManagerServer.Models.DTOs;
 
 public class RefreshDto
 {
