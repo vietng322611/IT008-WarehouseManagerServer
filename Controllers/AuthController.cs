@@ -17,6 +17,8 @@ namespace WarehouseManagerServer.Controllers;
  * - POST api/Auth/logout
  */
 
+[ApiController]
+[Route("api/auth")]
 public class AuthController(IAuthService service) : ControllerBase
 {
     [HttpGet("register/json")]
