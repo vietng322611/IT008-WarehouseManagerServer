@@ -10,4 +10,5 @@ public interface IWarehouseService
     Task<Warehouse> AddAsync(Warehouse warehouse);
     Task<Warehouse?> UpdateAsync(Warehouse warehouse);
     Task<bool> DeleteAsync(int warehouseId);
+    Task<(bool, string)> Sync(int warehouseId, WarehouseSyncDto syncDto);
 }

@@ -1,4 +1,4 @@
-﻿using WarehouseManagerServer.Data;
+﻿using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
@@ -21,4 +21,7 @@ public class WarehouseService(IWarehouseRepository warehouseRepository) : IWareh
 
     public Task<bool> DeleteAsync(int warehouseId)
         => warehouseRepository.DeleteAsync(warehouseId);
+
+    public Task<(bool, string)> Sync(int warehouseId, WarehouseSyncDto syncDto)
+        => warehouseRepository.Sync(warehouseId, syncDto);
 }

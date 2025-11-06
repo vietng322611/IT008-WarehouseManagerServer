@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using WarehouseManagerServer.Data;
 using WarehouseManagerServer.Extensions;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
 
 namespace WarehouseManagerServer;
 

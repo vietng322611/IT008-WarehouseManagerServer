@@ -64,7 +64,7 @@ public partial class WarehouseContext : DbContext
                 .HasColumnName("date");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
-            entity.Property(e => e.MovementTypeEnum)
+            entity.Property(e => e.MovementType)
                 .HasColumnName("movement_type")
                 .HasColumnType("movement_type_enum");
 

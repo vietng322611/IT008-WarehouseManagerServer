@@ -10,7 +10,7 @@ public class Movement
 
     public int Quantity { get; set; }
 
-    public MovementTypeEnum MovementTypeEnum { get; set; }
+    public MovementTypeEnum MovementType { get; set; }
 
     public DateTime? Date { get; set; }
 

@@ -19,7 +19,7 @@ public class MovementController(IMovementService service) : ControllerBase
             MovementId = 0,
             ProductId = 0,
             Quantity = 1,
-            MovementTypeEnum = MovementTypeEnum.In,
+            MovementType = MovementTypeEnum.In,
             Date = DateTime.Now
         };
         return Ok(model);
