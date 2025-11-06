@@ -3,6 +3,7 @@ using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
+using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
@@ -52,6 +53,7 @@ public class WarehouseController(IWarehouseService service) : Controller
         }
     }
 
+    [UserPermission(UserPermissionEnum.Authenticated)]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Warehouse content)
     {

@@ -3,6 +3,7 @@ using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
+using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
@@ -54,7 +55,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
         }
     }
 
-    [UserPermission]
+    [UserPermission(UserPermissionEnum.SameUser)]
     [HttpGet("user/{userId:int:min(1)}")]
     public async Task<IActionResult> GetByUserId([FromRoute] int userId)
     {

@@ -140,7 +140,6 @@ public partial class WarehouseContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("join_date");
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
-            entity.Property(e => e.Salt).HasColumnName("salt");
             entity.Property(e => e.Username)
                 .HasMaxLength(40)
                 .HasColumnName("username");

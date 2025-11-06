@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using WarehouseManagerServer.Services.Interfaces;
+using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Attributes;
 
-public class UserPermissionAttribute : Attribute, IAsyncAuthorizationFilter
+public class UserPermissionAttribute(
+    UserPermissionEnum permission
+    ) : Attribute, IAsyncAuthorizationFilter
 {
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
@@ -16,6 +19,8 @@ public class UserPermissionAttribute : Attribute, IAsyncAuthorizationFilter
             return;
         }
 
+        if (permission == UserPermissionEnum.Authenticated) return;
+        
         var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
         if (!context.RouteData.Values.TryGetValue("userId", out var idObj) ||

@@ -19,11 +19,6 @@ public class Program
         builder.Services.AddDbContext<WarehouseContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-        // Add Identity
-        builder.Services.AddIdentity<User, IdentityRole>()
-            .AddEntityFrameworkStores<WarehouseContext>()
-            .AddDefaultTokenProviders();
-
         // Configure JWT
         builder.Services.AddAuthentication(options =>
             {
@@ -71,6 +66,12 @@ public class Program
 
         app.MapControllers();
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<WarehouseContext>();
+            db.Database.Migrate();
+        }
+        
         app.Run();
     }
 }

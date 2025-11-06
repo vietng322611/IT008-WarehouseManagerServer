@@ -11,7 +11,7 @@ services:
     environment:
       ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=warehouse_db;Username=postgres;Password=postgres"
       ASPNETCORE_URLS: "http://+:8080"
-      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_ENVIRONMENT: "Production"
     ports:
       - "8080:8080"
     restart: unless-stopped

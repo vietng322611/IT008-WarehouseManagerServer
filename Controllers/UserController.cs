@@ -3,6 +3,7 @@ using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Services.Interfaces;
+using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
@@ -22,7 +23,7 @@ public class UserController(IUserService service) : ControllerBase
         });
     }
 
-    [UserPermission]
+    [UserPermission(UserPermissionEnum.SameUser)]
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
@@ -44,7 +45,7 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
-    [UserPermission]
+    [UserPermission(UserPermissionEnum.SameUser)]
     [HttpGet("{id:int:min(1)}/warehouses")]
     public async Task<IActionResult> GetUserWarehouses([FromRoute] int id)
     {
@@ -59,7 +60,7 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
-    [UserPermission]
+    [UserPermission(UserPermissionEnum.SameUser)]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] User content)
     {
@@ -85,7 +86,7 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
-    [UserPermission]
+    [UserPermission(UserPermissionEnum.SameUser)]
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] User updatedContent)
     {
@@ -107,7 +108,7 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
-    [UserPermission]
+    [UserPermission(UserPermissionEnum.SameUser)]
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

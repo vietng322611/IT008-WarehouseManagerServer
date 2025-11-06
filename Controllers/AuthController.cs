@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Models.DTOs;
-using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
+using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
