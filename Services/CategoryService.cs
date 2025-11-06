@@ -1,4 +1,4 @@
-﻿using WarehouseManagerServer.Models;
+﻿using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -6,8 +6,8 @@ namespace WarehouseManagerServer.Services;
 
 public class CategoryService(ICategoryRepository categoryRepository) : ICategoryService
 {
-    public Task<List<Category>> GetAllAsync()
-        => categoryRepository.GetAllAsync();
+    public Task<List<Category>> GetByWarehouseAsync(int warehouseId)
+        => categoryRepository.GetByWarehouseAsync(warehouseId);
 
     public Task<Category?> GetByKeyAsync(int categoryId)
         => categoryRepository.GetByKeyAsync(categoryId);
