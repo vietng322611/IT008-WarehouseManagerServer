@@ -159,6 +159,15 @@ public partial class WarehouseContext : DbContext
             entity.Property(e => e.Permissions)
                 .HasColumnName("permissions")
                 .HasColumnType("permission_enum[]");
+            
+            entity.HasOne(d => d.User).WithMany(p => p.Permissions)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("permission_user_id_fkey");
+            entity.HasOne(d => d.Warehouse).WithMany(p => p.Permissions)
+                .HasForeignKey(d => d.WarehouseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("permission_warehouse_id_fkey");
         });
 
         modelBuilder.Entity<Warehouse>(entity =>
