@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using WarehouseManagerServer.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
-using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
@@ -16,7 +16,7 @@ namespace WarehouseManagerServer.Controllers;
  */
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/permissions")]
 public class PermissionController(IPermissionService service) : ControllerBase
 {
     // [HttpGet]
@@ -33,11 +33,12 @@ public class PermissionController(IPermissionService service) : ControllerBase
         {
             UserId = 0,
             WarehouseId = 0,
-            PermissionEnum = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
+            Permissions = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
         };
         return Ok(model);
     }
 
+    [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
     public async Task<IActionResult> GetByIds([FromRoute] int userId, [FromRoute] int warehouseId)
     {
@@ -53,6 +54,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
         }
     }
 
+    [UserPermission]
     [HttpGet("user/{userId:int:min(1)}")]
     public async Task<IActionResult> GetByUserId([FromRoute] int userId)
     {
@@ -67,6 +69,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
         }
     }
 
+    [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("warehouse/{warehouseId:int:min(1)}")]
     public async Task<IActionResult> GetByWarehouseId([FromRoute] int warehouseId)
     {
@@ -81,6 +84,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
         }
     }
 
+    [WarehousePermission(PermissionEnum.Owner)]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Permission content)
     {
@@ -102,6 +106,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
         }
     }
 
+    [WarehousePermission(PermissionEnum.Owner)]
     [HttpPut("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
     public async Task<IActionResult> Put(
         [FromRoute] int userId,
@@ -127,6 +132,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
         }
     }
 
+    [WarehousePermission(PermissionEnum.Owner)]
     [HttpDelete("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int userId, [FromRoute] int warehouseId)
     {

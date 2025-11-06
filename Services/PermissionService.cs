@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -7,8 +8,8 @@ namespace WarehouseManagerServer.Services;
 
 public class PermissionService(IPermissionRepository permissionRepository) : IPermissionService
 {
-    public Task<List<Permission>> GetAllAsync()
-        => permissionRepository.GetAllAsync();
+    public Task<bool> HasPermissionAsync(int userId, int warehouseId, PermissionEnum requiredPermission)
+        => permissionRepository.HasPermissionAsync(userId, warehouseId, requiredPermission);
 
     public Task<Permission?> GetByKeyAsync(int userId, int warehouseId)
         => permissionRepository.GetByKeyAsync(userId, warehouseId);
