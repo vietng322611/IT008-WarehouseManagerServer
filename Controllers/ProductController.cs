@@ -14,14 +14,9 @@ public class ProductController(IProductService service) : ControllerBase
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
-        var model = new ProductDto()
+        var model = new
         {
-            ProductId = 0,
-            Name = "Product",
-            UnitPrice = 1,
-            Quantity = 0,
-            SupplierName = "Supplier",
-            CategoryName = "Category"
+            
         };
         return Ok(model);
     }

@@ -14,10 +14,10 @@ public class MovementController(IMovementService service) : ControllerBase
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
-        var model = new MovementDto()
+        var model = new Movement()
         {
             MovementId = 0,
-            ProductName = "Product",
+            ProductId = 0,
             Quantity = 1,
             MovementTypeEnum = MovementTypeEnum.In,
             Date = DateTime.Now
