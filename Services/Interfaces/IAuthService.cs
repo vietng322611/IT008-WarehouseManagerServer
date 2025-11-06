@@ -1,4 +1,4 @@
-﻿using WarehouseManagerServer.Data;
+﻿using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 
