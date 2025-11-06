@@ -16,11 +16,10 @@ public class ProductController(IProductService service) : ControllerBase
     {
         var model = new
         {
-            
         };
         return Ok(model);
     }
-    
+
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
     public async Task<IActionResult> GetWarehouseProducts([FromRoute] int id)

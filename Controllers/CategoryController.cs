@@ -21,7 +21,7 @@ public class CategoryController(ICategoryService service) : ControllerBase
         };
         return Ok(model);
     }
-    
+
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
     public async Task<IActionResult> GetWarehouseCategories([FromRoute] int id)

@@ -22,7 +22,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
         };
         return Ok(model);
     }
-    
+
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
     public async Task<IActionResult> GetWarehouseSuppliers([FromRoute] int id)

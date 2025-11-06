@@ -46,7 +46,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         if (oldProduct == null) return null;
 
         context.Entry(oldProduct).CurrentValues.SetValues(product);
-        
+
         await context.SaveChangesAsync();
         return product;
     }

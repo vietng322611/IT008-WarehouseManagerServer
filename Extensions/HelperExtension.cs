@@ -35,7 +35,7 @@ public static class HelperExtension
             }
         }
     }
-    
+
     public static async Task UpsertCategories(WarehouseContext context, List<Category> categories, int warehouseId)
     {
         foreach (var dto in categories)
@@ -58,7 +58,7 @@ public static class HelperExtension
             }
         }
     }
-    
+
     public static async Task UpsertMovements(WarehouseContext context, List<Movement> movements)
     {
         foreach (var dto in movements)
@@ -84,7 +84,7 @@ public static class HelperExtension
             }
         }
     }
-    
+
     public static async Task UpsertSuppliers(WarehouseContext context, List<Supplier> suppliers, int warehouseId)
     {
         foreach (var dto in suppliers)

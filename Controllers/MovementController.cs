@@ -32,7 +32,7 @@ public class MovementController(IMovementService service) : ControllerBase
         var result = await service.GetByWarehouseAsync(id);
         return Ok(result);
     }
-    
+
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)

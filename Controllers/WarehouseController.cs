@@ -51,7 +51,7 @@ public class WarehouseController(IWarehouseService service) : Controller
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Warehouse content)
     {
