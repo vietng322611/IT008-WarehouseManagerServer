@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
@@ -13,10 +14,10 @@ public class MovementController(IMovementService service) : ControllerBase
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
-        var model = new Movement
+        var model = new MovementDto()
         {
             MovementId = 0,
-            ProductId = 0,
+            ProductName = "Product",
             Quantity = 1,
             MovementTypeEnum = MovementTypeEnum.In,
             Date = DateTime.Now

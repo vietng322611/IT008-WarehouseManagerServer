@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
@@ -13,14 +14,14 @@ public class ProductController(IProductService service) : ControllerBase
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
-        var model = new Product
+        var model = new ProductDto()
         {
             ProductId = 0,
             Name = "Product",
-            WarehouseId = 0,
-            CategoryId = 0,
             UnitPrice = 1,
-            Quantity = 0
+            Quantity = 0,
+            SupplierName = "Supplier",
+            CategoryName = "Category"
         };
         return Ok(model);
     }
