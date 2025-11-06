@@ -1,6 +1,6 @@
 ﻿using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
-using WarehouseManagerServer.Types.Enums;
+using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 
 namespace WarehouseManagerServer.Services.Interfaces;
 

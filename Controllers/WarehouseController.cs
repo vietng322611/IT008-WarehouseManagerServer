@@ -1,29 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using WarehouseManagerServer.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Warehouse
- * Endpoints:
- * - POST api/Warehouse
- * - GET api/Warehouse/json
- * - GET, PUT, DELETE api/Warehouse/[WarehouseId]
- * - GET api/Warehouse/[WarehouseId]/users
- */
-
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/warehouses")]
 public class WarehouseController(IWarehouseService service) : Controller
 {
-    // [HttpGet]
-    // public async Task<IActionResult> GetAll()
-    // {
-    //     var content = await service.GetAllAsync();
-    //     return Ok(content);
-    // }
-
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
@@ -35,6 +21,7 @@ public class WarehouseController(IWarehouseService service) : Controller
         return Ok(model);
     }
 
+    [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
@@ -50,6 +37,7 @@ public class WarehouseController(IWarehouseService service) : Controller
         }
     }
 
+    [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{id:int:min(1)}/users")]
     public async Task<IActionResult> GetWarehouseUsers([FromRoute] int id)
     {
@@ -63,7 +51,7 @@ public class WarehouseController(IWarehouseService service) : Controller
             return StatusCode(500, e.Message);
         }
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Warehouse content)
     {
@@ -80,6 +68,7 @@ public class WarehouseController(IWarehouseService service) : Controller
         }
     }
 
+    [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Warehouse updatedContent)
     {
@@ -101,6 +90,7 @@ public class WarehouseController(IWarehouseService service) : Controller
         }
     }
 
+    [WarehousePermission(PermissionEnum.Delete)]
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

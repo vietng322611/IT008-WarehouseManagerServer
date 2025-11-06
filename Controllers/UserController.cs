@@ -1,30 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Services.Interfaces;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/User
- * Endpoints:
- * - POST api/User
- * - GET api/User/json
- * - GET, PUT, DELETE api/User/[UserId]
- * - GET api/User/[UserId]/warehouses
- */
-
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/users")]
 public class UserController(IUserService service) : ControllerBase
 {
-    // [HttpGet]
-    // public async Task<IActionResult> GetAll()
-    // {
-    //     var content = await service.GetAllAsync();
-    //     return Ok(content);
-    // }
-
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
@@ -37,6 +22,7 @@ public class UserController(IUserService service) : ControllerBase
         });
     }
 
+    [UserPermission]
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
@@ -58,6 +44,7 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
+    [UserPermission]
     [HttpGet("{id:int:min(1)}/warehouses")]
     public async Task<IActionResult> GetUserWarehouses([FromRoute] int id)
     {
@@ -72,6 +59,7 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
+    [UserPermission]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] User content)
     {
@@ -97,6 +85,7 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
+    [UserPermission]
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] User updatedContent)
     {
@@ -118,6 +107,7 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
+    [UserPermission]
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

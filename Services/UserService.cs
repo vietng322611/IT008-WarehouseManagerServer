@@ -1,5 +1,4 @@
-﻿using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+﻿using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 

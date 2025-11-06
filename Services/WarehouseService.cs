@@ -1,5 +1,5 @@
 ﻿using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -7,9 +7,6 @@ namespace WarehouseManagerServer.Services;
 
 public class WarehouseService(IWarehouseRepository warehouseRepository) : IWarehouseService
 {
-    public Task<List<Warehouse>> GetAllAsync()
-        => warehouseRepository.GetAllAsync();
-
     public Task<Warehouse?> GetByKeyAsync(int warehouseId)
         => warehouseRepository.GetByKeyAsync(warehouseId);
 
