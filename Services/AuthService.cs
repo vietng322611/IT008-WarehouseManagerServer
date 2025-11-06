@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
-using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Services;
 

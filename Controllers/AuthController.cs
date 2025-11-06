@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Data;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
-using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
@@ -23,13 +23,13 @@ public class AuthController(IAuthService service) : ControllerBase
     public IActionResult GetRegisterJson()
     {
         return Ok(new RegisterDto()
-            {
-                Username = "Username",
-                Email = "Email@gmail.com",
-                Password = "Password"
-            });
+        {
+            Username = "Username",
+            Email = "Email@gmail.com",
+            Password = "Password"
+        });
     }
-    
+
     [HttpGet("login/json")]
     public IActionResult GetLoginJson()
     {
@@ -39,7 +39,7 @@ public class AuthController(IAuthService service) : ControllerBase
             Password = "Password"
         });
     }
-    
+
     [HttpGet("refresh/json")]
     [HttpGet("logout/json")]
     public IActionResult GetRefreshJson()
@@ -49,7 +49,7 @@ public class AuthController(IAuthService service) : ControllerBase
             RefreshToken = "RefreshToken"
         });
     }
-    
+
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
