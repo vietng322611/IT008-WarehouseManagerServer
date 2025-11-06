@@ -1,6 +1,6 @@
-﻿using WarehouseManagerServer.Types.Enums;
+﻿using WarehouseManagerServer.Models.Enums;
 
-namespace WarehouseManagerServer.Models;
+namespace WarehouseManagerServer.Models.Entities;
 
 public class Movement
 {

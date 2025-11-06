@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.Entities;
 
-namespace WarehouseManagerServer.Data;
+namespace WarehouseManagerServer.Models.DTOs;
 
 public partial class WarehouseContext : DbContext
 {
@@ -31,8 +31,8 @@ public partial class WarehouseContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
-            .HasPostgresEnum("movement_type_enum", new[] { "in", "out", "adjustment", "transfer", "remove" })
-            .HasPostgresEnum("permission_enum", new[] { "in", "out", "adjustment", "transfer", "remove" });
+            .HasPostgresEnum("movement_type_enum", ["in", "out", "adjustment", "transfer", "remove"])
+            .HasPostgresEnum("permission_enum", ["read", "write", "delete", "owner"]);
 
         modelBuilder.Entity<Category>(entity =>
         {
@@ -41,7 +41,13 @@ public partial class WarehouseContext : DbContext
             entity.ToTable("categories");
 
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
+            entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
             entity.Property(e => e.Name).HasColumnName("name");
+
+            entity.HasOne(d => d.Warehouse).WithMany(p => p.Categories)
+                .HasForeignKey(d => d.WarehouseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("category_warehouse_id_fkey");
         });
 
         modelBuilder.Entity<Movement>(entity =>
@@ -64,8 +70,8 @@ public partial class WarehouseContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.Movements)
                 .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("movements_product_id_fkey");
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("movement_product_id_fkey");
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -78,6 +84,7 @@ public partial class WarehouseContext : DbContext
 
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
+            entity.Property(e => e.SupplierId).HasColumnName("supplier_id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Quantity)
@@ -88,12 +95,18 @@ public partial class WarehouseContext : DbContext
                 .HasDefaultValueSql("1")
                 .HasColumnName("unit_price");
 
-            entity.HasOne(d => d.Category).WithMany(p => p.Products)
-                .HasForeignKey(d => d.CategoryId)
-                .HasConstraintName("products_category_id_fkey");
             entity.HasOne(d => d.Warehouse).WithMany(p => p.Products)
                 .HasForeignKey(d => d.WarehouseId)
-                .HasConstraintName("products_warehouse_id_fkey");
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("product_warehouse_id_fkey");
+            entity.HasOne(d => d.Category).WithMany(p => p.Products)
+                .HasForeignKey(d => d.CategoryId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_category_id_fkey");
+            entity.HasOne(d => d.Supplier).WithMany(p => p.Products)
+                .HasForeignKey(d => d.SupplierId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("product_supplier_id_fkey");
         });
 
         modelBuilder.Entity<Supplier>(entity =>
@@ -103,8 +116,14 @@ public partial class WarehouseContext : DbContext
             entity.ToTable("suppliers");
 
             entity.Property(e => e.SupplierId).HasColumnName("supplier_id");
+            entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
             entity.Property(e => e.ContactInfo).HasColumnName("contact_info");
             entity.Property(e => e.Name).HasColumnName("name");
+
+            entity.HasOne(e => e.Warehouse).WithMany(d => d.Suppliers)
+                .HasForeignKey(e => e.WarehouseId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("supplier_warehouse_id_fkey");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -138,7 +157,7 @@ public partial class WarehouseContext : DbContext
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
-            entity.Property(e => e.PermissionEnum)
+            entity.Property(e => e.Permissions)
                 .HasColumnName("permissions")
                 .HasColumnType("permission_enum[]");
         });
