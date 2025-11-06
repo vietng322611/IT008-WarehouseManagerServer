@@ -1,16 +1,19 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 
 namespace WarehouseManagerServer.Repositories;
 
 public class MovementRepository(WarehouseContext context) : IMovementRepository
 {
-    public async Task<List<Movement>> GetAllAsync()
+    public async Task<List<Movement>> GetByWarehouseAsync(int warehouseId)
     {
-        return await context.Movements.ToListAsync();
+        return await context.Movements
+            .Include(m => m.Product)
+            .Where(m => m.Product.WarehouseId == warehouseId)
+            .ToListAsync();
     }
 
     public async Task<Movement?> GetByKeyAsync(int movementId)

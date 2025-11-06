@@ -5,8 +5,8 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Services.Interfaces;
 using WarehouseManagerServer.Types.Enums;
 
@@ -52,16 +52,15 @@ public class AuthService(
         var passwordHash = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
         return passwordHash == PasswordVerificationResult.Success ? user : null;
     }
-
-
+    
     public string GenerateAccessToken(User user)
     {
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
+            new(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
+            new(JwtRegisteredClaimNames.Email, user.Email),
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(ClaimTypes.Name, user.Username)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
@@ -78,7 +77,7 @@ public class AuthService(
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public async Task<RefreshToken> GenerateRefreshToken(User user)
+    public async Task<string> GenerateRefreshToken(User user)
     {
         var randomBytes = new byte[64];
         using var rng = RandomNumberGenerator.Create();
@@ -94,7 +93,7 @@ public class AuthService(
         user.RefreshTokens.Add(refreshToken);
         await context.SaveChangesAsync();
 
-        return refreshToken;
+        return refreshToken.Token;
     }
 
     public async Task<User?> ValidateRefreshToken(RefreshDto dto)

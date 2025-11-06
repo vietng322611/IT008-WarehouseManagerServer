@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using WarehouseManagerServer.Data;
 using WarehouseManagerServer.Extensions;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
 
 namespace WarehouseManagerServer;
 
@@ -18,11 +18,6 @@ public class Program
         // Add DbContext
         builder.Services.AddDbContext<WarehouseContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-        // Add Identity
-        builder.Services.AddIdentity<User, IdentityRole>()
-            .AddEntityFrameworkStores<WarehouseContext>()
-            .AddDefaultTokenProviders();
 
         // Configure JWT
         builder.Services.AddAuthentication(options =>
@@ -71,6 +66,12 @@ public class Program
 
         app.MapControllers();
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<WarehouseContext>();
+            db.Database.Migrate();
+        }
+        
         app.Run();
     }
 }

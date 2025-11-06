@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace WarehouseManagerServer.Models;
+namespace WarehouseManagerServer.Models.Entities;
 
 [Index(nameof(Username), IsUnique = true)]
 [Index(nameof(Email), IsUnique = true)]
@@ -14,10 +14,11 @@ public class User
 
     public string PasswordHash { get; set; } = null!;
 
-    public string Salt { get; set; } = null!;
-
     public DateTime? JoinDate { get; set; }
 
     public ICollection<Warehouse> Warehouses { get; set; } = new List<Warehouse>();
+    
+    public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
+    
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

@@ -1,16 +1,24 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Repositories.Interfaces;
 
 namespace WarehouseManagerServer.Repositories;
 
 public class PermissionRepository(WarehouseContext context) : IPermissionRepository
 {
-    public async Task<List<Permission>> GetAllAsync()
+    public async Task<bool> HasPermissionAsync(int userId, int warehouseId, PermissionEnum requiredPermission)
     {
-        return await context.Permissions.ToListAsync();
+        var permission = await context.Permissions
+            .Include(p => p.Permissions)
+            .FirstOrDefaultAsync(p => p.UserId == userId && p.WarehouseId == warehouseId);
+
+        return permission != null && (
+            permission.Permissions.Contains(requiredPermission) || 
+            permission.Permissions.Contains(PermissionEnum.Owner)
+            );
     }
 
     public async Task<Permission?> GetByKeyAsync(int userId, int warehouseId)

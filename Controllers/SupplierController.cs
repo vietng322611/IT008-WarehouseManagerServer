@@ -1,40 +1,37 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using WarehouseManagerServer.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Supplier
- * Endpoints:
- * - GET, POST api/Supplier
- * - GET api/Supplier/json
- * - GET, PUT, DELETE api/Supplier/[SupplierId]
- */
-
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/warehouse/{warehouseId:int:min(1)}/suppliers")]
 public class SupplierController(ISupplierService service) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var content = await service.GetAllAsync();
-        return Ok(content);
-    }
-
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
         var model = new Supplier
         {
             SupplierId = 0,
+            WarehouseId = 0,
             Name = "Supplier",
             ContactInfo = "Ho Chi Minh City, Vietnam"
         };
         return Ok(model);
     }
 
+    [WarehousePermission(PermissionEnum.Read)]
+    [HttpGet]
+    public async Task<IActionResult> GetWarehouseSuppliers([FromRoute] int id)
+    {
+        var result = await service.GetByWarehouseAsync(id);
+        return Ok(result);
+    }
+
+    [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
@@ -50,6 +47,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
         }
     }
 
+    [WarehousePermission(PermissionEnum.Write)]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Supplier content)
     {
@@ -66,6 +64,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
         }
     }
 
+    [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Supplier updatedContent)
     {
@@ -87,6 +86,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
         }
     }
 
+    [WarehousePermission(PermissionEnum.Write)]
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

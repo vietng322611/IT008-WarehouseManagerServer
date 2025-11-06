@@ -1,29 +1,19 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using WarehouseManagerServer.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
+using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Warehouse
- * Endpoints:
- * - POST api/Warehouse
- * - GET api/Warehouse/json
- * - GET, PUT, DELETE api/Warehouse/[WarehouseId]
- * - GET api/Warehouse/[WarehouseId]/users
- */
-
 [ApiController]
-[Route("api/[controller]")]
-public class WarehouseController(IWarehouseService service) : Controller
+[Route("api/warehouses")]
+public class WarehouseController(
+    IWarehouseService service,
+    IPermissionService permissionService
+    ) : Controller
 {
-    // [HttpGet]
-    // public async Task<IActionResult> GetAll()
-    // {
-    //     var content = await service.GetAllAsync();
-    //     return Ok(content);
-    // }
-
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
@@ -35,6 +25,7 @@ public class WarehouseController(IWarehouseService service) : Controller
         return Ok(model);
     }
 
+    [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{id:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
@@ -50,6 +41,7 @@ public class WarehouseController(IWarehouseService service) : Controller
         }
     }
 
+    [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{id:int:min(1)}/users")]
     public async Task<IActionResult> GetWarehouseUsers([FromRoute] int id)
     {
@@ -64,14 +56,27 @@ public class WarehouseController(IWarehouseService service) : Controller
         }
     }
 
+    [UserPermission(UserPermissionEnum.Authenticated)]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Warehouse content)
     {
         try
         {
             content.WarehouseId = 0; // Ignore id in input
-
             var newContent = await service.AddAsync(content);
+            
+            var userIdClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+
+            var userId = int.Parse(userIdClaim.Value);
+            
+            await permissionService.AddAsync(new Permission
+            {
+                UserId = userId,
+                WarehouseId = newContent.WarehouseId,
+                Permissions = [ PermissionEnum.Owner ]
+            });
             return CreatedAtAction(nameof(GetById), new { id = newContent.WarehouseId }, newContent);
         }
         catch (Exception e)
@@ -80,6 +85,7 @@ public class WarehouseController(IWarehouseService service) : Controller
         }
     }
 
+    [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("{id:int:min(1)}")]
     public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Warehouse updatedContent)
     {
@@ -101,6 +107,7 @@ public class WarehouseController(IWarehouseService service) : Controller
         }
     }
 
+    [WarehousePermission(PermissionEnum.Delete)]
     [HttpDelete("{id:int:min(1)}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

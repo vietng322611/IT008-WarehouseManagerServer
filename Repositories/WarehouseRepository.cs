@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Extensions;
+using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 
 namespace WarehouseManagerServer.Repositories;
@@ -57,5 +58,28 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
         context.Warehouses.Remove(oldWarehouse);
         await context.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<(bool, string)> Sync(int warehouseId, WarehouseSyncDto syncDto)
+    {
+        await using var transaction = await context.Database.BeginTransactionAsync();
+
+        try
+        {
+            await HelperExtension.UpsertCategories(context, syncDto.Categories, warehouseId);
+            await HelperExtension.UpsertSuppliers(context, syncDto.Suppliers, warehouseId);
+            await HelperExtension.UpsertProducts(context, syncDto.Products, warehouseId);
+            await HelperExtension.UpsertMovements(context, syncDto.Movements);
+
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return (true, "");
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return (false, ex.Message);
+        }
     }
 }

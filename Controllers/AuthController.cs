@@ -1,35 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WarehouseManagerServer.Data;
+using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Services.Interfaces;
 using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Auth
- * Endpoints:
- * - GET api/Auth/register/json
- * - GET api/Auth/login/json
- * - GET api/Auth/refresh/json
- * - GET api/Auth/logout/json
- * - POST api/Auth/register
- * - POST api/Auth/login
- * - POST api/Auth/refresh
- * - POST api/Auth/logout
- */
-
+[ApiController]
+[Route("api/auth")]
 public class AuthController(IAuthService service) : ControllerBase
 {
     [HttpGet("register/json")]
     public IActionResult GetRegisterJson()
     {
         return Ok(new RegisterDto()
-            {
-                Username = "Username",
-                Email = "Email@gmail.com",
-                Password = "Password"
-            });
+        {
+            Username = "Username",
+            Email = "Email@gmail.com",
+            Password = "Password"
+        });
     }
-    
+
     [HttpGet("login/json")]
     public IActionResult GetLoginJson()
     {
@@ -39,7 +29,7 @@ public class AuthController(IAuthService service) : ControllerBase
             Password = "Password"
         });
     }
-    
+
     [HttpGet("refresh/json")]
     [HttpGet("logout/json")]
     public IActionResult GetRefreshJson()
@@ -49,7 +39,7 @@ public class AuthController(IAuthService service) : ControllerBase
             RefreshToken = "RefreshToken"
         });
     }
-    
+
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {

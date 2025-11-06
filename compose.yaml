@@ -1,7 +1,33 @@
-﻿services:
-  warehousemanagerserver:
-    image: warehousemanagerserver
+﻿version: "3.9"
+
+services:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: warehouse_api
+    depends_on:
+      - db
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=warehouse_db;Username=postgres;Password=postgres"
+      ASPNETCORE_URLS: "http://+:8080"
+      ASPNETCORE_ENVIRONMENT: "Production"
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
 
+  db:
+    image: postgres:16
+    container_name: warehouse_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: warehouse_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:

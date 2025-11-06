@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
-using WarehouseManagerServer.Data;
-using WarehouseManagerServer.Models;
+using WarehouseManagerServer.Models.Entities;
 
 namespace WarehouseManagerServer.Repositories.Interfaces;
 
