@@ -11,8 +11,8 @@ public class MovementRepository(WarehouseContext context) : IMovementRepository
     public async Task<List<Movement>> GetByWarehouseAsync(int warehouseId)
     {
         return await context.Movements
-            .Include(m => m.Product)
             .Where(m => m.Product.WarehouseId == warehouseId)
+            .OrderBy(m => m.Date)
             .ToListAsync();
     }
 

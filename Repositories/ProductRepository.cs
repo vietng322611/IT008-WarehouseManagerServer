@@ -11,9 +11,8 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
     public async Task<List<Product>> GetByWarehouseAsync(int warehouseId)
     {
         return await context.Products.AsNoTracking()
-            .Include(p => p.Supplier)
-            .Include(p => p.Category)
             .Where(p => p.WarehouseId == warehouseId)
+            .OrderBy(p => p.Name)
             .ToListAsync();
     }
 
