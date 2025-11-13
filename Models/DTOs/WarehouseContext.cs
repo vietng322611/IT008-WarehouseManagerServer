@@ -94,6 +94,8 @@ public partial class WarehouseContext : DbContext
                 .HasPrecision(12, 2)
                 .HasDefaultValueSql("1")
                 .HasColumnName("unit_price");
+            entity.Property(e => e.ExpiryDate)
+                .HasColumnName("expiry_date");
 
             entity.HasOne(d => d.Warehouse).WithMany(p => p.Products)
                 .HasForeignKey(d => d.WarehouseId)

@@ -15,6 +15,8 @@ public class Product
     public decimal UnitPrice { get; set; }
 
     public int Quantity { get; set; }
+    
+    public DateTime ExpiryDate { get; set; }
 
     public virtual Warehouse Warehouse { get; set; } = null!;
 
