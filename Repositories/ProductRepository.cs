@@ -14,6 +14,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
             .Include(p => p.Supplier)
             .Include(p => p.Category)
             .Where(p => p.WarehouseId == warehouseId)
+            .OrderBy(p => p.Name)
             .ToListAsync();
     }
 

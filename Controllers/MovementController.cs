@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
-using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
@@ -14,13 +13,14 @@ public class MovementController(IMovementService service) : ControllerBase
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
-        var model = new Movement()
+        var model = new
         {
             MovementId = 0,
-            ProductId = 0,
+            Product = "Product",
             Quantity = 1,
             MovementType = MovementTypeEnum.In,
-            Date = DateTime.Now
+            Date = DateTime.Now,
+            ProductId = 0
         };
         return Ok(model);
     }
@@ -30,7 +30,15 @@ public class MovementController(IMovementService service) : ControllerBase
     public async Task<IActionResult> GetWarehouseMovements([FromRoute] int id)
     {
         var result = await service.GetByWarehouseAsync(id);
-        return Ok(result);
+        return Ok(result.Select(content => new
+        {
+            content.MovementId,
+            Product = content.Product.Name,
+            content.Quantity,
+            content.MovementType,
+            content.Date,
+            content.ProductId
+        }));
     }
 
     [WarehousePermission(PermissionEnum.Read)]
@@ -41,7 +49,15 @@ public class MovementController(IMovementService service) : ControllerBase
         {
             var content = await service.GetByKeyAsync(id);
             if (content == null) return NotFound();
-            return Ok(content);
+            return Ok(new
+            {
+                content.MovementId,
+                Product = content.Product.Name,
+                content.Quantity,
+                content.MovementType,
+                content.Date,
+                content.ProductId
+            });
         }
         catch (Exception e)
         {
@@ -56,9 +72,23 @@ public class MovementController(IMovementService service) : ControllerBase
         try
         {
             content.MovementId = 0; // Ignore id in input
-
-            var newContent = await service.AddAsync(content);
-            return CreatedAtAction(nameof(GetById), new { id = newContent.MovementId }, newContent);
+            await service.AddAsync(content);
+            
+            var newContent = await service.GetByKeyAsync(content.MovementId);
+            if (newContent == null) return StatusCode(500, "Error adding new content");
+            
+            return CreatedAtAction(
+                nameof(GetById), 
+                new { id = newContent.MovementId },
+                new
+                {
+                    newContent.MovementId,
+                    Product = newContent.Product.Name,
+                    newContent.Quantity,
+                    newContent.MovementType,
+                    newContent.Date,
+                    newContent.ProductId
+                });
         }
         catch (Exception e)
         {

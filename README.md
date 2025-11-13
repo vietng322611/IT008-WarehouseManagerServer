@@ -18,9 +18,13 @@
 
 > Json templates are available at `api/[endpoint]/json`
 
+---
+
 ## How to get JSON template
-JSON templates can be get by send a `GET` request to `api/[endpoint]/json`  
+JSON templates can be accessed by sending a `GET` request to `api/[endpoint]/json`  
 For Authentication endpoints: `api/Auth/[endpoint]/json`
+
+---
 
 ### Authentication
 
@@ -44,6 +48,7 @@ DELETE api/warehouses/[WarehouseId]/categories/[CategoryId]
 ### Movement
 
 ```
+GET    api/warehouses/[WarehouseId]/movements
 GET    api/warehouses/[WarehouseId]/movements/[MovementId]
 POST   api/warehouses/[WarehouseId]/movements
 PUT    api/warehouses/[WarehouseId]/movements/[MovementId]
@@ -64,11 +69,11 @@ DELETE api/Permission/[userId]-[WarehouseId]
 ### Product
 
 ```
-GET    api/warehouses/[WarehouseId]products/[ProductId]
-GET    api/warehouses/[WarehouseId]products/warehouse/[WarehouseId]
-POST   api/warehouses/[WarehouseId]products
-PUT    api/warehouses/[WarehouseId]products/[ProductId]
-DELETE api/warehouses/[WarehouseId]products/[ProductId]
+GET    api/warehouses/[WarehouseId]/products/
+GET    api/warehouses/[WarehouseId]/products/[ProductId]
+POST   api/warehouses/[WarehouseId]/products
+PUT    api/warehouses/[WarehouseId]/products/[ProductId]
+DELETE api/warehouses/[WarehouseId]/products/[ProductId]
 
 ```
 

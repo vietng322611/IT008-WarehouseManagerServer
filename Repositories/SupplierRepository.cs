@@ -9,7 +9,10 @@ public class SupplierRepository(WarehouseContext context) : ISupplierRepository
 {
     public async Task<List<Supplier>> GetByWarehouseAsync(int warehouseId)
     {
-        return await context.Suppliers.Where(p => p.WarehouseId == warehouseId).ToListAsync();
+        return await context.Suppliers
+            .Where(p => p.WarehouseId == warehouseId)
+            .OrderBy(p => p.Name)
+            .ToListAsync();
     }
 
     public async Task<Supplier?> GetByKeyAsync(int supplierId)

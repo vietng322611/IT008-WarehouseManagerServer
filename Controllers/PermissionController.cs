@@ -34,7 +34,7 @@ public class PermissionController(IPermissionService service) : ControllerBase
         {
             UserId = 0,
             WarehouseId = 0,
-            Permissions = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
+            UserPermissions = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
         };
         return Ok(model);
     }
