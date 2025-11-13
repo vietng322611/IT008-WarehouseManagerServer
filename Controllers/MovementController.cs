@@ -72,8 +72,11 @@ public class MovementController(IMovementService service) : ControllerBase
         try
         {
             content.MovementId = 0; // Ignore id in input
-
-            var newContent = await service.AddAsync(content);
+            await service.AddAsync(content);
+            
+            var newContent = await service.GetByKeyAsync(content.MovementId);
+            if (newContent == null) return StatusCode(500, "Error adding new content");
+            
             return CreatedAtAction(
                 nameof(GetById), 
                 new { id = newContent.MovementId },

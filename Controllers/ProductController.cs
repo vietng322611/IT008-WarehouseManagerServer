@@ -81,8 +81,11 @@ public class ProductController(IProductService service) : ControllerBase
         try
         {
             content.ProductId = 0; // Ignore id in input
-
-            var newContent = await service.AddAsync(content);
+            await service.AddAsync(content);
+            
+            var newContent = await service.GetByKeyAsync(content.ProductId);
+            if (newContent == null) return StatusCode(500, "Error adding new content");
+            
             return CreatedAtAction(
                 nameof(GetById), 
                 new { id = newContent.ProductId }, 
