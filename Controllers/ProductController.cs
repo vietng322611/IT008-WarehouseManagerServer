@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
-using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
@@ -16,6 +15,15 @@ public class ProductController(IProductService service) : ControllerBase
     {
         var model = new
         {
+            ProductId = 1,
+            Name = "Product",
+            Category = "Category",
+            Supplier = "Supplier",
+            Quantity = 1,
+            ExpiryDate = DateTime.Now,
+            WarehouseId = 1,
+            CategoryId = 1,
+            SupplierId = 1
         };
         return Ok(model);
     }
@@ -25,7 +33,18 @@ public class ProductController(IProductService service) : ControllerBase
     public async Task<IActionResult> GetWarehouseProducts([FromRoute] int id)
     {
         var result = await service.GetByWarehouseAsync(id);
-        return Ok(result);
+        return Ok(result.Select(content => new
+        {
+            content.ProductId,
+            content.Name,
+            Category = content.Category == null ? "": content.Category.Name,
+            Supplier = content.Supplier == null ? "": content.Supplier.Name,
+            content.Quantity,
+            content.ExpiryDate,
+            content.WarehouseId,
+            content.CategoryId,
+            content.SupplierId
+        }));
     }
 
     [WarehousePermission(PermissionEnum.Read)]
@@ -36,7 +55,18 @@ public class ProductController(IProductService service) : ControllerBase
         {
             var content = await service.GetByKeyAsync(id);
             if (content == null) return NotFound();
-            return Ok(content);
+            return Ok(new
+            {
+                content.ProductId,
+                content.Name,
+                Category = content.Category == null ? "": content.Category.Name,
+                Supplier = content.Supplier == null ? "": content.Supplier.Name,
+                content.Quantity,
+                content.ExpiryDate,
+                content.WarehouseId,
+                content.CategoryId,
+                content.SupplierId
+            });
         }
         catch (Exception e)
         {
@@ -53,7 +83,21 @@ public class ProductController(IProductService service) : ControllerBase
             content.ProductId = 0; // Ignore id in input
 
             var newContent = await service.AddAsync(content);
-            return CreatedAtAction(nameof(GetById), new { id = newContent.ProductId }, newContent);
+            return CreatedAtAction(
+                nameof(GetById), 
+                new { id = newContent.ProductId }, 
+                new
+                {
+                    newContent.ProductId,
+                    newContent.Name,
+                    Category = newContent.Category == null ? "": newContent.Category.Name,
+                    Supplier = newContent.Supplier == null ? "": newContent.Supplier.Name,
+                    newContent.Quantity,
+                    newContent.ExpiryDate,
+                    newContent.WarehouseId,
+                    newContent.CategoryId,
+                    newContent.SupplierId
+                });
         }
         catch (Exception e)
         {
