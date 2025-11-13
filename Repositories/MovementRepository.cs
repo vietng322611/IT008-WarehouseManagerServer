@@ -11,6 +11,7 @@ public class MovementRepository(WarehouseContext context) : IMovementRepository
     public async Task<List<Movement>> GetByWarehouseAsync(int warehouseId)
     {
         return await context.Movements
+            .Include(m => m.Product)
             .Where(m => m.Product.WarehouseId == warehouseId)
             .OrderBy(m => m.Date)
             .ToListAsync();
@@ -18,7 +19,10 @@ public class MovementRepository(WarehouseContext context) : IMovementRepository
 
     public async Task<Movement?> GetByKeyAsync(int movementId)
     {
-        return await context.Movements.FindAsync(movementId);
+        return await context.Movements
+            .Include(m => m.Product)
+            .Where(m => m.MovementId == movementId)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<List<Movement>> FilterAsync(params Expression<Func<Movement, bool>>[] filters)

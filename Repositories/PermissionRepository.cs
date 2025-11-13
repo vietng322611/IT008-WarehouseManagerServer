@@ -12,9 +12,8 @@ public class PermissionRepository(WarehouseContext context) : IPermissionReposit
     public async Task<bool> HasPermissionAsync(int userId, int warehouseId, PermissionEnum requiredPermission)
     {
         var permission = await context.Permissions
-            .Include(p => p.Permissions)
             .FirstOrDefaultAsync(p => p.UserId == userId && p.WarehouseId == warehouseId);
-
+        
         return permission != null && (
             permission.Permissions.Contains(requiredPermission) || 
             permission.Permissions.Contains(PermissionEnum.Owner)
