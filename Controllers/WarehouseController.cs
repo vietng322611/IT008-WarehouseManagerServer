@@ -75,7 +75,7 @@ public class WarehouseController(
             {
                 UserId = userId,
                 WarehouseId = newContent.WarehouseId,
-                Permissions = [ PermissionEnum.Owner ]
+                UserPermissions = [ PermissionEnum.Owner ]
             });
             return CreatedAtAction(nameof(GetById), new { id = newContent.WarehouseId }, newContent);
         }

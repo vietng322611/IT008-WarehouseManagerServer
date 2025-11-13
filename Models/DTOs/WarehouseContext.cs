@@ -158,8 +158,8 @@ public partial class WarehouseContext : DbContext
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
-            entity.Property(e => e.Permissions)
-                .HasColumnName("permissions")
+            entity.Property(e => e.UserPermissions)
+                .HasColumnName("user_permissions")
                 .HasColumnType("permission_enum[]");
             
             entity.HasOne(d => d.User).WithMany(p => p.Permissions)

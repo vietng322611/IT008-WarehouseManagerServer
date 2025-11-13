@@ -15,8 +15,8 @@ public class PermissionRepository(WarehouseContext context) : IPermissionReposit
             .FirstOrDefaultAsync(p => p.UserId == userId && p.WarehouseId == warehouseId);
         
         return permission != null && (
-            permission.Permissions.Contains(requiredPermission) || 
-            permission.Permissions.Contains(PermissionEnum.Owner)
+            permission.UserPermissions.Contains(requiredPermission) || 
+            permission.UserPermissions.Contains(PermissionEnum.Owner)
             );
     }
 
