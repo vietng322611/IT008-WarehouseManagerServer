@@ -69,11 +69,11 @@ DELETE api/Permission/[userId]-[WarehouseId]
 ### Product
 
 ```
-GET    api/warehouses/[WarehouseId]products/
-GET    api/warehouses/[WarehouseId]products/[ProductId]
-POST   api/warehouses/[WarehouseId]products
-PUT    api/warehouses/[WarehouseId]products/[ProductId]
-DELETE api/warehouses/[WarehouseId]products/[ProductId]
+GET    api/warehouses/[WarehouseId]/products/
+GET    api/warehouses/[WarehouseId]/products/[ProductId]
+POST   api/warehouses/[WarehouseId]/products
+PUT    api/warehouses/[WarehouseId]/products/[ProductId]
+DELETE api/warehouses/[WarehouseId]/products/[ProductId]
 
 ```
 
