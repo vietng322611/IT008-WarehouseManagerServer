@@ -119,7 +119,7 @@ public class AuthController(IAuthService service) : ControllerBase
                 return Unauthorized(new { Message = "Refresh Token Expired" });
 
             await service.InvalidateRefreshToken(oldToken);
-            return Unauthorized();
+            return Ok("Logout successfully");
         }
         catch (Exception e)
         {
