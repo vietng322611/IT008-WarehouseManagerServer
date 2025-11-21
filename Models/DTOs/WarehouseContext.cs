@@ -145,6 +145,9 @@ public partial class WarehouseContext : DbContext
             entity.Property(e => e.Username)
                 .HasMaxLength(40)
                 .HasColumnName("username");
+            entity.Property(e => e.RecoveryCode)
+                .HasMaxLength(7)
+                .HasColumnName("recovery_code");
             entity.HasMany(e => e.Warehouses)
                 .WithMany(p => p.Users)
                 .UsingEntity(j => j.ToTable("UserWarehouses"));

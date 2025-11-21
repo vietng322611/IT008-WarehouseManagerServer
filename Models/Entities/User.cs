@@ -16,6 +16,7 @@ public class User
     public string PasswordHash { get; set; } = null!;
     [JsonPropertyName(("join_date"))]
     public DateTime? JoinDate { get; set; }
+    public string? RecoveryCode { get; set; }
 
     public ICollection<Warehouse> Warehouses { get; set; } = new List<Warehouse>();
     
