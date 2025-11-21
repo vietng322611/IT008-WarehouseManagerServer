@@ -11,13 +11,31 @@ public class SupplierRepository(WarehouseContext context) : ISupplierRepository
     {
         return await context.Suppliers
             .Where(p => p.WarehouseId == warehouseId)
+            .Select(p => new Supplier
+            {
+                SupplierId = p.SupplierId,
+                WarehouseId = p.WarehouseId,
+                Name = p.Name,
+                ContactInfo = p.ContactInfo,
+                ProductCount = p.Products.Count
+            })
             .OrderBy(p => p.Name)
             .ToListAsync();
     }
 
     public async Task<Supplier?> GetByKeyAsync(int supplierId)
     {
-        return await context.Suppliers.FindAsync(supplierId);
+        return await context.Suppliers
+            .Where(s => s.SupplierId == supplierId)
+            .Select(p => new Supplier
+            {
+                SupplierId = p.SupplierId,
+                WarehouseId = p.WarehouseId,
+                Name = p.Name,
+                ContactInfo = p.ContactInfo,
+                ProductCount = p.Products.Count
+            })
+            .FirstOrDefaultAsync();
     }
 
     public async Task<Supplier> AddAsync(Supplier supplier)

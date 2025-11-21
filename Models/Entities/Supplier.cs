@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace WarehouseManagerServer.Models.Entities;
 
@@ -16,4 +17,7 @@ public class Supplier
     public virtual Warehouse Warehouse { get; set; } = null!;
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    
+    [NotMapped]
+    public int ProductCount { get; set; }
 }

@@ -13,12 +13,13 @@ public class SupplierController(ISupplierService service) : ControllerBase
     [HttpGet("json")]
     public IActionResult GetSampleJson()
     {
-        var model = new Supplier
+        var model = new
         {
-            SupplierId = 0,
-            WarehouseId = 0,
-            Name = "Supplier",
-            ContactInfo = "Ho Chi Minh City, Vietnam"
+            supplier_id = 0,
+            warehouse_id = 0,
+            name = "Supplier",
+            contact_info = "Ho Chi Minh City, Vietnam",
+            total_imports = 0
         };
         return Ok(model);
     }
@@ -28,7 +29,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
     public async Task<IActionResult> GetWarehouseSuppliers([FromRoute] int id)
     {
         var result = await service.GetByWarehouseAsync(id);
-        return Ok(result);
+        return Ok(result.Select(Serialize));
     }
 
     [WarehousePermission(PermissionEnum.Read)]
@@ -39,7 +40,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
         {
             var content = await service.GetByKeyAsync(id);
             if (content == null) return NotFound();
-            return Ok(content);
+            return Ok(Serialize(content));
         }
         catch (Exception e)
         {
@@ -105,6 +106,13 @@ public class SupplierController(ISupplierService service) : ControllerBase
 
     private object Serialize(Supplier content)
     {
-        return new { };
+        return new
+        {
+            supplier_id = content.SupplierId,
+            warehouse_id = content.WarehouseId,
+            name = content.Name,
+            contact_info = content.ContactInfo,
+            total_imports = content.ProductCount
+        };
     }
 }
