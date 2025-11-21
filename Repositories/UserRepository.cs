@@ -10,7 +10,13 @@ public class UserRepository(WarehouseContext context) : IUserRepository
 {
     public async Task<List<User>> GetAllAsync()
     {
-        return await context.Users.ToListAsync();
+        return await context.Users.Select(user => new User
+        {
+            UserId = user.UserId,
+            Username = user.Username,
+            Email = user.Email,
+            JoinDate = user.JoinDate
+        }).ToListAsync();
     }
 
     public async Task<User?> GetByKeyAsync(int userId)
@@ -21,16 +27,15 @@ public class UserRepository(WarehouseContext context) : IUserRepository
 
     public async Task<User?> GetByUniqueAsync(Expression<Func<User, bool>> condition)
     {
-        var user = await context.Users.Where(condition).FirstOrDefaultAsync();
-        if (user == null) return null;
-
-        return new User
+        var user = await context.Users.Where(condition).Select(user => new User
         {
             UserId = user.UserId,
             Username = user.Username,
             Email = user.Email,
             JoinDate = user.JoinDate
-        };
+        }).FirstOrDefaultAsync();
+
+        return user;
     }
 
     public async Task<List<Warehouse>> GetUserWarehousesAsync(int userId)
