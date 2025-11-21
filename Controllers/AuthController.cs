@@ -47,9 +47,9 @@ public class AuthController(IAuthService service) : ControllerBase
         {
             var result = await service.RegisterUser(dto, dto.Password);
             if (result == RegisterEnum.UserAlreadyExists)
-                return BadRequest(new { Message = "User already exists" });
+                return BadRequest(new { message = "User already exists" });
 
-            return Ok("Registered successfully");
+            return Ok(new {message = "Registered successfully" });
         }
         catch (Exception e)
         {
@@ -84,11 +84,11 @@ public class AuthController(IAuthService service) : ControllerBase
         {
             var user = await service.ValidateRefreshToken(dto);
             if (user == null)
-                return Unauthorized(new { Message = "Invalid Refresh Token" });
+                return Unauthorized(new { message = "Invalid Refresh Token" });
 
             var oldToken = user.RefreshTokens.Single(x => x.Token == dto.RefreshToken);
             if (!oldToken.IsActive)
-                return Unauthorized(new { Message = "Refresh Token Expired" });
+                return Unauthorized(new { message = "Refresh Token Expired" });
 
             var newRefreshToken = await service.GenerateRefreshToken(user);
             var newAccessToken = service.GenerateAccessToken(user);
@@ -112,14 +112,14 @@ public class AuthController(IAuthService service) : ControllerBase
         {
             var user = await service.ValidateRefreshToken(dto);
             if (user == null)
-                return Unauthorized(new { Message = "Invalid Refresh Token" });
+                return Unauthorized(new { message = "Invalid Refresh Token" });
 
             var oldToken = user.RefreshTokens.Single(x => x.Token == dto.RefreshToken);
             if (!oldToken.IsActive)
-                return Unauthorized(new { Message = "Refresh Token Expired" });
+                return Unauthorized(new { message = "Refresh Token Expired" });
 
             await service.InvalidateRefreshToken(oldToken);
-            return Ok("Logout successfully");
+            return Unauthorized();
         }
         catch (Exception e)
         {
