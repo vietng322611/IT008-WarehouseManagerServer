@@ -1,4 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -40,7 +42,7 @@ public class AuthService(
             return RegisterEnum.InvalidEmail;
         }
         try {
-            var addr = new System.Net.Mail.MailAddress(email);
+            var addr = new MailAddress(email);
             if (addr.Address != email)
                 return RegisterEnum.InvalidEmail;
         }
@@ -135,5 +137,65 @@ public class AuthService(
     {
         context.RefreshTokens.Remove(refreshToken);
         await context.SaveChangesAsync();
+    }
+
+    public async Task SendRecoveryCode(User user)
+    {
+        var fromAddress = new MailAddress(config["MailService:Address"]!, "WarehouseManager App");
+        var toAddress = new MailAddress(user.Email, user.Username);
+        var smtp = new SmtpClient("smtp.gmail.com", 587)
+        {
+            Credentials = new NetworkCredential(
+                fromAddress.Address,
+                config["MailService:Password"]), EnableSsl = true
+        };
+        
+        var code = await GenerateUniqueCode(user.UserId);
+        using var message = new MailMessage(fromAddress, toAddress);
+        message.Subject = "Recovery code";
+        message.Body = "Recovery code for your WarehouseManager account: " + code;
+        await smtp.SendMailAsync(message);
+    }
+
+    public async Task<User?> VerifyRecoveryCode(string code)
+    {
+        var recovery = await context.RecoveryCodes
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.Code == code);
+        if (recovery == null) return null;
+        
+        context.RecoveryCodes.Remove(recovery);
+        await context.SaveChangesAsync();
+
+        return recovery.User;
+    }
+
+    private async Task<string> GenerateUniqueCode(int userId)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        
+        for (var attempt = 0; attempt < 5; attempt++)
+        {
+            var bytes = new byte[7];
+            RandomNumberGenerator.Fill(bytes);
+            var code = new string(bytes.Select(b => chars[b % chars.Length]).ToArray());
+
+            var recovery = new RecoveryCode
+            {
+                UserId = userId,
+                Code = code
+            };
+
+            context.RecoveryCodes.Add(recovery);
+
+            try
+            {
+                await context.SaveChangesAsync();
+                return code;
+            }
+            catch (DbUpdateException) {} // retry
+        }
+
+        throw new Exception("Failed to generate a unique recovery code after several attempts.");
     }
 }

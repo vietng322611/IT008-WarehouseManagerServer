@@ -12,4 +12,6 @@ public interface IAuthService
     Task<string> GenerateRefreshToken(User user);
     Task<User?> ValidateRefreshToken(RefreshDto dto);
     Task InvalidateRefreshToken(RefreshToken refreshToken);
+    Task SendRecoveryCode(User user);
+    Task<User?> VerifyRecoveryCode(string code);
 }
