@@ -46,10 +46,13 @@ public class AuthController(IAuthService service) : ControllerBase
         try
         {
             var result = await service.RegisterUser(dto, dto.Password);
-            if (result == RegisterEnum.UserAlreadyExists)
-                return BadRequest(new { message = "User already exists" });
-
-            return Ok(new {message = "Registered successfully" });
+            return result switch
+            {
+                RegisterEnum.UserAlreadyExists => BadRequest(new { message = "User already exists" }),
+                RegisterEnum.EmailAlreadyExists => BadRequest(new { message = "Email already exists" }),
+                RegisterEnum.InvalidEmail =>  BadRequest(new { message = "Invalid Email" }),
+                _ => Ok(new { message = "Registered successfully" })
+            };
         }
         catch (Exception e)
         {
@@ -67,9 +70,15 @@ public class AuthController(IAuthService service) : ControllerBase
                 return Unauthorized(new { message = "Invalid Username or Password" });
 
             var refreshToken = await service.GenerateRefreshToken(user);
-            var accessToken = service.GenerateAccessToken(user);
+            var (accessToken, expires) = service.GenerateAccessToken(user);
 
-            return Ok(new { accessToken, refreshToken });
+            return Ok(new
+            {
+                user_id = user.UserId,
+                access_token = accessToken,
+                refresh_token = refreshToken,
+                exprire_in = expires
+            });
         }
         catch (Exception e)
         {
@@ -91,12 +100,13 @@ public class AuthController(IAuthService service) : ControllerBase
                 return Unauthorized(new { message = "Refresh Token Expired" });
 
             var newRefreshToken = await service.GenerateRefreshToken(user);
-            var newAccessToken = service.GenerateAccessToken(user);
+            var (newAccessToken, expires) = service.GenerateAccessToken(user);
 
             return Ok(new
             {
-                AccessToken = newAccessToken,
-                RefreshToken = newRefreshToken
+                access_token = newAccessToken,
+                refresh_token = newRefreshToken,
+                expire_in = expires
             });
         }
         catch (Exception e)
