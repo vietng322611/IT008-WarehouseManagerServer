@@ -102,4 +102,9 @@ public class SupplierController(ISupplierService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+
+    private object Serialize(Supplier content)
+    {
+        return new { };
+    }
 }

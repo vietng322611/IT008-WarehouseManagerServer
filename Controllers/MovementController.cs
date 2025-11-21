@@ -15,12 +15,12 @@ public class MovementController(IMovementService service) : ControllerBase
     {
         var model = new
         {
-            MovementId = 0,
-            Product = "Product",
-            Quantity = 1,
-            MovementType = MovementTypeEnum.In,
-            Date = DateTime.Now,
-            ProductId = 0
+            movement_id = 0,
+            product = "Product",
+            quantity = 1,
+            movement_type = MovementTypeEnum.In,
+            date = DateTime.Now,
+            productId = 0
         };
         return Ok(model);
     }
@@ -30,15 +30,7 @@ public class MovementController(IMovementService service) : ControllerBase
     public async Task<IActionResult> GetWarehouseMovements([FromRoute] int id)
     {
         var result = await service.GetByWarehouseAsync(id);
-        return Ok(result.Select(content => new
-        {
-            content.MovementId,
-            Product = content.Product.Name,
-            content.Quantity,
-            content.MovementType,
-            content.Date,
-            content.ProductId
-        }));
+        return Ok(result.Select(Serialize));
     }
 
     [WarehousePermission(PermissionEnum.Read)]
@@ -49,15 +41,7 @@ public class MovementController(IMovementService service) : ControllerBase
         {
             var content = await service.GetByKeyAsync(id);
             if (content == null) return NotFound();
-            return Ok(new
-            {
-                content.MovementId,
-                Product = content.Product.Name,
-                content.Quantity,
-                content.MovementType,
-                content.Date,
-                content.ProductId
-            });
+            return Ok(Serialize(content));
         }
         catch (Exception e)
         {
@@ -80,15 +64,7 @@ public class MovementController(IMovementService service) : ControllerBase
             return CreatedAtAction(
                 nameof(GetById), 
                 new { id = newContent.MovementId },
-                new
-                {
-                    newContent.MovementId,
-                    Product = newContent.Product.Name,
-                    newContent.Quantity,
-                    newContent.MovementType,
-                    newContent.Date,
-                    newContent.ProductId
-                });
+                Serialize(newContent));
         }
         catch (Exception e)
         {
@@ -133,5 +109,18 @@ public class MovementController(IMovementService service) : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
+    }
+
+    private object Serialize(Movement content)
+    {
+        return new
+        {
+            movement_id = content.MovementId,
+            product = content.Product.Name,
+            quantity = content.Quantity,
+            movement_type = content.MovementType,
+            date = content.Date,
+            product_id = content.ProductId
+        };
     }
 }
