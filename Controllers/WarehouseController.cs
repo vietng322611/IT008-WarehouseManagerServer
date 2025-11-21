@@ -26,12 +26,12 @@ public class WarehouseController(
     }
 
     [WarehousePermission(PermissionEnum.Read)]
-    [HttpGet("{id:int:min(1)}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    [HttpGet("{warehouseId:int:min(1)}")]
+    public async Task<IActionResult> GetById([FromRoute] int warehouseId)
     {
         try
         {
-            var content = await service.GetByKeyAsync(id);
+            var content = await service.GetByKeyAsync(warehouseId);
             if (content == null) return NotFound();
             return Ok(content);
         }
@@ -42,12 +42,12 @@ public class WarehouseController(
     }
 
     [WarehousePermission(PermissionEnum.Read)]
-    [HttpGet("{id:int:min(1)}/users")]
-    public async Task<IActionResult> GetWarehouseUsers([FromRoute] int id)
+    [HttpGet("{warehouseId:int:min(1)}/users")]
+    public async Task<IActionResult> GetWarehouseUsers([FromRoute] int warehouseId)
     {
         try
         {
-            var content = await service.GetWarehouseUsersAsync(id);
+            var content = await service.GetWarehouseUsersAsync(warehouseId);
             return Ok(content);
         }
         catch (Exception e)
@@ -86,15 +86,15 @@ public class WarehouseController(
     }
 
     [WarehousePermission(PermissionEnum.Write)]
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Warehouse updatedContent)
+    [HttpPut("{warehouseId:int:min(1)}")]
+    public async Task<IActionResult> Put([FromRoute] int warehouseId, [FromBody] Warehouse updatedContent)
     {
         try
         {
-            if (id != updatedContent.WarehouseId)
+            if (warehouseId != updatedContent.WarehouseId)
                 return BadRequest();
 
-            var existingContent = await service.GetByKeyAsync(id);
+            var existingContent = await service.GetByKeyAsync(warehouseId);
             if (existingContent == null)
                 return NotFound();
 
@@ -108,12 +108,12 @@ public class WarehouseController(
     }
 
     [WarehousePermission(PermissionEnum.Delete)]
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    [HttpDelete("{warehouseId:int:min(1)}")]
+    public async Task<IActionResult> Delete([FromRoute] int warehouseId)
     {
         try
         {
-            var success = await service.DeleteAsync(id);
+            var success = await service.DeleteAsync(warehouseId);
             if (success)
                 return NoContent();
             return NotFound();
