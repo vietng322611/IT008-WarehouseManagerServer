@@ -7,7 +7,10 @@ namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(IAuthService service) : ControllerBase
+public class AuthController(
+    IAuthService service,
+    IUserService userService
+    ) : ControllerBase
 {
     [HttpGet("register/json")]
     public IActionResult GetRegisterJson()
@@ -130,6 +133,24 @@ public class AuthController(IAuthService service) : ControllerBase
 
             await service.InvalidateRefreshToken(oldToken);
             return Unauthorized();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpPost("recovery")]
+    public async Task<IActionResult> Recovery([FromBody] string email)
+    {
+        try
+        {
+            var user = await userService.GetByUniqueAsync(u => u.Email == email);
+            if (user == null)
+                return BadRequest(new { message = "Email not associated with any account" });
+            
+            await service.SendRecoveryCode(user);
+            return Ok("Sent recovery code to email: " + email);
         }
         catch (Exception e)
         {
