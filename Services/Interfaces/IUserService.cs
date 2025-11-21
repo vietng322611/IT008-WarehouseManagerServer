@@ -1,4 +1,5 @@
-﻿using WarehouseManagerServer.Models.Entities;
+﻿using System.Linq.Expressions;
+using WarehouseManagerServer.Models.Entities;
 
 namespace WarehouseManagerServer.Services.Interfaces;
 
@@ -6,6 +7,7 @@ public interface IUserService
 {
     Task<List<User>> GetAllAsync();
     Task<User?> GetByKeyAsync(int userId);
+    Task<User?> GetByUniqueAsync(Expression<Func<User, bool>> condition);
     Task<List<Warehouse>> GetUserWarehousesAsync(int userId);
     Task<User> AddAsync(User user);
     Task<User?> UpdateAsync(User user);

@@ -1,4 +1,5 @@
-﻿using WarehouseManagerServer.Models.Entities;
+﻿using System.Linq.Expressions;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -11,7 +12,8 @@ public class UserService(IUserRepository userRepository) : IUserService
 
     public Task<User?> GetByKeyAsync(int userId)
         => userRepository.GetByKeyAsync(userId);
-
+    public Task<User?> GetByUniqueAsync(Expression<Func<User, bool>> condition)
+        => userRepository.GetByUniqueAsync(condition);
     public Task<List<Warehouse>> GetUserWarehousesAsync(int userId)
         => userRepository.GetUserWarehousesAsync(userId);
 
