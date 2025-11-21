@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Services.Interfaces;
@@ -36,6 +37,29 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
+    [UserPermission(UserPermissionEnum.Authenticated)]
+    [HttpGet("me")]
+    public async Task<IActionResult> GetOwn()
+    {
+        try
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var content = await service.GetByKeyAsync(userId);
+            if (content == null) return NotFound();
+            return Ok(new User
+            {
+                UserId = content.UserId,
+                Username = content.Username,
+                Email = content.Email,
+                JoinDate = content.JoinDate
+            });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    
     [UserPermission(UserPermissionEnum.SameUser)]
     [HttpGet("{userId:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int userId)
