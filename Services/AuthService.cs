@@ -55,8 +55,7 @@ public class AuthService(
             Username = username,
             Email = email,
         };
-        var passwordHash = passwordHasher.HashPassword(user, password);
-        user.PasswordHash = passwordHash;
+        user.PasswordHash = passwordHasher.HashPassword(user, password);
 
         context.Users.Add(user);
         await context.SaveChangesAsync();
@@ -159,15 +158,21 @@ public class AuthService(
 
     public async Task<User?> VerifyRecoveryCode(string code)
     {
-        var recovery = await context.RecoveryCodes
+        var recoveryCode = await context.RecoveryCodes
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Code == code);
-        if (recovery == null) return null;
+        if (recoveryCode == null) return null;
         
-        context.RecoveryCodes.Remove(recovery);
+        context.RecoveryCodes.Remove(recoveryCode);
         await context.SaveChangesAsync();
 
-        return recovery.User;
+        return recoveryCode.User;
+    }
+
+    public async Task ChangePassword(User user, string newPassword)
+    {
+        user.PasswordHash = passwordHasher.HashPassword(user, newPassword);
+        await context.SaveChangesAsync();
     }
 
     private async Task<string> GenerateUniqueCode(int userId)

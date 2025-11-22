@@ -14,4 +14,5 @@ public interface IAuthService
     Task InvalidateRefreshToken(RefreshToken refreshToken);
     Task SendRecoveryCode(User user);
     Task<User?> VerifyRecoveryCode(string code);
+    Task ChangePassword(User user, string newPassword);
 }

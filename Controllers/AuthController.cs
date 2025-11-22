@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Services.Interfaces;
 using WarehouseManagerServer.Types.Enums;
@@ -141,16 +143,63 @@ public class AuthController(
     }
 
     [HttpPost("recovery")]
-    public async Task<IActionResult> Recovery([FromBody] string email)
+    public async Task<IActionResult> RequestRecoveryCode([FromBody] RequestCodeDto dto)
     {
         try
         {
-            var user = await userService.GetByUniqueAsync(u => u.Email == email);
+            var user = await userService.GetByUniqueAsync(u => u.Email == dto.Email);
             if (user == null)
                 return BadRequest(new { message = "Email not associated with any account" });
             
             await service.SendRecoveryCode(user);
-            return Ok("Sent recovery code to email: " + email);
+            return Ok("Sent recovery code to email: " + dto.Email);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+    {
+        try
+        {
+            var user = await service.VerifyRecoveryCode(dto.Code);
+            if (user == null)
+                return BadRequest(new { message = "Recovery code not valid" });
+
+            await service.ChangePassword(user, dto.NewPassword);
+            return Ok(new { message = "Password successfully reset" });
+        }
+        catch (Exception e) 
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [UserPermission(UserPermissionEnum.SameUser)]
+    [HttpPut("change-password")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+    {
+        try
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var user = await userService.GetByKeyAsync(userId);
+            if (user == null)
+                return BadRequest(new { message = "User does not exist" });
+
+            // ISTG this looks dumb but reuse code should be good right?
+            user = await service.ValidateUser(new LoginDto
+            {
+                Username = user.Username,
+                Password = dto.OldPassword
+            });
+            if (user == null)
+                return BadRequest(new { message = "Old password is incorrect" });
+
+            await service.ChangePassword(user, dto.NewPassword);
+            return NoContent();
         }
         catch (Exception e)
         {
