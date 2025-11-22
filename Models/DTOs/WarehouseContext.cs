@@ -27,6 +27,8 @@ public partial class WarehouseContext : DbContext
     public virtual DbSet<Permission> Permissions { get; set; }
 
     public virtual DbSet<Warehouse> Warehouses { get; set; }
+    
+    public virtual DbSet<RecoveryCode> RecoveryCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -184,6 +186,29 @@ public partial class WarehouseContext : DbContext
                 .HasColumnName("name");
             entity.HasMany(e => e.Users)
                 .WithMany(p => p.Warehouses);
+        });
+
+        modelBuilder.Entity<RecoveryCode>(entity =>
+        {
+            entity.HasKey(e => e.CodeId).HasName("recovery_code_pkey");
+
+            entity.ToTable("recovery_code");
+
+            entity.Property(e => e.CodeId).HasColumnName("code_id");
+            entity.Property(e => e.UserId)
+                .HasColumnName("user_id");
+            entity.Property(e => e.Code)
+                .HasMaxLength(7)
+                .HasColumnName("code");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnName("created_at");
+            
+            entity.HasIndex(e => e.Code).IsUnique();
+            
+            entity.HasOne(e => e.User)
+                .WithOne(p => p.RecoveryCode)
+                .HasForeignKey<RecoveryCode>(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);

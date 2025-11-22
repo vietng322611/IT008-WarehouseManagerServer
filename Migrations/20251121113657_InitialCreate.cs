@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace WarehouseManagerServer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,19 +15,6 @@ namespace WarehouseManagerServer.Migrations
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:movement_type_enum", "in,out,adjustment,transfer,remove")
                 .Annotation("Npgsql:Enum:permission_enum", "read,write,delete,owner");
-
-            migrationBuilder.CreateTable(
-                name: "permissions",
-                columns: table => new
-                {
-                    user_id = table.Column<int>(type: "integer", nullable: false),
-                    warehouse_id = table.Column<int>(type: "integer", nullable: false),
-                    permissions = table.Column<int[]>(type: "permission_enum[]", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("permissions_pkey", x => new { x.user_id, x.warehouse_id });
-                });
 
             migrationBuilder.CreateTable(
                 name: "users",
@@ -38,7 +25,6 @@ namespace WarehouseManagerServer.Migrations
                     username = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     email = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     password_hash = table.Column<string>(type: "text", nullable: false),
-                    salt = table.Column<string>(type: "text", nullable: false),
                     join_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
@@ -57,6 +43,27 @@ namespace WarehouseManagerServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("warehouses_pkey", x => x.warehouse_id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "recovery_code",
+                columns: table => new
+                {
+                    code_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    code = table.Column<string>(type: "character varying(7)", maxLength: 7, nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("recovery_code_pkey", x => x.code_id);
+                    table.ForeignKey(
+                        name: "FK_recovery_code_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -96,6 +103,31 @@ namespace WarehouseManagerServer.Migrations
                     table.PrimaryKey("categories_pkey", x => x.category_id);
                     table.ForeignKey(
                         name: "category_warehouse_id_fkey",
+                        column: x => x.warehouse_id,
+                        principalTable: "warehouses",
+                        principalColumn: "warehouse_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "permissions",
+                columns: table => new
+                {
+                    user_id = table.Column<int>(type: "integer", nullable: false),
+                    warehouse_id = table.Column<int>(type: "integer", nullable: false),
+                    user_permissions = table.Column<int[]>(type: "permission_enum[]", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("permissions_pkey", x => new { x.user_id, x.warehouse_id });
+                    table.ForeignKey(
+                        name: "permission_user_id_fkey",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "user_id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "permission_warehouse_id_fkey",
                         column: x => x.warehouse_id,
                         principalTable: "warehouses",
                         principalColumn: "warehouse_id",
@@ -158,7 +190,8 @@ namespace WarehouseManagerServer.Migrations
                     supplier_id = table.Column<int>(type: "integer", nullable: true),
                     category_id = table.Column<int>(type: "integer", nullable: true),
                     unit_price = table.Column<decimal>(type: "numeric(12,2)", precision: 12, scale: 2, nullable: false, defaultValueSql: "1"),
-                    quantity = table.Column<int>(type: "integer", nullable: false, defaultValue: 0)
+                    quantity = table.Column<int>(type: "integer", nullable: false, defaultValue: 0),
+                    expiry_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -216,6 +249,11 @@ namespace WarehouseManagerServer.Migrations
                 column: "product_id");
 
             migrationBuilder.CreateIndex(
+                name: "IX_permissions_warehouse_id",
+                table: "permissions",
+                column: "warehouse_id");
+
+            migrationBuilder.CreateIndex(
                 name: "idx_products_category",
                 table: "products",
                 column: "category_id");
@@ -229,6 +267,18 @@ namespace WarehouseManagerServer.Migrations
                 name: "IX_products_warehouse_id",
                 table: "products",
                 column: "warehouse_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_recovery_code_code",
+                table: "recovery_code",
+                column: "code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_recovery_code_user_id",
+                table: "recovery_code",
+                column: "user_id",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
@@ -266,6 +316,9 @@ namespace WarehouseManagerServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "permissions");
+
+            migrationBuilder.DropTable(
+                name: "recovery_code");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");

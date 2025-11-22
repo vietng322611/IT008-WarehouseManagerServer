@@ -19,9 +19,8 @@ public class UserPermissionAttribute(
         }
 
         if (permission == UserPermissionEnum.Authenticated) return;
-        
-        var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
+        var userId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         if (!context.RouteData.Values.TryGetValue("userId", out var idObj) ||
             !int.TryParse(idObj?.ToString(), out var requestUserId))
         {

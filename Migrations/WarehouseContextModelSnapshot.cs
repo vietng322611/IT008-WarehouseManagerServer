@@ -44,18 +44,21 @@ namespace WarehouseManagerServer.Migrations
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("category_id");
+                        .HasColumnName("category_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "category_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CategoryId"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasAnnotation("Relational:JsonPropertyName", "name");
 
                     b.Property<int>("WarehouseId")
                         .HasColumnType("integer")
-                        .HasColumnName("warehouse_id");
+                        .HasColumnName("warehouse_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "warehouse_id");
 
                     b.HasKey("CategoryId")
                         .HasName("categories_pkey");
@@ -70,7 +73,8 @@ namespace WarehouseManagerServer.Migrations
                     b.Property<int>("MovementId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("movement_id");
+                        .HasColumnName("movement_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "movement_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("MovementId"));
 
@@ -78,19 +82,23 @@ namespace WarehouseManagerServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                        .HasAnnotation("Relational:JsonPropertyName", "date");
 
                     b.Property<int>("MovementType")
                         .HasColumnType("movement_type_enum")
-                        .HasColumnName("movement_type");
+                        .HasColumnName("movement_type")
+                        .HasAnnotation("Relational:JsonPropertyName", "movement_type");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("integer")
-                        .HasColumnName("product_id");
+                        .HasColumnName("product_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "product_id");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
-                        .HasColumnName("quantity");
+                        .HasColumnName("quantity")
+                        .HasAnnotation("Relational:JsonPropertyName", "quantity");
 
                     b.HasKey("MovementId")
                         .HasName("movements_pkey");
@@ -104,19 +112,24 @@ namespace WarehouseManagerServer.Migrations
                 {
                     b.Property<int>("UserId")
                         .HasColumnType("integer")
-                        .HasColumnName("user_id");
+                        .HasColumnName("user_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "user_id");
 
                     b.Property<int>("WarehouseId")
                         .HasColumnType("integer")
-                        .HasColumnName("warehouse_id");
+                        .HasColumnName("warehouse_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "warehouse_id");
 
-                    b.PrimitiveCollection<int[]>("Permissions")
+                    b.PrimitiveCollection<int[]>("UserPermissions")
                         .IsRequired()
                         .HasColumnType("permission_enum[]")
-                        .HasColumnName("permissions");
+                        .HasColumnName("user_permissions")
+                        .HasAnnotation("Relational:JsonPropertyName", "user_permissions");
 
                     b.HasKey("UserId", "WarehouseId")
                         .HasName("permissions_pkey");
+
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("permissions", (string)null);
                 });
@@ -126,39 +139,51 @@ namespace WarehouseManagerServer.Migrations
                     b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("product_id");
+                        .HasColumnName("product_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "product_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ProductId"));
 
                     b.Property<int?>("CategoryId")
                         .HasColumnType("integer")
-                        .HasColumnName("category_id");
+                        .HasColumnName("category_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "category_id");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expiry_date")
+                        .HasAnnotation("Relational:JsonPropertyName", "expiry_date");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasAnnotation("Relational:JsonPropertyName", "name");
 
                     b.Property<int>("Quantity")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(0)
-                        .HasColumnName("quantity");
+                        .HasColumnName("quantity")
+                        .HasAnnotation("Relational:JsonPropertyName", "quantity");
 
                     b.Property<int?>("SupplierId")
                         .HasColumnType("integer")
-                        .HasColumnName("supplier_id");
+                        .HasColumnName("supplier_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "supplier_id");
 
                     b.Property<decimal>("UnitPrice")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(12, 2)
                         .HasColumnType("numeric(12,2)")
                         .HasColumnName("unit_price")
-                        .HasDefaultValueSql("1");
+                        .HasDefaultValueSql("1")
+                        .HasAnnotation("Relational:JsonPropertyName", "unit_price");
 
                     b.Property<int>("WarehouseId")
                         .HasColumnType("integer")
-                        .HasColumnName("warehouse_id");
+                        .HasColumnName("warehouse_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "warehouse_id");
 
                     b.HasKey("ProductId")
                         .HasName("products_pkey");
@@ -170,6 +195,41 @@ namespace WarehouseManagerServer.Migrations
                     b.HasIndex(new[] { "CategoryId" }, "idx_products_category");
 
                     b.ToTable("products", (string)null);
+                });
+
+            modelBuilder.Entity("WarehouseManagerServer.Models.Entities.RecoveryCode", b =>
+                {
+                    b.Property<int>("CodeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("code_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CodeId"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("CodeId")
+                        .HasName("recovery_code_pkey");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("recovery_code", (string)null);
                 });
 
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.RefreshToken", b =>
@@ -208,22 +268,26 @@ namespace WarehouseManagerServer.Migrations
                     b.Property<int>("SupplierId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("supplier_id");
+                        .HasColumnName("supplier_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "supplier_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("SupplierId"));
 
                     b.Property<string>("ContactInfo")
                         .HasColumnType("text")
-                        .HasColumnName("contact_info");
+                        .HasColumnName("contact_info")
+                        .HasAnnotation("Relational:JsonPropertyName", "contact_info");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasAnnotation("Relational:JsonPropertyName", "name");
 
                     b.Property<int>("WarehouseId")
                         .HasColumnType("integer")
-                        .HasColumnName("warehouse_id");
+                        .HasColumnName("warehouse_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "warehouse_id");
 
                     b.HasKey("SupplierId")
                         .HasName("suppliers_pkey");
@@ -238,7 +302,8 @@ namespace WarehouseManagerServer.Migrations
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("user_id");
+                        .HasColumnName("user_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "user_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
 
@@ -246,13 +311,15 @@ namespace WarehouseManagerServer.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)")
-                        .HasColumnName("email");
+                        .HasColumnName("email")
+                        .HasAnnotation("Relational:JsonPropertyName", "email");
 
                     b.Property<DateTime?>("JoinDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("join_date")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                        .HasAnnotation("Relational:JsonPropertyName", "join_date");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -263,7 +330,8 @@ namespace WarehouseManagerServer.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)")
-                        .HasColumnName("username");
+                        .HasColumnName("username")
+                        .HasAnnotation("Relational:JsonPropertyName", "username");
 
                     b.HasKey("UserId")
                         .HasName("users_pkey");
@@ -282,7 +350,8 @@ namespace WarehouseManagerServer.Migrations
                     b.Property<int>("WarehouseId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasColumnName("warehouse_id");
+                        .HasColumnName("warehouse_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "warehouse_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("WarehouseId"));
 
@@ -290,7 +359,8 @@ namespace WarehouseManagerServer.Migrations
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)")
-                        .HasColumnName("name");
+                        .HasColumnName("name")
+                        .HasAnnotation("Relational:JsonPropertyName", "name");
 
                     b.HasKey("WarehouseId")
                         .HasName("warehouses_pkey");
@@ -337,6 +407,27 @@ namespace WarehouseManagerServer.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("WarehouseManagerServer.Models.Entities.Permission", b =>
+                {
+                    b.HasOne("WarehouseManagerServer.Models.Entities.User", "User")
+                        .WithMany("Permissions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("permission_user_id_fkey");
+
+                    b.HasOne("WarehouseManagerServer.Models.Entities.Warehouse", "Warehouse")
+                        .WithMany("Permissions")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("permission_warehouse_id_fkey");
+
+                    b.Navigation("User");
+
+                    b.Navigation("Warehouse");
+                });
+
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.Product", b =>
                 {
                     b.HasOne("WarehouseManagerServer.Models.Entities.Category", "Category")
@@ -363,6 +454,17 @@ namespace WarehouseManagerServer.Migrations
                     b.Navigation("Supplier");
 
                     b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("WarehouseManagerServer.Models.Entities.RecoveryCode", b =>
+                {
+                    b.HasOne("WarehouseManagerServer.Models.Entities.User", "User")
+                        .WithOne("RecoveryCode")
+                        .HasForeignKey("WarehouseManagerServer.Models.Entities.RecoveryCode", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.RefreshToken", b =>
@@ -405,12 +507,18 @@ namespace WarehouseManagerServer.Migrations
 
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.User", b =>
                 {
+                    b.Navigation("Permissions");
+
+                    b.Navigation("RecoveryCode");
+
                     b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.Warehouse", b =>
                 {
                     b.Navigation("Categories");
+
+                    b.Navigation("Permissions");
 
                     b.Navigation("Products");
 

@@ -18,12 +18,12 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
         return await context.Warehouses.FindAsync(warehouseId);
     }
 
-    public async Task<List<UserDto>> GetWarehouseUsersAsync(int warehouseId)
+    public async Task<List<User>> GetWarehouseUsersAsync(int warehouseId)
     {
         return await context.Warehouses
             .Where(e => e.WarehouseId == warehouseId)
             .SelectMany(p => p.Users)
-            .Select(u => new UserDto
+            .Select(u => new User
             {
                 UserId = u.UserId,
                 Username = u.Username,

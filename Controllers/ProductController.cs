@@ -33,18 +33,7 @@ public class ProductController(IProductService service) : ControllerBase
     public async Task<IActionResult> GetWarehouseProducts([FromRoute] int id)
     {
         var result = await service.GetByWarehouseAsync(id);
-        return Ok(result.Select(content => new
-        {
-            content.ProductId,
-            content.Name,
-            Category = content.Category == null ? "": content.Category.Name,
-            Supplier = content.Supplier == null ? "": content.Supplier.Name,
-            content.Quantity,
-            content.ExpiryDate,
-            content.WarehouseId,
-            content.CategoryId,
-            content.SupplierId
-        }));
+        return Ok(result.Select(Serialize));
     }
 
     [WarehousePermission(PermissionEnum.Read)]
@@ -55,18 +44,7 @@ public class ProductController(IProductService service) : ControllerBase
         {
             var content = await service.GetByKeyAsync(id);
             if (content == null) return NotFound();
-            return Ok(new
-            {
-                content.ProductId,
-                content.Name,
-                Category = content.Category == null ? "": content.Category.Name,
-                Supplier = content.Supplier == null ? "": content.Supplier.Name,
-                content.Quantity,
-                content.ExpiryDate,
-                content.WarehouseId,
-                content.CategoryId,
-                content.SupplierId
-            });
+            return Ok(Serialize(content));
         }
         catch (Exception e)
         {
@@ -89,18 +67,7 @@ public class ProductController(IProductService service) : ControllerBase
             return CreatedAtAction(
                 nameof(GetById), 
                 new { id = newContent.ProductId }, 
-                new
-                {
-                    newContent.ProductId,
-                    newContent.Name,
-                    Category = newContent.Category == null ? "": newContent.Category.Name,
-                    Supplier = newContent.Supplier == null ? "": newContent.Supplier.Name,
-                    newContent.Quantity,
-                    newContent.ExpiryDate,
-                    newContent.WarehouseId,
-                    newContent.CategoryId,
-                    newContent.SupplierId
-                });
+                Serialize(newContent));
         }
         catch (Exception e)
         {
@@ -145,5 +112,21 @@ public class ProductController(IProductService service) : ControllerBase
         {
             return StatusCode(500, e.Message);
         }
+    }
+
+    private object Serialize(Product content)
+    {
+        return new
+        {
+            product_id = content.ProductId,
+            name = content.Name,
+            category = content.Category == null ? "" : content.Category.Name,
+            supplier = content.Supplier == null ? "" : content.Supplier.Name,
+            quantity = content.Quantity,
+            expiry_date = content.ExpiryDate,
+            warehouse_id = content.WarehouseId,
+            category_id = content.CategoryId,
+            supplier_id = content.SupplierId
+        };
     }
 }

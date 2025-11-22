@@ -7,14 +7,14 @@ using WarehouseManagerServer.Services.Interfaces;
 namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
-[Route("api/warehouses/{id:int:min(1)}/sync")]
+[Route("api/warehouses/{warehouseId:int:min(1)}/sync")]
 public class WarehouseSyncController(IWarehouseService service) : Controller
 {
     [WarehousePermission((PermissionEnum.Write))]
     [HttpPost]
-    public async Task<IActionResult> Sync([FromRoute] int id, [FromBody] WarehouseSyncDto syncDto)
+    public async Task<IActionResult> Sync([FromRoute] int warehouseId, [FromBody] WarehouseSyncDto syncDto)
     {
-        var (success, err) = await service.Sync(id, syncDto);
+        var (success, err) = await service.Sync(warehouseId, syncDto);
         return success ? Ok("Warehouse data synced successfully.") : StatusCode(500, $"Sync failed: {err}");
     }
 }

@@ -10,7 +10,7 @@ public class WarehouseService(IWarehouseRepository warehouseRepository) : IWareh
     public Task<Warehouse?> GetByKeyAsync(int warehouseId)
         => warehouseRepository.GetByKeyAsync(warehouseId);
 
-    public Task<List<UserDto>> GetWarehouseUsersAsync(int warehouseId)
+    public Task<List<User>> GetWarehouseUsersAsync(int warehouseId)
         => warehouseRepository.GetWarehouseUsersAsync(warehouseId);
 
     public Task<Warehouse> AddAsync(Warehouse warehouse)
