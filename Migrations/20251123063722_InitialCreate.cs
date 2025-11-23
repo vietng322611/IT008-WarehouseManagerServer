@@ -22,8 +22,8 @@ namespace WarehouseManagerServer.Migrations
                 {
                     user_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    username = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     email = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
+                    fullname = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     password_hash = table.Column<string>(type: "text", nullable: false),
                     join_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
@@ -294,12 +294,6 @@ namespace WarehouseManagerServer.Migrations
                 name: "IX_users_email",
                 table: "users",
                 column: "email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_users_username",
-                table: "users",
-                column: "username",
                 unique: true);
 
             migrationBuilder.CreateIndex(
