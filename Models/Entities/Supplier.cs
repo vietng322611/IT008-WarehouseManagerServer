@@ -10,9 +10,10 @@ public class Supplier
     [JsonPropertyName("name")] public string Name { get; set; } = null!;
     [JsonPropertyName("contact_info")] public string? ContactInfo { get; set; }
 
-    public virtual Warehouse Warehouse { get; set; } = null!;
+    [JsonPropertyName("product_count")]
+    [NotMapped]
+    public int ProductCount { get; set; }
 
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
-
-    [NotMapped] public int ProductCount { get; set; }
+    [JsonIgnore] public virtual Warehouse Warehouse { get; set; } = null!;
+    [JsonIgnore] public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

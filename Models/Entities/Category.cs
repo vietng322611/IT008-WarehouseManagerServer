@@ -8,7 +8,6 @@ public class Category
     [JsonPropertyName("warehouse_id")] public int WarehouseId { get; set; }
     [JsonPropertyName("name")] public string Name { get; set; } = null!;
 
-    public virtual Warehouse Warehouse { get; set; } = null!;
-
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+    [JsonIgnore] public virtual Warehouse Warehouse { get; set; } = null!;
+    [JsonIgnore] public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

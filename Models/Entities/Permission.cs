@@ -11,7 +11,6 @@ public class Permission
     [JsonPropertyName("user_permissions")]
     public ICollection<PermissionEnum> UserPermissions { get; set; } = new List<PermissionEnum>();
 
-    public virtual User User { get; set; } = null!;
-
-    public virtual Warehouse Warehouse { get; set; } = null!;
+    [JsonIgnore] public virtual User User { get; set; } = null!;
+    [JsonIgnore] public virtual Warehouse Warehouse { get; set; } = null!;
 }

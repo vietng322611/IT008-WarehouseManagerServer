@@ -11,5 +11,5 @@ public class Movement
     [JsonPropertyName("movement_type")] public MovementTypeEnum MovementType { get; set; }
     [JsonPropertyName("date")] public DateTime? Date { get; set; }
 
-    public virtual Product Product { get; set; } = null!;
+    [JsonIgnore] public virtual Product Product { get; set; } = null!;
 }
