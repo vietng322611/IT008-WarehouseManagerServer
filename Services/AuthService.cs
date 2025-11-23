@@ -31,22 +31,23 @@ public class AuthService(
         if (existedUser != null)
             return RegisterEnum.EmailAlreadyExists;
 
-        if (email.EndsWith('.')) {
-            return RegisterEnum.InvalidEmail;
-        }
-        try {
+        if (email.EndsWith('.')) return RegisterEnum.InvalidEmail;
+
+        try
+        {
             var addr = new MailAddress(email);
             if (addr.Address != email)
                 return RegisterEnum.InvalidEmail;
         }
-        catch {
+        catch
+        {
             return RegisterEnum.InvalidEmail;
         }
-        
+
         var user = new User
         {
             FullName = fullName,
-            Email = email,
+            Email = email
         };
         user.PasswordHash = passwordHasher.HashPassword(user, password);
 
@@ -71,7 +72,7 @@ public class AuthService(
         var passwordHash = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
         return passwordHash == PasswordVerificationResult.Success ? user : null;
     }
-    
+
     public (string, DateTime) GenerateAccessToken(User user)
     {
         var claims = new List<Claim>
@@ -84,11 +85,11 @@ public class AuthService(
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expires = DateTime.UtcNow.AddMinutes(double.Parse(config["Jwt:AccessTokenExpirationMinutes"]!));
-        
+
         var token = new JwtSecurityToken(
-            issuer: config["Jwt:Issuer"],
-            audience: config["Jwt:Audience"],
-            claims: claims,
+            config["Jwt:Issuer"],
+            config["Jwt:Audience"],
+            claims,
             expires: expires,
             signingCredentials: credentials
         );
@@ -106,7 +107,7 @@ public class AuthService(
         {
             Token = Convert.ToBase64String(randomBytes),
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(7),
+            ExpiresAt = DateTime.UtcNow.AddDays(7)
         };
 
         user.RefreshTokens.Add(refreshToken);
@@ -138,9 +139,10 @@ public class AuthService(
         {
             Credentials = new NetworkCredential(
                 fromAddress.Address,
-                config["MailService:Password"]), EnableSsl = true
+                config["MailService:Password"]),
+            EnableSsl = true
         };
-        
+
         var code = await GenerateUniqueCode(user.UserId);
         using var message = new MailMessage(fromAddress, toAddress);
         message.Subject = "Recovery code";
@@ -154,7 +156,7 @@ public class AuthService(
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Code == code);
         if (recoveryCode == null) return null;
-        
+
         context.RecoveryCodes.Remove(recoveryCode);
         await context.SaveChangesAsync();
 
@@ -170,7 +172,7 @@ public class AuthService(
     private async Task<string> GenerateUniqueCode(int userId)
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        
+
         for (var attempt = 0; attempt < 5; attempt++)
         {
             var bytes = new byte[7];
@@ -190,7 +192,9 @@ public class AuthService(
                 await context.SaveChangesAsync();
                 return code;
             }
-            catch (DbUpdateException) {} // retry
+            catch (DbUpdateException)
+            {
+            } // retry
         }
 
         throw new Exception("Failed to generate a unique recovery code after several attempts.");

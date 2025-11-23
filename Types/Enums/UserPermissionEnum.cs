@@ -4,5 +4,5 @@ public enum UserPermissionEnum
 {
     Authenticated,
     SameUser,
-    Admin,
+    Admin
 }

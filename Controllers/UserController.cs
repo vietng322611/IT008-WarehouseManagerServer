@@ -11,18 +11,6 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/users")]
 public class UserController(IUserService service) : ControllerBase
 {
-    [HttpGet("json")]
-    public IActionResult GetSampleJson()
-    {
-        return Ok(new User
-        {
-            UserId = 0,
-            FullName = "User",
-            Email = "User@gmail.com",
-            JoinDate = DateTime.Now
-        });
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -59,7 +47,7 @@ public class UserController(IUserService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
+
     [UserPermission(UserPermissionEnum.SameUser)]
     [HttpGet("{userId:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int userId)

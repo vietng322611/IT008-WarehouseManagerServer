@@ -9,20 +9,32 @@ namespace WarehouseManagerServer.Services;
 public class PermissionService(IPermissionRepository permissionRepository) : IPermissionService
 {
     public Task<bool> HasPermissionAsync(int userId, int warehouseId, PermissionEnum requiredPermission)
-        => permissionRepository.HasPermissionAsync(userId, warehouseId, requiredPermission);
+    {
+        return permissionRepository.HasPermissionAsync(userId, warehouseId, requiredPermission);
+    }
 
     public Task<Permission?> GetByKeyAsync(int userId, int warehouseId)
-        => permissionRepository.GetByKeyAsync(userId, warehouseId);
+    {
+        return permissionRepository.GetByKeyAsync(userId, warehouseId);
+    }
 
     public Task<List<Permission>> FilterAsync(params Expression<Func<Permission, bool>>[] filters)
-        => permissionRepository.FilterAsync(filters);
+    {
+        return permissionRepository.FilterAsync(filters);
+    }
 
     public Task<Permission> AddAsync(Permission permission)
-        => permissionRepository.AddAsync(permission);
+    {
+        return permissionRepository.AddAsync(permission);
+    }
 
     public Task<Permission?> UpdateAsync(Permission permission)
-        => permissionRepository.UpdateAsync(permission);
+    {
+        return permissionRepository.UpdateAsync(permission);
+    }
 
     public Task<bool> DeleteAsync(int userId, int warehouseId)
-        => permissionRepository.DeleteAsync(userId, warehouseId);
+    {
+        return permissionRepository.DeleteAsync(userId, warehouseId);
+    }
 }

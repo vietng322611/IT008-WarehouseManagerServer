@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using WarehouseManagerServer.Models.Entities;
+﻿using WarehouseManagerServer.Models.Entities;
 
 namespace WarehouseManagerServer.Services.Interfaces;
 

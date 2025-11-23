@@ -10,20 +10,6 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/warehouse/{warehouseId:int:min(1)}/suppliers")]
 public class SupplierController(ISupplierService service) : ControllerBase
 {
-    [HttpGet("json")]
-    public IActionResult GetSampleJson()
-    {
-        var model = new
-        {
-            supplier_id = 0,
-            warehouse_id = 0,
-            name = "Supplier",
-            contact_info = "Ho Chi Minh City, Vietnam",
-            total_imports = 0
-        };
-        return Ok(model);
-    }
-
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
     public async Task<IActionResult> GetWarehouseSuppliers([FromRoute] int id)
