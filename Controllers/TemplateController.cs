@@ -80,15 +80,15 @@ public class TemplateController : ControllerBase
     {
         var model = new
         {
-            ProductId = 1,
-            Name = "Product",
-            Category = "Category",
-            Supplier = "Supplier",
-            Quantity = 1,
-            ExpiryDate = DateTime.Now,
-            WarehouseId = 1,
-            CategoryId = 1,
-            SupplierId = 1
+            product_id = 1,
+            name = "Product",
+            category = "Category",
+            supplier = "Supplier",
+            quantity = 1,
+            expiry_date = DateTime.Now,
+            warehouse_id = 1,
+            category_id = 1,
+            supplier_id = 1
         };
         return Ok(model);
     }
