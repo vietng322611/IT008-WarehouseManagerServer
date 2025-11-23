@@ -23,20 +23,13 @@ public class AuthService(
 
     public async Task<RegisterEnum> RegisterUser(RegisterDto dto, string password)
     {
-        var username = dto.Username.Trim();
+        var fullName = dto.FullName.Trim();
         var email = dto.Email.Trim();
         var existedUser = await context.Users
-            .Where(e => 
-                e.Username == username ||
-                e.Email == email)
+            .Where(e => e.Email == email)
             .FirstOrDefaultAsync();
         if (existedUser != null)
-        {
-            if (existedUser.Username == username)
-                return RegisterEnum.UserAlreadyExists;
-            if (existedUser.Email == email)
-                return RegisterEnum.EmailAlreadyExists;
-        }
+            return RegisterEnum.EmailAlreadyExists;
 
         if (email.EndsWith('.')) {
             return RegisterEnum.InvalidEmail;
@@ -52,7 +45,7 @@ public class AuthService(
         
         var user = new User
         {
-            Username = username,
+            FullName = fullName,
             Email = email,
         };
         user.PasswordHash = passwordHasher.HashPassword(user, password);
@@ -71,8 +64,8 @@ public class AuthService(
         );
         await context.SaveChangesAsync();
 
-        var username = dto.Username.Trim();
-        var user = await context.Users.Where(e => e.Username == username).FirstOrDefaultAsync();
+        var email = dto.Email.Trim();
+        var user = await context.Users.Where(e => e.Email == email).FirstOrDefaultAsync();
         if (user == null) return null;
 
         var passwordHash = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
@@ -84,9 +77,8 @@ public class AuthService(
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
-            new(JwtRegisteredClaimNames.Email, user.Email),
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(ClaimTypes.Name, user.Username)
+            new(ClaimTypes.Name, user.FullName)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
@@ -141,7 +133,7 @@ public class AuthService(
     public async Task SendRecoveryCode(User user)
     {
         var fromAddress = new MailAddress(config["MailService:Address"]!, "WarehouseManager App");
-        var toAddress = new MailAddress(user.Email, user.Username);
+        var toAddress = new MailAddress(user.Email, user.FullName);
         var smtp = new SmtpClient("smtp.gmail.com", 587)
         {
             Credentials = new NetworkCredential(

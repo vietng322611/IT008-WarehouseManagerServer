@@ -13,8 +13,8 @@ public class UserRepository(WarehouseContext context) : IUserRepository
         return await context.Users.Select(user => new User
         {
             UserId = user.UserId,
-            Username = user.Username,
             Email = user.Email,
+            FullName = user.FullName,
             JoinDate = user.JoinDate
         }).ToListAsync();
     }
@@ -30,8 +30,8 @@ public class UserRepository(WarehouseContext context) : IUserRepository
         var user = await context.Users.Where(condition).Select(user => new User
         {
             UserId = user.UserId,
-            Username = user.Username,
             Email = user.Email,
+            FullName = user.FullName,
             JoinDate = user.JoinDate
         }).FirstOrDefaultAsync();
 

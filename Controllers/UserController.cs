@@ -17,7 +17,7 @@ public class UserController(IUserService service) : ControllerBase
         return Ok(new User
         {
             UserId = 0,
-            Username = "User",
+            FullName = "User",
             Email = "User@gmail.com",
             JoinDate = DateTime.Now
         });
@@ -49,7 +49,7 @@ public class UserController(IUserService service) : ControllerBase
             return Ok(new User
             {
                 UserId = content.UserId,
-                Username = content.Username,
+                FullName = content.FullName,
                 Email = content.Email,
                 JoinDate = content.JoinDate
             });
@@ -71,7 +71,7 @@ public class UserController(IUserService service) : ControllerBase
             return Ok(new User
             {
                 UserId = content.UserId,
-                Username = content.Username,
+                FullName = content.FullName,
                 Email = content.Email,
                 JoinDate = content.JoinDate
             });
@@ -112,7 +112,7 @@ public class UserController(IUserService service) : ControllerBase
                 new User
                 {
                     UserId = content.UserId,
-                    Username = content.Username,
+                    FullName = content.FullName,
                     Email = content.Email,
                     JoinDate = content.JoinDate
                 });
