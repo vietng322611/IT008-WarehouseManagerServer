@@ -13,11 +13,11 @@ public class PermissionRepository(WarehouseContext context) : IPermissionReposit
     {
         var permission = await context.Permissions
             .FirstOrDefaultAsync(p => p.UserId == userId && p.WarehouseId == warehouseId);
-        
+
         return permission != null && (
-            permission.UserPermissions.Contains(requiredPermission) || 
+            permission.UserPermissions.Contains(requiredPermission) ||
             permission.UserPermissions.Contains(PermissionEnum.Owner)
-            );
+        );
     }
 
     public async Task<Permission?> GetByKeyAsync(int userId, int warehouseId)

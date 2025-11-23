@@ -7,7 +7,7 @@ namespace WarehouseManagerServer.Attributes;
 
 public class UserPermissionAttribute(
     UserPermissionEnum permission
-    ) : Attribute, IAsyncAuthorizationFilter
+) : Attribute, IAsyncAuthorizationFilter
 {
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {

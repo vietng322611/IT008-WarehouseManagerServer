@@ -12,39 +12,8 @@ namespace WarehouseManagerServer.Controllers;
 public class AuthController(
     IAuthService service,
     IUserService userService
-    ) : ControllerBase
+) : ControllerBase
 {
-    [HttpGet("register/json")]
-    public IActionResult GetRegisterJson()
-    {
-        return Ok(new RegisterDto()
-        {
-            FullName = "John Smith",
-            Email = "Email@gmail.com",
-            Password = "Password"
-        });
-    }
-
-    [HttpGet("login/json")]
-    public IActionResult GetLoginJson()
-    {
-        return Ok(new LoginDto
-        {
-            Email = "Email@gmail.com",
-            Password = "Password"
-        });
-    }
-
-    [HttpGet("refresh/json")]
-    [HttpGet("logout/json")]
-    public IActionResult GetRefreshJson()
-    {
-        return Ok(new RefreshDto
-        {
-            RefreshToken = "RefreshToken"
-        });
-    }
-
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
@@ -54,7 +23,7 @@ public class AuthController(
             return result switch
             {
                 RegisterEnum.EmailAlreadyExists => BadRequest(new { message = "Email already exists" }),
-                RegisterEnum.InvalidEmail =>  BadRequest(new { message = "Invalid Email" }),
+                RegisterEnum.InvalidEmail => BadRequest(new { message = "Invalid Email" }),
                 _ => Ok(new { message = "Registered successfully" })
             };
         }
@@ -149,7 +118,7 @@ public class AuthController(
             var user = await userService.GetByUniqueAsync(u => u.Email == dto.Email);
             if (user == null)
                 return BadRequest(new { message = "Email not associated with any account" });
-            
+
             await service.SendRecoveryCode(user);
             return Ok("Sent recovery code to email: " + dto.Email);
         }
@@ -171,7 +140,7 @@ public class AuthController(
             await service.ChangePassword(user, dto.NewPassword);
             return Ok(new { message = "Password successfully reset" });
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
             return StatusCode(500, e.Message);
         }

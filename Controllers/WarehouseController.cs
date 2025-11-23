@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
@@ -12,19 +13,8 @@ namespace WarehouseManagerServer.Controllers;
 public class WarehouseController(
     IWarehouseService service,
     IPermissionService permissionService
-    ) : Controller
+) : Controller
 {
-    [HttpGet("json")]
-    public IActionResult GetSampleJson()
-    {
-        var model = new Warehouse
-        {
-            WarehouseId = 0,
-            Name = "Warehouse"
-        };
-        return Ok(model);
-    }
-
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{warehouseId:int:min(1)}")]
     public async Task<IActionResult> GetById([FromRoute] int warehouseId)
@@ -64,18 +54,18 @@ public class WarehouseController(
         {
             content.WarehouseId = 0; // Ignore id in input
             var newContent = await service.AddAsync(content);
-            
-            var userIdClaim = HttpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+
+            var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
                 return Unauthorized();
 
             var userId = int.Parse(userIdClaim.Value);
-            
+
             await permissionService.AddAsync(new Permission
             {
                 UserId = userId,
                 WarehouseId = newContent.WarehouseId,
-                UserPermissions = [ PermissionEnum.Owner ]
+                UserPermissions = [PermissionEnum.Owner]
             });
             return CreatedAtAction(nameof(GetById), new { id = newContent.WarehouseId }, newContent);
         }

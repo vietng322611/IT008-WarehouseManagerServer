@@ -4,6 +4,5 @@ namespace WarehouseManagerServer.Models.DTOs;
 
 public class RefreshDto
 {
-    [JsonPropertyName(("refresh_token"))]
-    public string RefreshToken { get; set; } = "";
+    [JsonPropertyName("refresh_token")] public string RefreshToken { get; set; } = "";
 }

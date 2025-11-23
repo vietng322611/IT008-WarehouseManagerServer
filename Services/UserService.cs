@@ -8,21 +8,37 @@ namespace WarehouseManagerServer.Services;
 public class UserService(IUserRepository userRepository) : IUserService
 {
     public Task<List<User>> GetAllAsync()
-        => userRepository.GetAllAsync();
+    {
+        return userRepository.GetAllAsync();
+    }
 
     public Task<User?> GetByKeyAsync(int userId)
-        => userRepository.GetByKeyAsync(userId);
+    {
+        return userRepository.GetByKeyAsync(userId);
+    }
+
     public Task<User?> GetByUniqueAsync(Expression<Func<User, bool>> condition)
-        => userRepository.GetByUniqueAsync(condition);
+    {
+        return userRepository.GetByUniqueAsync(condition);
+    }
+
     public Task<List<Warehouse>> GetUserWarehousesAsync(int userId)
-        => userRepository.GetUserWarehousesAsync(userId);
+    {
+        return userRepository.GetUserWarehousesAsync(userId);
+    }
 
     public Task<User> AddAsync(User user)
-        => userRepository.AddAsync(user);
+    {
+        return userRepository.AddAsync(user);
+    }
 
     public Task<User?> UpdateAsync(User user)
-        => userRepository.UpdateAsync(user);
+    {
+        return userRepository.UpdateAsync(user);
+    }
 
     public Task<bool> DeleteAsync(int userId)
-        => userRepository.DeleteAsync(userId);
+    {
+        return userRepository.DeleteAsync(userId);
+    }
 }

@@ -21,6 +21,7 @@
 ---
 
 ## How to get JSON template
+
 JSON templates can be accessed by sending a `GET` request to `api/[endpoint]/json`  
 For Authentication endpoints: `api/Auth/[endpoint]/json`
 

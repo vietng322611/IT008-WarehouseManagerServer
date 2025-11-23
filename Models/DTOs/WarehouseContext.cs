@@ -27,8 +27,10 @@ public partial class WarehouseContext : DbContext
     public virtual DbSet<Permission> Permissions { get; set; }
 
     public virtual DbSet<Warehouse> Warehouses { get; set; }
-    
+
     public virtual DbSet<RecoveryCode> RecoveryCodes { get; set; }
+
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -147,9 +149,9 @@ public partial class WarehouseContext : DbContext
             entity.Property(e => e.FullName)
                 .HasMaxLength(40)
                 .HasColumnName("fullname");
-            
+
             entity.HasIndex(e => e.Email).IsUnique();
-            
+
             entity.HasMany(e => e.Warehouses)
                 .WithMany(p => p.Users)
                 .UsingEntity(j => j.ToTable("UserWarehouses"));
@@ -166,7 +168,7 @@ public partial class WarehouseContext : DbContext
             entity.Property(e => e.UserPermissions)
                 .HasColumnName("user_permissions")
                 .HasColumnType("permission_enum[]");
-            
+
             entity.HasOne(d => d.User).WithMany(p => p.Permissions)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.Cascade)
@@ -205,9 +207,9 @@ public partial class WarehouseContext : DbContext
                 .HasColumnName("code");
             entity.Property(e => e.CreatedAt)
                 .HasColumnName("created_at");
-            
+
             entity.HasIndex(e => e.Code).IsUnique();
-            
+
             entity.HasOne(e => e.User)
                 .WithOne(p => p.RecoveryCode)
                 .HasForeignKey<RecoveryCode>(e => e.UserId)
@@ -216,8 +218,6 @@ public partial class WarehouseContext : DbContext
 
         OnModelCreatingPartial(modelBuilder);
     }
-
-    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

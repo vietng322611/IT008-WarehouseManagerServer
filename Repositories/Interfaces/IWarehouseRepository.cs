@@ -1,5 +1,4 @@
-﻿using WarehouseManagerServer.Models.DTOs;
-using WarehouseManagerServer.Models.Entities;
+﻿using WarehouseManagerServer.Models.Entities;
 
 namespace WarehouseManagerServer.Repositories.Interfaces;
 
@@ -10,5 +9,4 @@ public interface IWarehouseRepository
     Task<Warehouse> AddAsync(Warehouse warehouse);
     Task<Warehouse?> UpdateAsync(Warehouse warehouse);
     Task<bool> DeleteAsync(int warehouseId);
-    Task<(bool, string)> Sync(int warehouseId, WarehouseSyncDto syncDto);
 }

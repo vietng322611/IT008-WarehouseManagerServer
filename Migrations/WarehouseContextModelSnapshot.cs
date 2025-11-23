@@ -314,6 +314,13 @@ namespace WarehouseManagerServer.Migrations
                         .HasColumnName("email")
                         .HasAnnotation("Relational:JsonPropertyName", "email");
 
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("fullname")
+                        .HasAnnotation("Relational:JsonPropertyName", "full_name");
+
                     b.Property<DateTime?>("JoinDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -326,20 +333,10 @@ namespace WarehouseManagerServer.Migrations
                         .HasColumnType("text")
                         .HasColumnName("password_hash");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
-                        .HasColumnName("username")
-                        .HasAnnotation("Relational:JsonPropertyName", "username");
-
                     b.HasKey("UserId")
                         .HasName("users_pkey");
 
                     b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("users", (string)null);

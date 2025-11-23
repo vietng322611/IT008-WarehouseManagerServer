@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WarehouseManagerServer.Models.DTOs;
+﻿using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Entities;
 
 namespace WarehouseManagerServer.Extensions;
