@@ -144,9 +144,12 @@ public partial class WarehouseContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("join_date");
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
-            entity.Property(e => e.Username)
+            entity.Property(e => e.FullName)
                 .HasMaxLength(40)
-                .HasColumnName("username");
+                .HasColumnName("fullname");
+            
+            entity.HasIndex(e => e.Email).IsUnique();
+            
             entity.HasMany(e => e.Warehouses)
                 .WithMany(p => p.Users)
                 .UsingEntity(j => j.ToTable("UserWarehouses"));

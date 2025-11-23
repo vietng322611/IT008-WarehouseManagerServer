@@ -19,7 +19,7 @@ public class AuthController(
     {
         return Ok(new RegisterDto()
         {
-            Username = "Username",
+            FullName = "John Smith",
             Email = "Email@gmail.com",
             Password = "Password"
         });
@@ -30,7 +30,7 @@ public class AuthController(
     {
         return Ok(new LoginDto
         {
-            Username = "Username",
+            Email = "Email@gmail.com",
             Password = "Password"
         });
     }
@@ -53,7 +53,6 @@ public class AuthController(
             var result = await service.RegisterUser(dto, dto.Password);
             return result switch
             {
-                RegisterEnum.UserAlreadyExists => BadRequest(new { message = "User already exists" }),
                 RegisterEnum.EmailAlreadyExists => BadRequest(new { message = "Email already exists" }),
                 RegisterEnum.InvalidEmail =>  BadRequest(new { message = "Invalid Email" }),
                 _ => Ok(new { message = "Registered successfully" })
@@ -192,7 +191,7 @@ public class AuthController(
             // ISTG this looks dumb but reuse code should be good right?
             user = await service.ValidateUser(new LoginDto
             {
-                Username = user.Username,
+                Email = user.FullName,
                 Password = dto.OldPassword
             });
             if (user == null)

@@ -26,7 +26,7 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
             .Select(u => new User
             {
                 UserId = u.UserId,
-                Username = u.Username,
+                FullName = u.FullName,
                 Email = u.Email,
                 JoinDate = u.JoinDate
             })

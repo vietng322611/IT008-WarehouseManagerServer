@@ -3,7 +3,6 @@
 public enum RegisterEnum
 {
     Success,
-    UserAlreadyExists,
     EmailAlreadyExists,
     InvalidEmail
 }
