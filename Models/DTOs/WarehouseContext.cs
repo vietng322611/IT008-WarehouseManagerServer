@@ -189,6 +189,9 @@ public partial class WarehouseContext : DbContext
             entity.Property(e => e.Name)
                 .HasMaxLength(40)
                 .HasColumnName("name");
+            entity.Property(e => e.CreateDate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnName("create_date");
             entity.HasMany(e => e.Users)
                 .WithMany(p => p.Warehouses);
         });
