@@ -10,24 +10,6 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/warehouse/{warehouseId:int:min(1)}/products")]
 public class ProductController(IProductService service) : ControllerBase
 {
-    [HttpGet("json")]
-    public IActionResult GetSampleJson()
-    {
-        var model = new
-        {
-            ProductId = 1,
-            Name = "Product",
-            Category = "Category",
-            Supplier = "Supplier",
-            Quantity = 1,
-            ExpiryDate = DateTime.Now,
-            WarehouseId = 1,
-            CategoryId = 1,
-            SupplierId = 1
-        };
-        return Ok(model);
-    }
-
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
     public async Task<IActionResult> GetWarehouseProducts([FromRoute] int id)
@@ -60,13 +42,13 @@ public class ProductController(IProductService service) : ControllerBase
         {
             content.ProductId = 0; // Ignore id in input
             await service.AddAsync(content);
-            
+
             var newContent = await service.GetByKeyAsync(content.ProductId);
             if (newContent == null) return StatusCode(500, "Error adding new content");
-            
+
             return CreatedAtAction(
-                nameof(GetById), 
-                new { id = newContent.ProductId }, 
+                nameof(GetById),
+                new { id = newContent.ProductId },
                 Serialize(newContent));
         }
         catch (Exception e)

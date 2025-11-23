@@ -10,21 +10,6 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/warehouse/{warehouseId:int:min(1)}/movements")]
 public class MovementController(IMovementService service) : ControllerBase
 {
-    [HttpGet("json")]
-    public IActionResult GetSampleJson()
-    {
-        var model = new
-        {
-            movement_id = 0,
-            product = "Product",
-            quantity = 1,
-            movement_type = MovementTypeEnum.In,
-            date = DateTime.Now,
-            productId = 0
-        };
-        return Ok(model);
-    }
-
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
     public async Task<IActionResult> GetWarehouseMovements([FromRoute] int id)
@@ -57,12 +42,12 @@ public class MovementController(IMovementService service) : ControllerBase
         {
             content.MovementId = 0; // Ignore id in input
             await service.AddAsync(content);
-            
+
             var newContent = await service.GetByKeyAsync(content.MovementId);
             if (newContent == null) return StatusCode(500, "Error adding new content");
-            
+
             return CreatedAtAction(
-                nameof(GetById), 
+                nameof(GetById),
                 new { id = newContent.MovementId },
                 Serialize(newContent));
         }

@@ -27,18 +27,6 @@ public class PermissionController(IPermissionService service) : ControllerBase
     //     return Ok(content);
     // }
 
-    [HttpGet("json")]
-    public IActionResult GetSampleJson()
-    {
-        var model = new Permission
-        {
-            UserId = 0,
-            WarehouseId = 0,
-            UserPermissions = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
-        };
-        return Ok(model);
-    }
-
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
     public async Task<IActionResult> GetByIds([FromRoute] int userId, [FromRoute] int warehouseId)

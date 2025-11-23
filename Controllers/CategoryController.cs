@@ -10,18 +10,6 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/warehouse/{warehouseId:int:min(1)}/categories")]
 public class CategoryController(ICategoryService service) : ControllerBase
 {
-    [HttpGet("json")]
-    public IActionResult GetSampleJson()
-    {
-        var model = new Category
-        {
-            CategoryId = 0,
-            WarehouseId = 0,
-            Name = "Category",
-        };
-        return Ok(model);
-    }
-
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
     public async Task<IActionResult> GetWarehouseCategories([FromRoute] int id)
