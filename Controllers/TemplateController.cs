@@ -84,6 +84,7 @@ public class TemplateController : ControllerBase
             name = "Product",
             category = "Category",
             supplier = "Supplier",
+            unit_price = 1,
             quantity = 1,
             expiry_date = DateTime.Now,
             warehouse_id = 1,
