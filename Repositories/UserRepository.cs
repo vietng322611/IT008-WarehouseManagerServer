@@ -44,7 +44,9 @@ public class UserRepository(WarehouseContext context) : IUserRepository
             .Where(e => e.UserId == userId)
             .Select(e => new UserWarehousesDto
             {
-                Warehouse = e.Warehouse,
+                WarehouseId = e.WarehouseId,
+                Name = e.Warehouse.Name,
+                CreateDate = e.Warehouse.CreateDate,
                 Permissions = e.UserPermissions
             })
             .ToListAsync();

@@ -23,15 +23,9 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
             .Where(e => e.WarehouseId == warehouseId)
             .Select(u => new WarehouseUsersDto
             {
-                User = new User
-                {
-                    UserId = u.User.UserId,
-                    FullName = u.User.FullName,
-                    Email = u.User.Email,
-                    JoinDate = u.User.JoinDate
-                },
+                UserId = u.UserId,
+                FullName = u.User.FullName,
                 Permissions = u.UserPermissions
-                
             })
             .ToListAsync();
     }

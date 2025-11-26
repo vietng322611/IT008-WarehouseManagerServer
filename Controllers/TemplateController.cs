@@ -58,13 +58,8 @@ public class TemplateController : ControllerBase
     {
         var model = new WarehouseUsersDto
         {
-            User = new User
-            {
-                UserId = 0,
-                FullName = "User",
-                Email = "User@gmail.com",
-                JoinDate = DateTime.Now
-            },
+            UserId = 0,
+            FullName = "User",
             Permissions = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
         };
         return Ok(model);
@@ -87,12 +82,9 @@ public class TemplateController : ControllerBase
     {
         var model = new UserWarehousesDto
         {
-            Warehouse = new Warehouse
-            {
-                WarehouseId = 0,
-                Name = "Warehouse",
-                CreateDate = DateTime.Now,
-            },
+            WarehouseId = 0,
+            Name = "Warehouse",
+            CreateDate = DateTime.Now,
             Permissions = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
         };
         return Ok(model);

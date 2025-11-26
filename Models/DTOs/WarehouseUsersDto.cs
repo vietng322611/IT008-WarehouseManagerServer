@@ -6,6 +6,7 @@ namespace WarehouseManagerServer.Models.DTOs;
 
 public class WarehouseUsersDto
 {
-    [JsonPropertyName("user")] public required User User { get; set; }
-    [JsonPropertyName("permission")] public required ICollection<PermissionEnum> Permissions { get; set; }
+    [JsonPropertyName("user_id")] public required int UserId { get; set; }
+    [JsonPropertyName("fullName")] public required string FullName { get; set; }
+    [JsonPropertyName("permissions")] public required IEnumerable<PermissionEnum> Permissions { get; set; }
 }
