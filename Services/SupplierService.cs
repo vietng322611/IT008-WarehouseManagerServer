@@ -18,8 +18,8 @@ public class SupplierService(ISupplierRepository supplierRepository) : ISupplier
     public Task<Supplier?> UpdateAsync(Supplier supplier)
         => supplierRepository.UpdateAsync(supplier);
 
-    public Task UpsertSuppliers(List<Supplier> suppliers)
-        => supplierRepository.UpsertSuppliers(suppliers);
+    public Task UpsertAsync(List<Supplier> suppliers)
+        => supplierRepository.UpsertAsync(suppliers);
 
     public Task<bool> DeleteAsync(int supplierId)
         => supplierRepository.DeleteAsync(supplierId);

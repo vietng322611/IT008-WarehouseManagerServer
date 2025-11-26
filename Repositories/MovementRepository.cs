@@ -49,7 +49,7 @@ public class MovementRepository(WarehouseContext context) : IMovementRepository
         return movement;
     }
     
-    public async Task UpsertMovements(List<Movement> movements)
+    public async Task UpsertAsync(List<Movement> movements)
     {
         foreach (var movement in movements)
         {

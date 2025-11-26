@@ -10,6 +10,6 @@ public interface IMovementRepository
     Task<List<Movement>> FilterAsync(params Expression<Func<Movement, bool>>[] filters);
     Task<Movement> AddAsync(Movement movement);
     Task<Movement?> UpdateAsync(Movement movement);
-    Task UpsertMovements(List<Movement> movements);
+    Task UpsertAsync(List<Movement> movements);
     Task<bool> DeleteAsync(int movementId);
 }

@@ -55,7 +55,7 @@ public class SupplierRepository(WarehouseContext context) : ISupplierRepository
         return supplier;
     }
 
-    public async Task UpsertSuppliers(List<Supplier> suppliers)
+    public async Task UpsertAsync(List<Supplier> suppliers)
     {
         foreach (var supplier in suppliers)
         {

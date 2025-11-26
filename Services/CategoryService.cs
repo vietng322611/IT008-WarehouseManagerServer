@@ -18,8 +18,8 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
     public Task<Category?> UpdateAsync(Category category)
         => categoryRepository.UpdateAsync(category);
     
-    public Task UpsertCategories(List<Category> categories)
-        => categoryRepository.UpsertCategories(categories);
+    public Task UpsertAsync(List<Category> categories)
+        => categoryRepository.UpsertAsync(categories);
     
     public Task<bool> DeleteAsync(int categoryId)
         => categoryRepository.DeleteAsync(categoryId);

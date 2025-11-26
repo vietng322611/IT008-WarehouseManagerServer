@@ -37,7 +37,7 @@ public class CategoryRepository(WarehouseContext context) : ICategoryRepository
         return category;
     }
     
-    public async Task UpsertCategories(List<Category> categories)
+    public async Task UpsertAsync(List<Category> categories)
     {
         foreach (var category in categories)
         {

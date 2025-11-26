@@ -21,8 +21,8 @@ public class MovementService(IMovementRepository movementRepository) : IMovement
     public Task<Movement?> UpdateAsync(Movement movement)
         => movementRepository.UpdateAsync(movement);
 
-    public Task UpsertMovements(List<Movement> movements)
-        => movementRepository.UpsertMovements(movements);
+    public Task UpsertAsync(List<Movement> movements)
+        => movementRepository.UpsertAsync(movements);
 
     public Task<bool> DeleteAsync(int movementId)
         => movementRepository.DeleteAsync(movementId);
