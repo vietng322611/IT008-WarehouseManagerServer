@@ -2,6 +2,7 @@
 
 ## Table of Content
 
+- [How to run](#how-to-run)
 - [How to get Json template](#how-to-get-json-template)
 - [Authentication](#authentication)
 - [Category](#category)
@@ -14,16 +15,19 @@
 
 ---
 
-## How to get json template
+## How to run
 
-> Json templates are available at `api/[endpoint]/json`
+Prerequisite: Docker
+- Step 0: Start Docker
+- Step 1: Clone this repo
+- Step 2: Open the project folder
+- Step 3: Open a terminal here and run this command `docker compose up`
 
 ---
 
 ## How to get JSON template
 
-JSON templates can be accessed by sending a `GET` request to `api/[endpoint]/json`  
-For Authentication endpoints: `api/Auth/[endpoint]/json`
+JSON templates can be accessed by sending a `GET` request to `api/json`
 
 ---
 
