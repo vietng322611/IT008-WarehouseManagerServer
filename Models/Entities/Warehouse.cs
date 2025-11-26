@@ -6,7 +6,7 @@ public class Warehouse
 {
     [JsonPropertyName("warehouse_id")] public int WarehouseId { get; set; }
     [JsonPropertyName("name")] public string Name { get; set; } = null!;
-    [JsonPropertyName("create_date")] public DateTime CreateDate { get; set; }
+    [JsonPropertyName("create_date")] public DateTime CreateDate { get; set; } = DateTime.Now;
 
     [JsonIgnore] public virtual ICollection<Supplier> Suppliers { get; set; } = new List<Supplier>();
     [JsonIgnore] public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
