@@ -1,7 +1,13 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+﻿# -----------------------------
+# BASE IMAGE (small Mariner OS)
+# -----------------------------
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 5077
+
+# Create non-root user safely
+RUN adduser --uid 1001 --disabled-password appuser
+USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release

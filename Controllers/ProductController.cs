@@ -56,6 +56,21 @@ public class ProductController(IProductService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
+    
+    [WarehousePermission(PermissionEnum.Write)]
+    [HttpPost("upsert")]
+    public async Task<IActionResult> Upsert([FromBody] List<Product> contents)
+    {
+        try
+        {
+            await service.UpsertAsync(contents);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("{id:int:min(1)}")]
