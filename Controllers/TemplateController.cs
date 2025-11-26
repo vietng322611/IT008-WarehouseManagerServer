@@ -53,7 +53,7 @@ public class TemplateController : ControllerBase
         return Ok(model);
     }
 
-    [HttpGet("warehouses/users")]
+    [HttpGet("warehouse/user")]
     public IActionResult GetWarehouseUsersJson()
     {
         var model = new WarehouseUsersDto
@@ -77,7 +77,7 @@ public class TemplateController : ControllerBase
         return Ok(model);
     }
 
-    [HttpGet("users/warehouses")]
+    [HttpGet("user/warehouse")]
     public IActionResult GetUserWarehousesJson()
     {
         var model = new UserWarehousesDto

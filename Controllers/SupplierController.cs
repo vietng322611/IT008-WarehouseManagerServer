@@ -7,7 +7,7 @@ using WarehouseManagerServer.Services.Interfaces;
 namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
-[Route("api/warehouse/{warehouseId:int:min(1)}/suppliers")]
+[Route("api/warehouses/{warehouseId:int:min(1)}/suppliers")]
 public class SupplierController(ISupplierService service) : ControllerBase
 {
     [WarehousePermission(PermissionEnum.Read)]

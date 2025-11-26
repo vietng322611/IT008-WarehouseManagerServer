@@ -7,7 +7,7 @@ using WarehouseManagerServer.Services.Interfaces;
 namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
-[Route("api/warehouse/{warehouseId:int:min(1)}/products")]
+[Route("api/warehouses/{warehouseId:int:min(1)}/products")]
 public class ProductController(IProductService service) : ControllerBase
 {
     [WarehousePermission(PermissionEnum.Read)]
