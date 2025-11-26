@@ -7,30 +7,23 @@ namespace WarehouseManagerServer.Services;
 public class ProductService(IProductRepository productRepository) : IProductService
 {
     public Task<List<Product>> GetByWarehouseAsync(int warehouseId)
-    {
-        return productRepository.GetByWarehouseAsync(warehouseId);
-    }
+        => productRepository.GetByWarehouseAsync(warehouseId);
 
     public Task<Product?> GetByKeyAsync(int productId)
-    {
-        return productRepository.GetByKeyAsync(productId);
-    }
+        => productRepository.GetByKeyAsync(productId);
 
     // public Task<List<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters)
     //     => productRepository.FilterAsync(filters);
 
     public Task<Product> AddAsync(Product product)
-    {
-        return productRepository.AddAsync(product);
-    }
+        => productRepository.AddAsync(product);
 
     public Task<Product?> UpdateAsync(Product product)
-    {
-        return productRepository.UpdateAsync(product);
-    }
+        => productRepository.UpdateAsync(product);
+
+    public Task UpsertAsync(List<Product> products)
+        => productRepository.UpsertAsync(products);
 
     public Task<bool> DeleteAsync(int productId)
-    {
-        return productRepository.DeleteAsync(productId);
-    }
+        => productRepository.DeleteAsync(productId);
 }

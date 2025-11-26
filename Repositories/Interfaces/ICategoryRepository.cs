@@ -8,5 +8,6 @@ public interface ICategoryRepository
     Task<Category?> GetByKeyAsync(int categoryId);
     Task<Category> AddAsync(Category category);
     Task<Category?> UpdateAsync(Category category);
+    Task UpsertCategories(List<Category> categories);
     Task<bool> DeleteAsync(int categoryId);
 }

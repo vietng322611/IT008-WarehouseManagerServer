@@ -7,27 +7,20 @@ namespace WarehouseManagerServer.Services;
 public class CategoryService(ICategoryRepository categoryRepository) : ICategoryService
 {
     public Task<List<Category>> GetByWarehouseAsync(int warehouseId)
-    {
-        return categoryRepository.GetByWarehouseAsync(warehouseId);
-    }
+        => categoryRepository.GetByWarehouseAsync(warehouseId);
 
     public Task<Category?> GetByKeyAsync(int categoryId)
-    {
-        return categoryRepository.GetByKeyAsync(categoryId);
-    }
+        => categoryRepository.GetByKeyAsync(categoryId);
 
     public Task<Category> AddAsync(Category category)
-    {
-        return categoryRepository.AddAsync(category);
-    }
+        => categoryRepository.AddAsync(category);
 
     public Task<Category?> UpdateAsync(Category category)
-    {
-        return categoryRepository.UpdateAsync(category);
-    }
-
+        => categoryRepository.UpdateAsync(category);
+    
+    public Task UpsertCategories(List<Category> categories)
+        => categoryRepository.UpsertCategories(categories);
+    
     public Task<bool> DeleteAsync(int categoryId)
-    {
-        return categoryRepository.DeleteAsync(categoryId);
-    }
+        => categoryRepository.DeleteAsync(categoryId);
 }

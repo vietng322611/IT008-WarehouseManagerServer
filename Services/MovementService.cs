@@ -7,30 +7,23 @@ namespace WarehouseManagerServer.Services;
 public class MovementService(IMovementRepository movementRepository) : IMovementService
 {
     public Task<List<Movement>> GetByWarehouseAsync(int warehouseId)
-    {
-        return movementRepository.GetByWarehouseAsync(warehouseId);
-    }
+        => movementRepository.GetByWarehouseAsync(warehouseId);
 
     public Task<Movement?> GetByKeyAsync(int movementId)
-    {
-        return movementRepository.GetByKeyAsync(movementId);
-    }
+        => movementRepository.GetByKeyAsync(movementId);
 
     // public Task<List<Movement>> FilterAsync(params Expression<Func<Movement, bool>>[] filters)
     //     => movementRepository.FilterAsync(filters);
 
     public Task<Movement> AddAsync(Movement movement)
-    {
-        return movementRepository.AddAsync(movement);
-    }
+        => movementRepository.AddAsync(movement);
 
     public Task<Movement?> UpdateAsync(Movement movement)
-    {
-        return movementRepository.UpdateAsync(movement);
-    }
+        => movementRepository.UpdateAsync(movement);
+
+    public Task UpsertMovements(List<Movement> movements)
+        => movementRepository.UpsertMovements(movements);
 
     public Task<bool> DeleteAsync(int movementId)
-    {
-        return movementRepository.DeleteAsync(movementId);
-    }
+        => movementRepository.DeleteAsync(movementId);
 }

@@ -55,6 +55,31 @@ public class SupplierRepository(WarehouseContext context) : ISupplierRepository
         return supplier;
     }
 
+    public async Task UpsertSuppliers(List<Supplier> suppliers)
+    {
+        foreach (var supplier in suppliers)
+        {
+            var existing = await context.Suppliers.FindAsync(supplier.SupplierId);
+
+            if (existing is null)
+            {
+                var newSupplier = new Supplier
+                {
+                    WarehouseId = supplier.WarehouseId,
+                    Name = supplier.Name,
+                    ContactInfo = supplier.ContactInfo
+                };
+                context.Suppliers.Add(newSupplier);
+            }
+            else
+            {
+                existing.Name = supplier.Name;
+                existing.WarehouseId = supplier.WarehouseId;
+                existing.ContactInfo = supplier.ContactInfo;
+            }
+        }
+    }
+    
     public async Task<bool> DeleteAsync(int supplierId)
     {
         var oldSupplier = await GetByKeyAsync(supplierId);

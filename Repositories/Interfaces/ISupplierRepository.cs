@@ -8,5 +8,6 @@ public interface ISupplierRepository
     Task<Supplier?> GetByKeyAsync(int supplierId);
     Task<Supplier> AddAsync(Supplier supplier);
     Task<Supplier?> UpdateAsync(Supplier supplier);
+    Task UpsertSuppliers(List<Supplier> suppliers);
     Task<bool> DeleteAsync(int supplierId);
 }
