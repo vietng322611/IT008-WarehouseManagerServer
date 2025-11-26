@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
@@ -22,7 +23,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         return userRepository.GetByUniqueAsync(condition);
     }
 
-    public Task<List<Warehouse>> GetUserWarehousesAsync(int userId)
+    public Task<List<UserWarehousesDto>> GetUserWarehousesAsync(int userId)
     {
         return userRepository.GetUserWarehousesAsync(userId);
     }

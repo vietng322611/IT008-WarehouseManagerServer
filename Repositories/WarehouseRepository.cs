@@ -7,22 +7,31 @@ namespace WarehouseManagerServer.Repositories;
 
 public class WarehouseRepository(WarehouseContext context) : IWarehouseRepository
 {
+    public async Task<List<Warehouse>> GetAllAsync()
+    {
+        return await context.Warehouses.ToListAsync();
+    }
+    
     public async Task<Warehouse?> GetByKeyAsync(int warehouseId)
     {
         return await context.Warehouses.FindAsync(warehouseId);
     }
 
-    public async Task<List<User>> GetWarehouseUsersAsync(int warehouseId)
+    public async Task<List<WarehouseUsersDto>> GetWarehouseUsersAsync(int warehouseId)
     {
-        return await context.Warehouses
+        return await context.Permissions
             .Where(e => e.WarehouseId == warehouseId)
-            .SelectMany(p => p.Users)
-            .Select(u => new User
+            .Select(u => new WarehouseUsersDto
             {
-                UserId = u.UserId,
-                FullName = u.FullName,
-                Email = u.Email,
-                JoinDate = u.JoinDate
+                User = new User
+                {
+                    UserId = u.User.UserId,
+                    FullName = u.User.FullName,
+                    Email = u.User.Email,
+                    JoinDate = u.User.JoinDate
+                },
+                Permissions = u.UserPermissions
+                
             })
             .ToListAsync();
     }
@@ -52,10 +61,5 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
         context.Warehouses.Remove(oldWarehouse);
         await context.SaveChangesAsync();
         return true;
-    }
-
-    public async Task<List<Warehouse>> GetAllAsync()
-    {
-        return await context.Warehouses.ToListAsync();
     }
 }

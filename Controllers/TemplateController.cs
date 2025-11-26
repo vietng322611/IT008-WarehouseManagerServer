@@ -43,13 +43,31 @@ public class TemplateController : ControllerBase
     [HttpGet("user")]
     public IActionResult GetUserJson()
     {
-        return Ok(new User
+        var model = new User
         {
             UserId = 0,
             FullName = "User",
             Email = "User@gmail.com",
             JoinDate = DateTime.Now
-        });
+        };
+        return Ok(model);
+    }
+
+    [HttpGet("warehouses/users")]
+    public IActionResult GetWarehouseUsersJson()
+    {
+        var model = new WarehouseUsersDto
+        {
+            User = new User
+            {
+                UserId = 0,
+                FullName = "User",
+                Email = "User@gmail.com",
+                JoinDate = DateTime.Now
+            },
+            Permissions = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
+        };
+        return Ok(model);
     }
 
     [HttpGet("warehouse")]
@@ -58,7 +76,24 @@ public class TemplateController : ControllerBase
         var model = new Warehouse
         {
             WarehouseId = 0,
-            Name = "Warehouse"
+            Name = "Warehouse",
+            CreateDate = DateTime.Now,
+        };
+        return Ok(model);
+    }
+
+    [HttpGet("users/warehouses")]
+    public IActionResult GetUserWarehousesJson()
+    {
+        var model = new UserWarehousesDto
+        {
+            Warehouse = new Warehouse
+            {
+                WarehouseId = 0,
+                Name = "Warehouse",
+                CreateDate = DateTime.Now,
+            },
+            Permissions = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
         };
         return Ok(model);
     }
@@ -70,7 +105,7 @@ public class TemplateController : ControllerBase
         {
             UserId = 0,
             WarehouseId = 0,
-            UserPermissions = [PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner]
+            UserPermissions = [ PermissionEnum.Read, PermissionEnum.Write, PermissionEnum.Delete, PermissionEnum.Owner ]
         };
         return Ok(model);
     }
@@ -114,11 +149,11 @@ public class TemplateController : ControllerBase
         var model = new
         {
             movement_id = 0,
-            product = "Product",
+            product_id = 0,
+            product_name = "Product",
             quantity = 1,
             movement_type = MovementTypeEnum.In,
-            date = DateTime.Now,
-            productId = 0
+            date = DateTime.Now
         };
         return Ok(model);
     }
