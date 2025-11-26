@@ -1,4 +1,5 @@
-﻿using WarehouseManagerServer.Models.Entities;
+﻿using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -11,7 +12,7 @@ public class WarehouseService(IWarehouseRepository warehouseRepository) : IWareh
         return warehouseRepository.GetByKeyAsync(warehouseId);
     }
 
-    public Task<List<User>> GetWarehouseUsersAsync(int warehouseId)
+    public Task<List<WarehouseUsersDto>> GetWarehouseUsersAsync(int warehouseId)
     {
         return warehouseRepository.GetWarehouseUsersAsync(warehouseId);
     }

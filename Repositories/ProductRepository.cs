@@ -51,6 +51,36 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         return product;
     }
 
+    public async Task UpsertAsync(List<Product> products)
+    {
+        foreach (var product in products)
+        {
+            var existing = await context.Products.FindAsync(product.ProductId);
+
+            if (existing is null)
+            {
+                var newProduct = new Product
+                {
+                    Name = product.Name,
+                    Quantity = product.Quantity,
+                    UnitPrice = product.UnitPrice,
+                    WarehouseId = product.WarehouseId,
+                    SupplierId = product.SupplierId,
+                    CategoryId = product.CategoryId
+                };
+                context.Products.Add(newProduct);
+            }
+            else
+            {
+                existing.Name = product.Name;
+                existing.Quantity = product.Quantity;
+                existing.UnitPrice = product.UnitPrice;
+                existing.SupplierId = product.SupplierId;
+                existing.CategoryId = product.CategoryId;
+            }
+        }
+    }
+
     public async Task<bool> DeleteAsync(int productId)
     {
         var oldProduct = await context.Products.FindAsync(productId);

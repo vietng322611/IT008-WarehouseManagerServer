@@ -36,6 +36,25 @@ public class CategoryRepository(WarehouseContext context) : ICategoryRepository
         await context.SaveChangesAsync();
         return category;
     }
+    
+    public async Task UpsertAsync(List<Category> categories)
+    {
+        foreach (var category in categories)
+        {
+            var existing = await context.Categories.FindAsync(category.CategoryId);
+
+            if (existing is null)
+            {
+                var newCategory = new Category
+                {
+                    WarehouseId = category.WarehouseId,
+                    Name = category.Name
+                };
+                context.Categories.Add(newCategory);
+            }
+            else existing.Name = category.Name;
+        }
+    }
 
     public async Task<bool> DeleteAsync(int categoryId)
     {

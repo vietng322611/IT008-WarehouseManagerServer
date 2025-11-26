@@ -7,7 +7,7 @@ using WarehouseManagerServer.Services.Interfaces;
 namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
-[Route("api/warehouse/{warehouseId:int:min(1)}/products")]
+[Route("api/warehouses/{warehouseId:int:min(1)}/products")]
 public class ProductController(IProductService service) : ControllerBase
 {
     [WarehousePermission(PermissionEnum.Read)]
@@ -104,6 +104,7 @@ public class ProductController(IProductService service) : ControllerBase
             name = content.Name,
             category = content.Category == null ? "" : content.Category.Name,
             supplier = content.Supplier == null ? "" : content.Supplier.Name,
+            unit_price = content.UnitPrice,
             quantity = content.Quantity,
             expiry_date = content.ExpiryDate,
             warehouse_id = content.WarehouseId,

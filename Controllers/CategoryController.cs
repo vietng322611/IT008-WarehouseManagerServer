@@ -7,7 +7,7 @@ using WarehouseManagerServer.Services.Interfaces;
 namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
-[Route("api/warehouse/{warehouseId:int:min(1)}/categories")]
+[Route("api/warehouses/{warehouseId:int:min(1)}/categories")]
 public class CategoryController(ICategoryService service) : ControllerBase
 {
     [WarehousePermission(PermissionEnum.Read)]

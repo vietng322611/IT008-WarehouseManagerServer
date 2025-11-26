@@ -48,6 +48,32 @@ public class MovementRepository(WarehouseContext context) : IMovementRepository
         await context.SaveChangesAsync();
         return movement;
     }
+    
+    public async Task UpsertAsync(List<Movement> movements)
+    {
+        foreach (var movement in movements)
+        {
+            var existing = await context.Movements.FindAsync(movement.MovementId);
+
+            if (existing is null)
+            {
+                var newMovement = new Movement
+                {
+                    ProductId = movement.ProductId,
+                    Quantity = movement.Quantity,
+                    MovementType = movement.MovementType,
+                    Date = movement.Date
+                };
+                context.Movements.Add(newMovement);
+            }
+            else
+            {
+                existing.ProductId = movement.ProductId;
+                existing.MovementType = movement.MovementType;
+                existing.Date = movement.Date;
+            }
+        }
+    }
 
     public async Task<bool> DeleteAsync(int movementId)
     {

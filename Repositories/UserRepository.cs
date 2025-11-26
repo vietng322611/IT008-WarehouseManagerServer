@@ -38,11 +38,17 @@ public class UserRepository(WarehouseContext context) : IUserRepository
         return user;
     }
 
-    public async Task<List<Warehouse>> GetUserWarehousesAsync(int userId)
+    public async Task<List<UserWarehousesDto>> GetUserWarehousesAsync(int userId)
     {
-        return await context.Users
+        return await context.Permissions
             .Where(e => e.UserId == userId)
-            .SelectMany(u => u.Warehouses)
+            .Select(e => new UserWarehousesDto
+            {
+                WarehouseId = e.WarehouseId,
+                Name = e.Warehouse.Name,
+                CreateDate = e.Warehouse.CreateDate,
+                Permissions = e.UserPermissions
+            })
             .ToListAsync();
     }
 

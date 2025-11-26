@@ -11,5 +11,6 @@ public interface IProductRepository
     // Task<List<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters);
     Task<Product> AddAsync(Product product);
     Task<Product?> UpdateAsync(Product products);
+    Task UpsertAsync(List<Product> products);
     Task<bool> DeleteAsync(int productId);
 }

@@ -7,7 +7,7 @@ using WarehouseManagerServer.Services.Interfaces;
 namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
-[Route("api/warehouse/{warehouseId:int:min(1)}/movements")]
+[Route("api/warehouses/{warehouseId:int:min(1)}/movements")]
 public class MovementController(IMovementService service) : ControllerBase
 {
     [WarehousePermission(PermissionEnum.Read)]
@@ -101,11 +101,11 @@ public class MovementController(IMovementService service) : ControllerBase
         return new
         {
             movement_id = content.MovementId,
-            product = content.Product.Name,
+            product_id = content.ProductId,
+            product_name = content.Product.Name,
             quantity = content.Quantity,
             movement_type = content.MovementType,
-            date = content.Date,
-            product_id = content.ProductId
+            date = content.Date
         };
     }
 }
