@@ -6,7 +6,6 @@ namespace WarehouseManagerServer.Models.Entities;
 [Index(nameof(Email), IsUnique = true)]
 public class User
 {
-    public RecoveryCode? RecoveryCode;
     [JsonPropertyName("user_id")] public int UserId { get; set; }
     [JsonPropertyName("email")] public required string Email { get; set; }
     [JsonPropertyName("full_name")] public required string FullName { get; set; }

@@ -28,7 +28,7 @@ public partial class WarehouseContext : DbContext
 
     public virtual DbSet<Warehouse> Warehouses { get; set; }
 
-    public virtual DbSet<RecoveryCode> RecoveryCodes { get; set; }
+    public virtual DbSet<EmailVerification> EmailVerifications { get; set; }
 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
@@ -36,7 +36,8 @@ public partial class WarehouseContext : DbContext
     {
         modelBuilder
             .HasPostgresEnum("movement_type_enum", ["in", "out", "adjustment", "transfer", "remove"])
-            .HasPostgresEnum("permission_enum", ["read", "write", "delete", "owner"]);
+            .HasPostgresEnum("permission_enum", ["read", "write", "delete", "owner"])
+            .HasPostgresEnum("verification_type_enum", ["register", "change_password", "recovery"]);
 
         modelBuilder.Entity<Category>(entity =>
         {
@@ -140,7 +141,6 @@ public partial class WarehouseContext : DbContext
 
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Email)
-                .HasMaxLength(40)
                 .HasColumnName("email");
             entity.Property(e => e.JoinDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
@@ -196,27 +196,23 @@ public partial class WarehouseContext : DbContext
                 .WithMany(p => p.Warehouses);
         });
 
-        modelBuilder.Entity<RecoveryCode>(entity =>
+        modelBuilder.Entity<EmailVerification>(entity =>
         {
             entity.HasKey(e => e.CodeId).HasName("recovery_code_pkey");
 
             entity.ToTable("recovery_code");
 
             entity.Property(e => e.CodeId).HasColumnName("code_id");
-            entity.Property(e => e.UserId)
-                .HasColumnName("user_id");
+            entity.Property(e => e.Email)
+                .HasColumnName("email");
             entity.Property(e => e.Code)
                 .HasMaxLength(7)
                 .HasColumnName("code");
-            entity.Property(e => e.CreatedAt)
-                .HasColumnName("created_at");
-
-            entity.HasIndex(e => e.Code).IsUnique();
-
-            entity.HasOne(e => e.User)
-                .WithOne(p => p.RecoveryCode)
-                .HasForeignKey<RecoveryCode>(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+            entity.Property(e => e.ExpiresAt)
+                .HasColumnName("expire_at");
+            entity.Property(e => e.VerificationType)
+                .HasColumnName("verification_type")
+                .HasColumnType("verification_type_enum");
         });
 
         OnModelCreatingPartial(modelBuilder);

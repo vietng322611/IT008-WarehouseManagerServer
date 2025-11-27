@@ -14,12 +14,34 @@ public class AuthController(
     IUserService userService
 ) : ControllerBase
 {
+    [HttpPost("request-verification")]
+    public async Task<IActionResult> RequestVerification([FromBody] RequestCodeDto dto)
+    {
+        try
+        {
+            var user = await userService.GetByUniqueAsync(u => u.Email == dto.Email);
+            if (user == null)
+                return BadRequest(new { message = "Email not associated with any account" });
+
+            await service.SendVerificationCode(user, dto.Type);
+            return Ok("Sent recovery code to email: " + dto.Email);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
         try
         {
-            var result = await service.RegisterUser(dto, dto.Password);
+            var user = await service.VerifyRecoveryCode(dto.Code);
+            if (user == null)
+                return BadRequest(new { message = "Invalid verification code" });
+            
+            var result = await service.RegisterUser(dto.FullName, dto.Email, dto.Password);
             return result switch
             {
                 RegisterEnum.EmailAlreadyExists => BadRequest(new { message = "Email already exists" }),
@@ -110,24 +132,6 @@ public class AuthController(
         }
     }
 
-    [HttpPost("recovery")]
-    public async Task<IActionResult> RequestRecoveryCode([FromBody] RequestCodeDto dto)
-    {
-        try
-        {
-            var user = await userService.GetByUniqueAsync(u => u.Email == dto.Email);
-            if (user == null)
-                return BadRequest(new { message = "Email not associated with any account" });
-
-            await service.SendRecoveryCode(user);
-            return Ok("Sent recovery code to email: " + dto.Email);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
     {
@@ -135,7 +139,7 @@ public class AuthController(
         {
             var user = await service.VerifyRecoveryCode(dto.Code);
             if (user == null)
-                return BadRequest(new { message = "Recovery code not valid" });
+                return BadRequest(new { message = "Invalid verification code" });
 
             await service.ChangePassword(user, dto.NewPassword);
             return Ok(new { message = "Password successfully reset" });
@@ -152,12 +156,11 @@ public class AuthController(
     {
         try
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            var user = await userService.GetByKeyAsync(userId);
+            var user = await service.VerifyRecoveryCode(dto.Code);
             if (user == null)
-                return BadRequest(new { message = "User does not exist" });
+                return BadRequest(new { message = "Invalid verification code" });
 
-            // ISTG this looks dumb but reuse code should be good right?
+            // ISTG this looks so dumb but reuse code should be good right?
             user = await service.ValidateUser(new LoginDto
             {
                 Email = user.FullName,

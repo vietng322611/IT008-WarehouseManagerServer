@@ -77,4 +77,37 @@ public class UserRepository(WarehouseContext context) : IUserRepository
         context.Users.Remove(oldUser);
         return true;
     }
+
+    public async Task ChangePassword(User user, string newPasswordHash)
+    {
+        user.PasswordHash = newPasswordHash;
+        await context.SaveChangesAsync();
+    }
+
+    public async Task<User?> GetUserFromToken(string refreshToken)
+    {
+        return await context.Users
+            .Include(u => u.RefreshTokens)
+            .SingleOrDefaultAsync(u => u.RefreshTokens.Any(t => t.Token == refreshToken));
+    }
+
+    public async Task AddTokenAsync(User user, RefreshToken refreshToken)
+    {
+        user.RefreshTokens.Add(refreshToken);
+        await context.SaveChangesAsync();
+    }
+    
+    public async Task InvalidateRefreshToken(RefreshToken refreshToken)
+    {
+        context.RefreshTokens.Remove(refreshToken);
+        await context.SaveChangesAsync();
+    }
+    
+    public async Task ClearOutdatedAsync()
+    {
+        context.RefreshTokens.RemoveRange(
+            context.RefreshTokens.Where(t => t.ExpiresAt < DateTime.UtcNow)
+        );
+        await context.SaveChangesAsync();
+    }
 }

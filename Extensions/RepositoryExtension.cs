@@ -14,5 +14,6 @@ public static class RepositoryExtension
         services.AddScoped<ISupplierRepository, SupplierRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IWarehouseRepository, WarehouseRepository>();
+        services.AddScoped<IEmailVerificationRepository, EmailVerificationRepository>();
     }
 }

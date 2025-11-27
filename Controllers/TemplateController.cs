@@ -9,6 +9,16 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/json")]
 public class TemplateController : ControllerBase
 {
+    [HttpGet("request-verification")]
+    public IActionResult GetRequestVerificationJson()
+    {
+        return Ok(new RequestCodeDto
+        {
+            Email = "Email@gmail.com",
+            Type = VerificationTypeEnum.Register
+        });
+    }
+    
     [HttpGet("register")]
     public IActionResult GetRegisterJson()
     {
@@ -16,7 +26,8 @@ public class TemplateController : ControllerBase
         {
             FullName = "John Smith",
             Email = "Email@gmail.com",
-            Password = "Password"
+            Password = "Password",
+            Code = "A982NB7"
         });
     }
 
@@ -37,6 +48,27 @@ public class TemplateController : ControllerBase
         return Ok(new RefreshDto
         {
             RefreshToken = "RefreshToken"
+        });
+    }
+
+    [HttpGet("reset-password")]
+    public IActionResult GetResetPasswordJson()
+    {
+        return Ok(new ResetPasswordDto
+        {
+            Code = "A982NB7",
+            NewPassword = "NewPassword"
+        });
+    }
+
+    [HttpGet("change-password")]
+    public IActionResult GetChangePasswordJson()
+    {
+        return Ok(new ChangePasswordDto
+        {
+            Code = "A982NB7",
+            OldPassword = "OldPassword",
+            NewPassword = "NewPassword"
         });
     }
 
