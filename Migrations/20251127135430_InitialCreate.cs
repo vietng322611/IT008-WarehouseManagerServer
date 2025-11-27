@@ -14,7 +14,24 @@ namespace WarehouseManagerServer.Migrations
         {
             migrationBuilder.AlterDatabase()
                 .Annotation("Npgsql:Enum:movement_type_enum", "in,out,adjustment,transfer,remove")
-                .Annotation("Npgsql:Enum:permission_enum", "read,write,delete,owner");
+                .Annotation("Npgsql:Enum:permission_enum", "read,write,delete,owner")
+                .Annotation("Npgsql:Enum:verification_type_enum", "register,change_password,recovery");
+
+            migrationBuilder.CreateTable(
+                name: "recovery_code",
+                columns: table => new
+                {
+                    code_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    email = table.Column<string>(type: "text", nullable: false),
+                    code = table.Column<string>(type: "character varying(7)", maxLength: 7, nullable: false),
+                    expire_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    verification_type = table.Column<int>(type: "verification_type_enum", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("recovery_code_pkey", x => x.code_id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "users",
@@ -22,10 +39,10 @@ namespace WarehouseManagerServer.Migrations
                 {
                     user_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    email = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
+                    email = table.Column<string>(type: "text", nullable: false),
                     fullname = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
-                    password_hash = table.Column<string>(type: "text", nullable: false),
-                    join_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP")
+                    join_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    password_hash = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -38,32 +55,12 @@ namespace WarehouseManagerServer.Migrations
                 {
                     warehouse_id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false)
+                    name = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
+                    create_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("warehouses_pkey", x => x.warehouse_id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "recovery_code",
-                columns: table => new
-                {
-                    code_id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    user_id = table.Column<int>(type: "integer", nullable: false),
-                    code = table.Column<string>(type: "character varying(7)", maxLength: 7, nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("recovery_code_pkey", x => x.code_id);
-                    table.ForeignKey(
-                        name: "FK_recovery_code_users_user_id",
-                        column: x => x.user_id,
-                        principalTable: "users",
-                        principalColumn: "user_id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -225,7 +222,7 @@ namespace WarehouseManagerServer.Migrations
                     product_id = table.Column<int>(type: "integer", nullable: false),
                     quantity = table.Column<int>(type: "integer", nullable: false),
                     movement_type = table.Column<int>(type: "movement_type_enum", nullable: false),
-                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true, defaultValueSql: "CURRENT_TIMESTAMP")
+                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -269,15 +266,9 @@ namespace WarehouseManagerServer.Migrations
                 column: "warehouse_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_recovery_code_code",
+                name: "IX_recovery_code_email",
                 table: "recovery_code",
-                column: "code",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_recovery_code_user_id",
-                table: "recovery_code",
-                column: "user_id",
+                column: "email",
                 unique: true);
 
             migrationBuilder.CreateIndex(

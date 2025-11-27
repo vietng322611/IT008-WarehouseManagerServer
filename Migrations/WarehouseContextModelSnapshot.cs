@@ -22,6 +22,7 @@ namespace WarehouseManagerServer.Migrations
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "movement_type_enum", new[] { "in", "out", "adjustment", "transfer", "remove" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "permission_enum", new[] { "read", "write", "delete", "owner" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "verification_type_enum", new[] { "register", "change_password", "recovery" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("UserWarehouse", b =>
@@ -68,6 +69,43 @@ namespace WarehouseManagerServer.Migrations
                     b.ToTable("categories", (string)null);
                 });
 
+            modelBuilder.Entity("WarehouseManagerServer.Models.Entities.EmailVerification", b =>
+                {
+                    b.Property<int>("CodeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("code_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CodeId"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expire_at");
+
+                    b.Property<int>("VerificationType")
+                        .HasColumnType("verification_type_enum")
+                        .HasColumnName("verification_type");
+
+                    b.HasKey("CodeId")
+                        .HasName("recovery_code_pkey");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("recovery_code", (string)null);
+                });
+
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.Movement", b =>
                 {
                     b.Property<int>("MovementId")
@@ -78,7 +116,7 @@ namespace WarehouseManagerServer.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("MovementId"));
 
-                    b.Property<DateTime?>("Date")
+                    b.Property<DateTime>("Date")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("date")
@@ -197,41 +235,6 @@ namespace WarehouseManagerServer.Migrations
                     b.ToTable("products", (string)null);
                 });
 
-            modelBuilder.Entity("WarehouseManagerServer.Models.Entities.RecoveryCode", b =>
-                {
-                    b.Property<int>("CodeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("code_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CodeId"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(7)
-                        .HasColumnType("character varying(7)")
-                        .HasColumnName("code");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("CodeId")
-                        .HasName("recovery_code_pkey");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("recovery_code", (string)null);
-                });
-
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("TokenId")
@@ -309,8 +312,7 @@ namespace WarehouseManagerServer.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
+                        .HasColumnType("text")
                         .HasColumnName("email")
                         .HasAnnotation("Relational:JsonPropertyName", "email");
 
@@ -321,7 +323,7 @@ namespace WarehouseManagerServer.Migrations
                         .HasColumnName("fullname")
                         .HasAnnotation("Relational:JsonPropertyName", "full_name");
 
-                    b.Property<DateTime?>("JoinDate")
+                    b.Property<DateTime>("JoinDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("join_date")
@@ -460,17 +462,6 @@ namespace WarehouseManagerServer.Migrations
                     b.Navigation("Warehouse");
                 });
 
-            modelBuilder.Entity("WarehouseManagerServer.Models.Entities.RecoveryCode", b =>
-                {
-                    b.HasOne("WarehouseManagerServer.Models.Entities.User", "User")
-                        .WithOne("RecoveryCode")
-                        .HasForeignKey("WarehouseManagerServer.Models.Entities.RecoveryCode", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.RefreshToken", b =>
                 {
                     b.HasOne("WarehouseManagerServer.Models.Entities.User", "User")
@@ -512,8 +503,6 @@ namespace WarehouseManagerServer.Migrations
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.User", b =>
                 {
                     b.Navigation("Permissions");
-
-                    b.Navigation("RecoveryCode");
 
                     b.Navigation("RefreshTokens");
                 });
