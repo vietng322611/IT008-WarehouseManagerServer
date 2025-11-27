@@ -12,8 +12,6 @@ public class User
     [JsonPropertyName("join_date")] public DateTime JoinDate { get; set; } = DateTime.Now;
 
     [JsonIgnore] public string PasswordHash { get; set; } = null!;
-    
-    [JsonIgnore]public EmailVerification? EmailVerification;
     [JsonIgnore] public ICollection<Warehouse> Warehouses { get; set; } = new List<Warehouse>();
     [JsonIgnore] public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
     [JsonIgnore] public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
