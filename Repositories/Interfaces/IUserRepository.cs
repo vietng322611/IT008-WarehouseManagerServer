@@ -13,4 +13,9 @@ public interface IUserRepository
     Task<User> AddAsync(User user);
     Task<User?> UpdateAsync(User user);
     Task<bool> DeleteAsync(int userId);
+    Task ChangePassword(User user, string newPasswordHash);
+    Task<User?> GetUserFromToken(string refreshToken);
+    Task AddTokenAsync(User user, RefreshToken refreshToken);
+    Task InvalidateRefreshToken(RefreshToken refreshToken);
+    Task ClearOutdatedAsync();
 }
