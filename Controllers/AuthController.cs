@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.Enums;
@@ -20,11 +19,7 @@ public class AuthController(
     {
         try
         {
-            var user = await userService.GetByUniqueAsync(u => u.Email == dto.Email);
-            if (user == null)
-                return BadRequest(new { message = "Email not associated with any account" });
-
-            await service.SendVerificationCode(user, dto.Type);
+            await service.SendVerificationCode(dto.Email, dto.Type);
             return Ok("Sent recovery code to email: " + dto.Email);
         }
         catch (Exception e)
@@ -39,7 +34,7 @@ public class AuthController(
         try
         {
             var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.Register);
-            if (user == null)
+            if (user == null || dto.Email != user.Email)
                 return BadRequest(new { message = "Invalid verification code" });
             
             var result = await service.RegisterUser(dto.FullName, dto.Email, dto.Password);
