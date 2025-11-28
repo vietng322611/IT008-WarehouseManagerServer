@@ -28,6 +28,7 @@ public class EmailService(
         using var message = new MailMessage(fromAddress, toAddress);
         var template = await File.ReadAllTextAsync("Resources/Html/EmailTemplate.html");
         message.Subject = "Verification code";
+        message.IsBodyHtml = true;
         message.Body = template.Replace("{{CODE}}", code);
         await smtp.SendMailAsync(message);
     }
