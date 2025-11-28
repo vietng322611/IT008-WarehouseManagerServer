@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
@@ -48,7 +49,7 @@ public class WarehouseController(
 
     [UserPermission(UserPermissionEnum.Authenticated)]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Warehouse content)
+    public async Task<IActionResult> Post([FromBody] WarehouseDto content)
     {
         try
         {
@@ -58,8 +59,10 @@ public class WarehouseController(
 
             var userId = int.Parse(userIdClaim.Value);
             
-            content.WarehouseId = 0; // Ignore id in input
-            var newContent = await service.AddAsync(content);
+            var newContent = await service.AddAsync(new Warehouse
+            {
+                Name = content.Name
+            });
 
             await permissionService.AddAsync(new Permission
             {
