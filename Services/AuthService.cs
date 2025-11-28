@@ -119,9 +119,9 @@ public class AuthService(
     public async Task SendVerificationCode(User user, VerificationTypeEnum type)
         => await emailService.SendEmailAsync(user.Email, type);
 
-    public async Task<User?> VerifyRecoveryCode(string code)
+    public async Task<User?> VerifyCode(string code, VerificationTypeEnum type)
     {
-        var email = await emailService.VerifyCode(code, VerificationTypeEnum.Recovery);
+        var email = await emailService.VerifyCode(code, type);
         if (email == null) return null;
 
         var user = await userRepository.GetByUniqueAsync(user => user.Email == email);

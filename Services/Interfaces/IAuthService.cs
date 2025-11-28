@@ -14,6 +14,6 @@ public interface IAuthService
     Task<User?> ValidateRefreshToken(RefreshDto dto);
     Task InvalidateRefreshToken(RefreshToken refreshToken);
     Task SendVerificationCode(User user, VerificationTypeEnum type);
-    Task<User?> VerifyRecoveryCode(string code);
+    Task<User?> VerifyCode(string code, VerificationTypeEnum type);
     Task ChangePassword(User user, string newPassword);
 }

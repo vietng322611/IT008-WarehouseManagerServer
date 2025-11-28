@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
 using WarehouseManagerServer.Types.Enums;
 
@@ -37,7 +38,7 @@ public class AuthController(
     {
         try
         {
-            var user = await service.VerifyRecoveryCode(dto.Code);
+            var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.Register);
             if (user == null)
                 return BadRequest(new { message = "Invalid verification code" });
             
@@ -137,7 +138,7 @@ public class AuthController(
     {
         try
         {
-            var user = await service.VerifyRecoveryCode(dto.Code);
+            var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.Recovery);
             if (user == null)
                 return BadRequest(new { message = "Invalid verification code" });
 
@@ -156,7 +157,7 @@ public class AuthController(
     {
         try
         {
-            var user = await service.VerifyRecoveryCode(dto.Code);
+            var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.ChangePassword);
             if (user == null)
                 return BadRequest(new { message = "Invalid verification code" });
 
