@@ -67,24 +67,9 @@ public class SupplierRepository(WarehouseContext context) : ISupplierRepository
     {
         foreach (var supplier in suppliers)
         {
-            var existing = await context.Suppliers.FindAsync(supplier.SupplierId);
-
+            var existing = await UpdateAsync(supplier);
             if (existing is null)
-            {
-                var newSupplier = new Supplier
-                {
-                    WarehouseId = supplier.WarehouseId,
-                    Name = supplier.Name,
-                    ContactInfo = supplier.ContactInfo
-                };
-                context.Suppliers.Add(newSupplier);
-            }
-            else
-            {
-                existing.Name = supplier.Name;
-                existing.WarehouseId = supplier.WarehouseId;
-                existing.ContactInfo = supplier.ContactInfo;
-            }
+                await AddAsync(supplier);
         }
     }
     
