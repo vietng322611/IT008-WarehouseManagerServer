@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 
 namespace WarehouseManagerServer.Models.DTOs;
 
@@ -34,11 +36,6 @@ public partial class WarehouseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .HasPostgresEnum("movement_type_enum", ["in", "out", "adjustment", "transfer", "remove"])
-            .HasPostgresEnum("permission_enum", ["read", "write", "delete", "owner"])
-            .HasPostgresEnum("verification_type_enum", ["register", "change_password", "recovery"]);
-
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.CategoryId).HasName("categories_pkey");
@@ -71,7 +68,7 @@ public partial class WarehouseContext : DbContext
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.MovementType)
                 .HasColumnName("movement_type")
-                .HasColumnType("movement_type_enum");
+                .HasConversion<string>();
 
             entity.HasOne(d => d.Product).WithMany(p => p.Movements)
                 .HasForeignKey(d => d.ProductId)
@@ -167,7 +164,18 @@ public partial class WarehouseContext : DbContext
             entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
             entity.Property(e => e.UserPermissions)
                 .HasColumnName("user_permissions")
-                .HasColumnType("permission_enum[]");
+                .HasColumnType("varchar(6)[]")
+                .HasConversion(
+                    v => v.Select(x => x.ToString()).ToArray(),
+                    v => v.Select(Enum.Parse<PermissionEnum>).ToList()
+                )
+                .Metadata.SetValueComparer(new ValueComparer<ICollection<PermissionEnum>>(
+                    (c1, c2) =>
+                        c1 == null && c2 == null || 
+                        (c1 != null && c2 != null && c1.SequenceEqual(c2)),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToList()
+                ));
 
             entity.HasOne(d => d.User).WithMany(p => p.Permissions)
                 .HasForeignKey(d => d.UserId)
@@ -198,9 +206,9 @@ public partial class WarehouseContext : DbContext
 
         modelBuilder.Entity<EmailVerification>(entity =>
         {
-            entity.HasKey(e => e.CodeId).HasName("recovery_code_pkey");
+            entity.HasKey(e => e.CodeId).HasName("email_verification_pkey");
 
-            entity.ToTable("recovery_code");
+            entity.ToTable("email_verification");
 
             entity.Property(e => e.CodeId).HasColumnName("code_id");
             entity.Property(e => e.Email)
@@ -212,7 +220,7 @@ public partial class WarehouseContext : DbContext
                 .HasColumnName("expire_at");
             entity.Property(e => e.VerificationType)
                 .HasColumnName("verification_type")
-                .HasColumnType("verification_type_enum");
+                .HasConversion<string>();
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -9,10 +9,7 @@ namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(
-    IAuthService service,
-    IUserService userService
-) : ControllerBase
+public class AuthController(IAuthService service) : ControllerBase
 {
     [HttpPost("request-verification")]
     public async Task<IActionResult> RequestVerification([FromBody] RequestCodeDto dto)
@@ -152,7 +149,7 @@ public class AuthController(
     {
         try
         {
-            var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.ChangePassword);
+            var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.Change);
             if (user == null)
                 return BadRequest(new { message = "Invalid verification code" });
 

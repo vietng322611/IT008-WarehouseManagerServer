@@ -3,7 +3,7 @@ using WarehouseManagerServer.Models.Enums;
 
 namespace WarehouseManagerServer.Models.Entities;
 
-[Index(nameof(Email), IsUnique = true)]
+[Index(nameof(Code), IsUnique = true)] // Multiple code allowed so email is not unique
 public class EmailVerification
 {
     public int CodeId { get; set; }
