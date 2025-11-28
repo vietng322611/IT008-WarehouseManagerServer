@@ -96,7 +96,7 @@ public class UserController(IUserService service) : ControllerBase
             var newContent = await service.AddAsync(content);
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = newContent.UserId },
+                new { userId = newContent.UserId },
                 new User
                 {
                     UserId = content.UserId,
