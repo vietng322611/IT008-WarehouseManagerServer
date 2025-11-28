@@ -43,15 +43,10 @@ public class ProductController(IProductService service) : ControllerBase
         {
             content.ProductId = 0; // Ignore id in input
             content.WarehouseId = warehouseId; // just for safe
-            await service.AddAsync(content);
-
-            var newContent = await service.GetByKeyAsync(content.ProductId);
-            if (newContent == null) return StatusCode(500, "Error adding new content");
-
+            
+            var newContent = await service.AddAsync(content);
             return CreatedAtAction(
-                nameof(GetById),
-                new { id = newContent.ProductId },
-                Serialize(newContent));
+                nameof(GetById), new { warehouseId, id = newContent.ProductId }, newContent);
         }
         catch (Exception e)
         {
