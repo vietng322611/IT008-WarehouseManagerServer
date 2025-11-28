@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Services.Interfaces;
 using WarehouseManagerServer.Types.Enums;
@@ -88,19 +89,19 @@ public class UserController(IUserService service) : ControllerBase
 
     [UserPermission(UserPermissionEnum.Authenticated)]
     [HttpPut]
-    public async Task<IActionResult> Put([FromBody] User updatedContent)
+    public async Task<IActionResult> Put([FromBody] UserDto updatedContent)
     {
         try
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            if (userId != updatedContent.UserId)
-                return BadRequest();
-
             var existingContent = await service.GetByKeyAsync(userId);
             if (existingContent == null)
                 return NotFound();
 
-            await service.UpdateAsync(updatedContent);
+            await service.UpdateAsync(new User
+            {
+                FullName = updatedContent.FullName,
+            });
             return NoContent();
         }
         catch (Exception e)
