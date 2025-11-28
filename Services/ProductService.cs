@@ -1,4 +1,5 @@
-﻿using WarehouseManagerServer.Models.Entities;
+﻿using WarehouseManagerServer.Models.DTOs.Requests;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -15,13 +16,13 @@ public class ProductService(IProductRepository productRepository) : IProductServ
     // public Task<List<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters)
     //     => productRepository.FilterAsync(filters);
 
-    public Task<Product> AddAsync(Product product)
+    public Task<Product> AddAsync(ProductDto product)
         => productRepository.AddAsync(product);
 
-    public Task<Product?> UpdateAsync(Product product)
+    public Task<Product?> UpdateAsync(ProductDto product)
         => productRepository.UpdateAsync(product);
 
-    public Task UpsertAsync(List<Product> products)
+    public Task UpsertAsync(List<ProductDto> products)
         => productRepository.UpsertAsync(products);
 
     public Task<bool> DeleteAsync(int productId)

@@ -12,13 +12,8 @@ namespace WarehouseManagerServer.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:movement_type_enum", "in,out,adjustment,transfer,remove")
-                .Annotation("Npgsql:Enum:permission_enum", "read,write,delete,owner")
-                .Annotation("Npgsql:Enum:verification_type_enum", "register,change_password,recovery");
-
             migrationBuilder.CreateTable(
-                name: "recovery_code",
+                name: "email_verification",
                 columns: table => new
                 {
                     code_id = table.Column<int>(type: "integer", nullable: false)
@@ -26,11 +21,11 @@ namespace WarehouseManagerServer.Migrations
                     email = table.Column<string>(type: "text", nullable: false),
                     code = table.Column<string>(type: "character varying(7)", maxLength: 7, nullable: false),
                     expire_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    verification_type = table.Column<int>(type: "verification_type_enum", nullable: false)
+                    verification_type = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("recovery_code_pkey", x => x.code_id);
+                    table.PrimaryKey("email_verification_pkey", x => x.code_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -112,7 +107,7 @@ namespace WarehouseManagerServer.Migrations
                 {
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     warehouse_id = table.Column<int>(type: "integer", nullable: false),
-                    user_permissions = table.Column<int[]>(type: "permission_enum[]", nullable: false)
+                    user_permissions = table.Column<string[]>(type: "varchar(6)[]", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -221,7 +216,7 @@ namespace WarehouseManagerServer.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     product_id = table.Column<int>(type: "integer", nullable: false),
                     quantity = table.Column<int>(type: "integer", nullable: false),
-                    movement_type = table.Column<int>(type: "movement_type_enum", nullable: false),
+                    movement_type = table.Column<string>(type: "text", nullable: false),
                     date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
@@ -239,6 +234,12 @@ namespace WarehouseManagerServer.Migrations
                 name: "IX_categories_warehouse_id",
                 table: "categories",
                 column: "warehouse_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_email_verification_code",
+                table: "email_verification",
+                column: "code",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "idx_movements_product",
@@ -266,12 +267,6 @@ namespace WarehouseManagerServer.Migrations
                 column: "warehouse_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_recovery_code_email",
-                table: "recovery_code",
-                column: "email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_RefreshTokens_UserId",
                 table: "RefreshTokens",
                 column: "UserId");
@@ -297,13 +292,13 @@ namespace WarehouseManagerServer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "email_verification");
+
+            migrationBuilder.DropTable(
                 name: "movements");
 
             migrationBuilder.DropTable(
                 name: "permissions");
-
-            migrationBuilder.DropTable(
-                name: "recovery_code");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");

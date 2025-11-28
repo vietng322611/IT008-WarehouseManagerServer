@@ -1,4 +1,5 @@
-﻿using WarehouseManagerServer.Models.Entities;
+﻿using WarehouseManagerServer.Models.DTOs.Requests;
+using WarehouseManagerServer.Models.Entities;
 
 namespace WarehouseManagerServer.Services.Interfaces;
 
@@ -9,8 +10,8 @@ public interface IProductService
     Task<Product?> GetByKeyAsync(int productId);
 
     // Task<List<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters);
-    Task<Product> AddAsync(Product product);
-    Task<Product?> UpdateAsync(Product product);
-    Task UpsertAsync(List<Product> products);
+    Task<Product> AddAsync(ProductDto product);
+    Task<Product?> UpdateAsync(ProductDto product);
+    Task UpsertAsync(List<ProductDto> products);
     Task<bool> DeleteAsync(int productId);
 }

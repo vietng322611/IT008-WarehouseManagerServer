@@ -41,8 +41,8 @@ public class EmailVerificationRepository(WarehouseContext context): IEmailVerifi
 
             var recovery = new EmailVerification
             {
-                Code = code,
                 Email = email,
+                Code = code,
                 VerificationType = type
             };
 

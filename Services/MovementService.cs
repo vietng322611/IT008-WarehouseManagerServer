@@ -1,4 +1,5 @@
-﻿using WarehouseManagerServer.Models.Entities;
+﻿using WarehouseManagerServer.Models.DTOs.Requests;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -15,13 +16,13 @@ public class MovementService(IMovementRepository movementRepository) : IMovement
     // public Task<List<Movement>> FilterAsync(params Expression<Func<Movement, bool>>[] filters)
     //     => movementRepository.FilterAsync(filters);
 
-    public Task<Movement> AddAsync(Movement movement)
+    public Task<Movement> AddAsync(MovementDto movement)
         => movementRepository.AddAsync(movement);
 
-    public Task<Movement?> UpdateAsync(Movement movement)
+    public Task<Movement?> UpdateAsync(MovementDto movement)
         => movementRepository.UpdateAsync(movement);
 
-    public Task UpsertAsync(List<Movement> movements)
+    public Task UpsertAsync(List<MovementDto> movements)
         => movementRepository.UpsertAsync(movements);
 
     public Task<bool> DeleteAsync(int movementId)

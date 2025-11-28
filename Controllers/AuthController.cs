@@ -1,7 +1,8 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.DTOs.Requests;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
 using WarehouseManagerServer.Types.Enums;
 
@@ -9,22 +10,19 @@ namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
 [Route("api/auth")]
-public class AuthController(
-    IAuthService service,
-    IUserService userService
-) : ControllerBase
+public class AuthController(IAuthService service) : ControllerBase
 {
     [HttpPost("request-verification")]
     public async Task<IActionResult> RequestVerification([FromBody] RequestCodeDto dto)
     {
         try
         {
-            var user = await userService.GetByUniqueAsync(u => u.Email == dto.Email);
-            if (user == null)
-                return BadRequest(new { message = "Email not associated with any account" });
-
-            await service.SendVerificationCode(user, dto.Type);
-            return Ok("Sent recovery code to email: " + dto.Email);
+            await service.SendVerificationCode(dto.Email, dto.Type);
+            return Ok(new
+            {
+                message = "Sent verification code to email: " + dto.Email,
+                type = dto.Type.ToString()
+            });
         }
         catch (Exception e)
         {
@@ -37,9 +35,11 @@ public class AuthController(
     {
         try
         {
-            var user = await service.VerifyRecoveryCode(dto.Code);
+            var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.Register);
             if (user == null)
                 return BadRequest(new { message = "Invalid verification code" });
+            if (dto.Email != user.Email)
+                return BadRequest(new { message = "This code belonged to another user" });
             
             var result = await service.RegisterUser(dto.FullName, dto.Email, dto.Password);
             return result switch
@@ -137,7 +137,7 @@ public class AuthController(
     {
         try
         {
-            var user = await service.VerifyRecoveryCode(dto.Code);
+            var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.Recovery);
             if (user == null)
                 return BadRequest(new { message = "Invalid verification code" });
 
@@ -150,20 +150,19 @@ public class AuthController(
         }
     }
 
-    [UserPermission(UserPermissionEnum.SameUser)]
     [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
     {
         try
         {
-            var user = await service.VerifyRecoveryCode(dto.Code);
+            var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.Change);
             if (user == null)
                 return BadRequest(new { message = "Invalid verification code" });
 
             // ISTG this looks so dumb but reuse code should be good right?
             user = await service.ValidateUser(new LoginDto
             {
-                Email = user.FullName,
+                Email = user.Email,
                 Password = dto.OldPassword
             });
             if (user == null)

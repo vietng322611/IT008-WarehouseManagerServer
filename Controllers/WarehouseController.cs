@@ -52,14 +52,14 @@ public class WarehouseController(
     {
         try
         {
-            content.WarehouseId = 0; // Ignore id in input
-            var newContent = await service.AddAsync(content);
-
             var userIdClaim = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
                 return Unauthorized();
 
             var userId = int.Parse(userIdClaim.Value);
+            
+            content.WarehouseId = 0; // Ignore id in input
+            var newContent = await service.AddAsync(content);
 
             await permissionService.AddAsync(new Permission
             {
@@ -67,7 +67,7 @@ public class WarehouseController(
                 WarehouseId = newContent.WarehouseId,
                 UserPermissions = [PermissionEnum.Owner]
             });
-            return CreatedAtAction(nameof(GetById), new { id = newContent.WarehouseId }, newContent);
+            return CreatedAtAction(nameof(GetById), new { warehouseId = newContent.WarehouseId }, newContent);
         }
         catch (Exception e)
         {

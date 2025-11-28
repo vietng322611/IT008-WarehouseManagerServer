@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
@@ -12,9 +13,9 @@ public class SupplierController(ISupplierService service) : ControllerBase
 {
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
-    public async Task<IActionResult> GetWarehouseSuppliers([FromRoute] int id)
+    public async Task<IActionResult> GetWarehouseSuppliers([FromRoute] int warehouseId)
     {
-        var result = await service.GetByWarehouseAsync(id);
+        var result = await service.GetByWarehouseAsync(warehouseId);
         return Ok(result.Select(Serialize));
     }
 
@@ -36,7 +37,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Supplier content)
+    public async Task<IActionResult> Post([FromBody] SupplierDto content)
     {
         try
         {
@@ -53,7 +54,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
     
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPost("upsert")]
-    public async Task<IActionResult> Upsert([FromBody] List<Supplier> contents)
+    public async Task<IActionResult> Upsert([FromBody] List<SupplierDto> contents)
     {
         try
         {
@@ -68,7 +69,7 @@ public class SupplierController(ISupplierService service) : ControllerBase
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Supplier updatedContent)
+    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] SupplierDto updatedContent)
     {
         try
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 
@@ -20,24 +21,29 @@ public class CategoryRepository(WarehouseContext context) : ICategoryRepository
         return await context.Categories.FindAsync(categoryId);
     }
 
-    public async Task<Category> AddAsync(Category category)
+    public async Task<Category> AddAsync(CategoryDto category)
     {
-        context.Categories.Add(category);
+        var newCategory = context.Categories.Add(new Category
+        {
+            Name = category.Name,
+            WarehouseId = category.WarehouseId
+        });
         await context.SaveChangesAsync();
-        return category;
+        return newCategory.Entity;
     }
 
-    public async Task<Category?> UpdateAsync(Category category)
+    public async Task<Category?> UpdateAsync(CategoryDto category)
     {
         var oldCategory = await GetByKeyAsync(category.CategoryId);
         if (oldCategory == null) return null;
 
-        context.Entry(oldCategory).CurrentValues.SetValues(category);
+        oldCategory.Name = category.Name;
+        
         await context.SaveChangesAsync();
-        return category;
+        return oldCategory;
     }
     
-    public async Task UpsertAsync(List<Category> categories)
+    public async Task UpsertAsync(List<CategoryDto> categories)
     {
         foreach (var category in categories)
         {

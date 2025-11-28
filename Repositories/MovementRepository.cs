@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 
@@ -32,24 +33,34 @@ public class MovementRepository(WarehouseContext context) : IMovementRepository
         return await query.ToListAsync();
     }
 
-    public async Task<Movement> AddAsync(Movement movement)
+    public async Task<Movement> AddAsync(MovementDto movement)
     {
-        context.Movements.Add(movement);
+        var newMovement = context.Movements.Add(new Movement
+        {
+            ProductId = movement.ProductId,
+            Quantity = movement.Quantity,
+            MovementType = movement.MovementType,
+            Date = movement.Date
+        });
         await context.SaveChangesAsync();
-        return movement;
+        return newMovement.Entity;
     }
 
-    public async Task<Movement?> UpdateAsync(Movement movement)
+    public async Task<Movement?> UpdateAsync(MovementDto movement)
     {
         var oldMovement = await GetByKeyAsync(movement.MovementId);
         if (oldMovement == null) return null;
 
-        context.Entry(oldMovement).CurrentValues.SetValues(movement);
+        oldMovement.ProductId = movement.ProductId;
+        oldMovement.Quantity = movement.Quantity;
+        oldMovement.MovementType = movement.MovementType;
+        oldMovement.Date = movement.Date;
+        
         await context.SaveChangesAsync();
-        return movement;
+        return oldMovement;
     }
     
-    public async Task UpsertAsync(List<Movement> movements)
+    public async Task UpsertAsync(List<MovementDto> movements)
     {
         foreach (var movement in movements)
         {

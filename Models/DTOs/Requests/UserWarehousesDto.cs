@@ -2,7 +2,7 @@
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 
-namespace WarehouseManagerServer.Models.DTOs;
+namespace WarehouseManagerServer.Models.DTOs.Requests;
 
 public class UserWarehousesDto
 {

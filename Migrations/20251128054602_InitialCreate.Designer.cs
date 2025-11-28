@@ -12,7 +12,7 @@ using WarehouseManagerServer.Models.DTOs;
 namespace WarehouseManagerServer.Migrations
 {
     [DbContext(typeof(WarehouseContext))]
-    [Migration("20251127135430_InitialCreate")]
+    [Migration("20251128054602_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -23,9 +23,6 @@ namespace WarehouseManagerServer.Migrations
                 .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "movement_type_enum", new[] { "in", "out", "adjustment", "transfer", "remove" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "permission_enum", new[] { "read", "write", "delete", "owner" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "verification_type_enum", new[] { "register", "change_password", "recovery" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("UserWarehouse", b =>
@@ -96,17 +93,18 @@ namespace WarehouseManagerServer.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expire_at");
 
-                    b.Property<int>("VerificationType")
-                        .HasColumnType("verification_type_enum")
+                    b.Property<string>("VerificationType")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("verification_type");
 
                     b.HasKey("CodeId")
-                        .HasName("recovery_code_pkey");
+                        .HasName("email_verification_pkey");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("recovery_code", (string)null);
+                    b.ToTable("email_verification", (string)null);
                 });
 
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.Movement", b =>
@@ -126,8 +124,9 @@ namespace WarehouseManagerServer.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasAnnotation("Relational:JsonPropertyName", "date");
 
-                    b.Property<int>("MovementType")
-                        .HasColumnType("movement_type_enum")
+                    b.Property<string>("MovementType")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("movement_type")
                         .HasAnnotation("Relational:JsonPropertyName", "movement_type");
 
@@ -161,9 +160,9 @@ namespace WarehouseManagerServer.Migrations
                         .HasColumnName("warehouse_id")
                         .HasAnnotation("Relational:JsonPropertyName", "warehouse_id");
 
-                    b.PrimitiveCollection<int[]>("UserPermissions")
+                    b.Property<string[]>("UserPermissions")
                         .IsRequired()
-                        .HasColumnType("permission_enum[]")
+                        .HasColumnType("varchar(6)[]")
                         .HasColumnName("user_permissions")
                         .HasAnnotation("Relational:JsonPropertyName", "user_permissions");
 

@@ -1,8 +1,10 @@
-﻿namespace WarehouseManagerServer.Models.Enums;
+﻿using NpgsqlTypes;
+
+namespace WarehouseManagerServer.Models.Enums;
 
 public enum VerificationTypeEnum
 {
     Register,
-    ChangePassword,
+    Change,
     Recovery,
 }
