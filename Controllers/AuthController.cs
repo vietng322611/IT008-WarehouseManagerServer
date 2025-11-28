@@ -149,7 +149,6 @@ public class AuthController(IAuthService service) : ControllerBase
         }
     }
 
-    [UserPermission(UserPermissionEnum.SameUser)]
     [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
     {
@@ -162,7 +161,7 @@ public class AuthController(IAuthService service) : ControllerBase
             // ISTG this looks so dumb but reuse code should be good right?
             user = await service.ValidateUser(new LoginDto
             {
-                Email = user.FullName,
+                Email = user.Email,
                 Password = dto.OldPassword
             });
             if (user == null)
