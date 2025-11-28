@@ -30,4 +30,11 @@
         <Folder Include="Migrations\"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\Html\EmailTemplate.html" />
+      <Content Include="Resources\Html\EmailTemplate.html">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
