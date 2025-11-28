@@ -37,11 +37,12 @@ public class CategoryController(ICategoryService service) : ControllerBase
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CategoryDto content)
+    public async Task<IActionResult> Post([FromRoute] int warehouseId, [FromBody] CategoryDto content)
     {
         try
         {
             content.CategoryId = 0; // Ignore id in input
+            content.WarehouseId = warehouseId; // just for sure
 
             var newContent = await service.AddAsync(content);
             return CreatedAtAction(nameof(GetById), new { id = newContent.CategoryId }, newContent);
