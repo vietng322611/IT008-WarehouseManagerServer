@@ -37,11 +37,12 @@ public class SupplierController(ISupplierService service) : ControllerBase
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] SupplierDto content)
+    public async Task<IActionResult> Post([FromRoute] int warehouseId, [FromBody] SupplierDto content)
     {
         try
         {
             content.SupplierId = 0; // Ignore id in input
+            content.WarehouseId = warehouseId; // just for sure
 
             var newContent = await service.AddAsync(content);
             return CreatedAtAction(nameof(GetById), new { id = newContent.SupplierId }, newContent);

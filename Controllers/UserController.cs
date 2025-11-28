@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Services.Interfaces;
 using WarehouseManagerServer.Types.Enums;
@@ -86,46 +87,21 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
-    [UserPermission(UserPermissionEnum.SameUser)]
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] User content)
+    [UserPermission(UserPermissionEnum.Authenticated)]
+    [HttpPut]
+    public async Task<IActionResult> Put([FromBody] UserDto updatedContent)
     {
         try
         {
-            content.UserId = 0; // Ignore id in input
-
-            var newContent = await service.AddAsync(content);
-            return CreatedAtAction(
-                nameof(GetById),
-                new { userId = newContent.UserId },
-                new User
-                {
-                    UserId = content.UserId,
-                    FullName = content.FullName,
-                    Email = content.Email,
-                    JoinDate = content.JoinDate
-                });
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
-    [UserPermission(UserPermissionEnum.SameUser)]
-    [HttpPut("{userId:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int userId, [FromBody] User updatedContent)
-    {
-        try
-        {
-            if (userId != updatedContent.UserId)
-                return BadRequest();
-
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var existingContent = await service.GetByKeyAsync(userId);
             if (existingContent == null)
                 return NotFound();
 
-            await service.UpdateAsync(updatedContent);
+            await service.UpdateAsync(new User
+            {
+                FullName = updatedContent.FullName,
+            });
             return NoContent();
         }
         catch (Exception e)
@@ -134,12 +110,13 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
-    [UserPermission(UserPermissionEnum.SameUser)]
-    [HttpDelete("{userId:int:min(1)}")]
-    public async Task<IActionResult> Delete([FromRoute] int userId)
+    [UserPermission(UserPermissionEnum.Authenticated)]
+    [HttpDelete]
+    public async Task<IActionResult> Delete()
     {
         try
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var success = await service.DeleteAsync(userId);
             if (success)
                 return NoContent();

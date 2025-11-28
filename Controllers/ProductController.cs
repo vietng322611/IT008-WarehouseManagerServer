@@ -37,11 +37,12 @@ public class ProductController(IProductService service) : ControllerBase
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ProductDto content)
+    public async Task<IActionResult> Post([FromRoute] int warehouseId, [FromBody] ProductDto content)
     {
         try
         {
             content.ProductId = 0; // Ignore id in input
+            content.WarehouseId = warehouseId; // just for safe
             await service.AddAsync(content);
 
             var newContent = await service.GetByKeyAsync(content.ProductId);

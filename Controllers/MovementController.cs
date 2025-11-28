@@ -35,28 +35,28 @@ public class MovementController(IMovementService service) : ControllerBase
         }
     }
 
-    [WarehousePermission(PermissionEnum.Write)]
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] MovementDto content)
-    {
-        try
-        {
-            content.MovementId = 0; // Ignore id in input
-            await service.AddAsync(content);
-
-            var newContent = await service.GetByKeyAsync(content.MovementId);
-            if (newContent == null) return StatusCode(500, "Error adding new content");
-
-            return CreatedAtAction(
-                nameof(GetById),
-                new { id = newContent.MovementId },
-                Serialize(newContent));
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
+    // [WarehousePermission(PermissionEnum.Write)]
+    // [HttpPost]
+    // public async Task<IActionResult> Post([FromBody] MovementDto content)
+    // {
+    //     try
+    //     {
+    //         content.MovementId = 0; // Ignore id in input
+    //         await service.AddAsync(content);
+    //
+    //         var newContent = await service.GetByKeyAsync(content.MovementId);
+    //         if (newContent == null) return StatusCode(500, "Error adding new content");
+    //
+    //         return CreatedAtAction(
+    //             nameof(GetById),
+    //             new { id = newContent.MovementId },
+    //             Serialize(newContent));
+    //     }
+    //     catch (Exception e)
+    //     {
+    //         return StatusCode(500, e.Message);
+    //     }
+    // }
     
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPost("upsert")]

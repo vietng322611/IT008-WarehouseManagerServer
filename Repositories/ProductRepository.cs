@@ -2,6 +2,7 @@
 using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Repositories.Interfaces;
 
 namespace WarehouseManagerServer.Repositories;
@@ -36,7 +37,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
 
     public async Task<Product> AddAsync(ProductDto product)
     {
-        var newProduct = context.Products.Add(new Product
+        var newProduct = new Product
         {
             Name = product.Name,
             Quantity = product.Quantity,
@@ -45,10 +46,19 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
             SupplierId = product.SupplierId,
             CategoryId = product.CategoryId,
             ExpiryDate = product.ExpiryDate
-            
+        };
+        context.Products.Add(newProduct);
+        
+        context.Movements.Add(new Movement
+        {
+            Product = newProduct,
+            Quantity = newProduct.Quantity,
+            MovementType = MovementTypeEnum.In
         });
+        
         await context.SaveChangesAsync();
-        return newProduct.Entity;
+        
+        return newProduct;
     }
 
     public async Task<Product?> UpdateAsync(ProductDto product)
@@ -71,29 +81,9 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
     {
         foreach (var product in products)
         {
-            var existing = await context.Products.FindAsync(product.ProductId);
-
+            var existing = await UpdateAsync(product);
             if (existing is null)
-            {
-                var newProduct = new Product
-                {
-                    Name = product.Name,
-                    Quantity = product.Quantity,
-                    UnitPrice = product.UnitPrice,
-                    WarehouseId = product.WarehouseId,
-                    SupplierId = product.SupplierId,
-                    CategoryId = product.CategoryId
-                };
-                context.Products.Add(newProduct);
-            }
-            else
-            {
-                existing.Name = product.Name;
-                existing.Quantity = product.Quantity;
-                existing.UnitPrice = product.UnitPrice;
-                existing.SupplierId = product.SupplierId;
-                existing.CategoryId = product.CategoryId;
-            }
+                await AddAsync(product);
         }
     }
 
