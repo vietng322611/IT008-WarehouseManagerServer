@@ -45,7 +45,8 @@ public class SupplierController(ISupplierService service) : ControllerBase
             content.WarehouseId = warehouseId; // just for sure
 
             var newContent = await service.AddAsync(content);
-            return CreatedAtAction(nameof(GetById), new { id = newContent.SupplierId }, newContent);
+            return CreatedAtAction(
+                nameof(GetById), new { warehouseId, id = newContent.SupplierId }, newContent);
         }
         catch (Exception e)
         {

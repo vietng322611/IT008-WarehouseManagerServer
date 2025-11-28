@@ -45,7 +45,8 @@ public class CategoryController(ICategoryService service) : ControllerBase
             content.WarehouseId = warehouseId; // just for sure
 
             var newContent = await service.AddAsync(content);
-            return CreatedAtAction(nameof(GetById), new { id = newContent.CategoryId }, newContent);
+            return CreatedAtAction(
+                nameof(GetById), new { warehouseId, id = newContent.CategoryId }, newContent);
         }
         catch (Exception e)
         {
