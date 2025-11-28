@@ -20,23 +20,10 @@ public class UserRepository(WarehouseContext context) : IUserRepository
     }
 
     public async Task<User?> GetByKeyAsync(int userId)
-    {
-        var user = await context.Users.FindAsync(userId);
-        return user;
-    }
+        => await context.Users.FindAsync(userId);
 
     public async Task<User?> GetByUniqueAsync(Expression<Func<User, bool>> condition)
-    {
-        var user = await context.Users.Where(condition).Select(user => new User
-        {
-            UserId = user.UserId,
-            Email = user.Email,
-            FullName = user.FullName,
-            JoinDate = user.JoinDate
-        }).FirstOrDefaultAsync();
-
-        return user;
-    }
+        => await context.Users.Where(condition).FirstOrDefaultAsync();
 
     public async Task<List<UserWarehousesDto>> GetUserWarehousesAsync(int userId)
     {
