@@ -62,7 +62,7 @@ public class AuthController(IAuthService service) : ControllerBase
         {
             var user = await service.ValidateUser(dto);
             if (user == null)
-                return Unauthorized(new { message = "Invalid Username or Password" });
+                return Unauthorized(new { message = "Invalid Email or Password" });
 
             var refreshToken = await service.GenerateRefreshToken(user);
             var (accessToken, expires) = service.GenerateAccessToken(user);
