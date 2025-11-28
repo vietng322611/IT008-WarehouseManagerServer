@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace WarehouseManagerServer.Models.DTOs;
+namespace WarehouseManagerServer.Models.DTOs.Requests;
 
 public class LoginDto
 {

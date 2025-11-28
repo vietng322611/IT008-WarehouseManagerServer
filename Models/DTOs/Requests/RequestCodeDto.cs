@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using WarehouseManagerServer.Models.Enums;
 
-namespace WarehouseManagerServer.Models.DTOs;
+namespace WarehouseManagerServer.Models.DTOs.Requests;
 
 public class RequestCodeDto
 {
