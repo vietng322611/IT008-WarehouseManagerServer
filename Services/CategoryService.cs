@@ -1,4 +1,5 @@
-﻿using WarehouseManagerServer.Models.Entities;
+﻿using WarehouseManagerServer.Models.DTOs.Requests;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -12,13 +13,13 @@ public class CategoryService(ICategoryRepository categoryRepository) : ICategory
     public Task<Category?> GetByKeyAsync(int categoryId)
         => categoryRepository.GetByKeyAsync(categoryId);
 
-    public Task<Category> AddAsync(Category category)
+    public Task<Category> AddAsync(CategoryDto category)
         => categoryRepository.AddAsync(category);
 
-    public Task<Category?> UpdateAsync(Category category)
+    public Task<Category?> UpdateAsync(CategoryDto category)
         => categoryRepository.UpdateAsync(category);
     
-    public Task UpsertAsync(List<Category> categories)
+    public Task UpsertAsync(List<CategoryDto> categories)
         => categoryRepository.UpsertAsync(categories);
     
     public Task<bool> DeleteAsync(int categoryId)

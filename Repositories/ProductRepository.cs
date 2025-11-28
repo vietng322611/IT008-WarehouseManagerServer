@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 
@@ -33,25 +34,40 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
     //     return await query.ToListAsync();
     // }
 
-    public async Task<Product> AddAsync(Product product)
+    public async Task<Product> AddAsync(ProductDto product)
     {
-        context.Products.Add(product);
+        var newProduct = context.Products.Add(new Product
+        {
+            Name = product.Name,
+            Quantity = product.Quantity,
+            UnitPrice = product.UnitPrice,
+            WarehouseId = product.WarehouseId,
+            SupplierId = product.SupplierId,
+            CategoryId = product.CategoryId,
+            ExpiryDate = product.ExpiryDate
+            
+        });
         await context.SaveChangesAsync();
-        return product;
+        return newProduct.Entity;
     }
 
-    public async Task<Product?> UpdateAsync(Product product)
+    public async Task<Product?> UpdateAsync(ProductDto product)
     {
         var oldProduct = await context.Products.FindAsync(product.ProductId);
         if (oldProduct == null) return null;
 
-        context.Entry(oldProduct).CurrentValues.SetValues(product);
+        oldProduct.Name = product.Name;
+        oldProduct.Quantity = product.Quantity;
+        oldProduct.UnitPrice = product.UnitPrice;
+        oldProduct.SupplierId = product.SupplierId;
+        oldProduct.CategoryId = product.CategoryId;
+        oldProduct.ExpiryDate = product.ExpiryDate;
 
         await context.SaveChangesAsync();
-        return product;
+        return oldProduct;
     }
 
-    public async Task UpsertAsync(List<Product> products)
+    public async Task UpsertAsync(List<ProductDto> products)
     {
         foreach (var product in products)
         {

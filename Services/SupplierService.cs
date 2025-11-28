@@ -1,4 +1,5 @@
-﻿using WarehouseManagerServer.Models.Entities;
+﻿using WarehouseManagerServer.Models.DTOs.Requests;
+using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -12,13 +13,13 @@ public class SupplierService(ISupplierRepository supplierRepository) : ISupplier
     public Task<Supplier?> GetByKeyAsync(int supplierId)
         => supplierRepository.GetByKeyAsync(supplierId);
 
-    public Task<Supplier> AddAsync(Supplier supplier)
+    public Task<Supplier> AddAsync(SupplierDto supplier)
         => supplierRepository.AddAsync(supplier);
 
-    public Task<Supplier?> UpdateAsync(Supplier supplier)
+    public Task<Supplier?> UpdateAsync(SupplierDto supplier)
         => supplierRepository.UpdateAsync(supplier);
 
-    public Task UpsertAsync(List<Supplier> suppliers)
+    public Task UpsertAsync(List<SupplierDto> suppliers)
         => supplierRepository.UpsertAsync(suppliers);
 
     public Task<bool> DeleteAsync(int supplierId)

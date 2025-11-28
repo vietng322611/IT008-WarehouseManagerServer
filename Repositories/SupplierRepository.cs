@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 
@@ -38,24 +39,31 @@ public class SupplierRepository(WarehouseContext context) : ISupplierRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Supplier> AddAsync(Supplier supplier)
+    public async Task<Supplier> AddAsync(SupplierDto supplier)
     {
-        context.Suppliers.Add(supplier);
+        var newSupplier = context.Suppliers.Add(new Supplier
+        {
+            WarehouseId = supplier.WarehouseId,
+            Name = supplier.Name,
+            ContactInfo = supplier.ContactInfo,
+        });
         await context.SaveChangesAsync();
-        return supplier;
+        return newSupplier.Entity;
     }
 
-    public async Task<Supplier?> UpdateAsync(Supplier supplier)
+    public async Task<Supplier?> UpdateAsync(SupplierDto supplier)
     {
         var oldSupplier = await GetByKeyAsync(supplier.SupplierId);
         if (oldSupplier == null) return null;
 
-        context.Entry(oldSupplier).CurrentValues.SetValues(supplier);
+        oldSupplier.Name = supplier.Name;
+        oldSupplier.ContactInfo = supplier.ContactInfo;
+        
         await context.SaveChangesAsync();
-        return supplier;
+        return oldSupplier;
     }
 
-    public async Task UpsertAsync(List<Supplier> suppliers)
+    public async Task UpsertAsync(List<SupplierDto> suppliers)
     {
         foreach (var supplier in suppliers)
         {

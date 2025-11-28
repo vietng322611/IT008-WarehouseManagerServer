@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
@@ -36,7 +37,7 @@ public class ProductController(IProductService service) : ControllerBase
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Product content)
+    public async Task<IActionResult> Post([FromBody] ProductDto content)
     {
         try
         {
@@ -59,7 +60,7 @@ public class ProductController(IProductService service) : ControllerBase
     
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPost("upsert")]
-    public async Task<IActionResult> Upsert([FromBody] List<Product> contents)
+    public async Task<IActionResult> Upsert([FromBody] List<ProductDto> contents)
     {
         try
         {
@@ -74,7 +75,7 @@ public class ProductController(IProductService service) : ControllerBase
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] Product updatedContent)
+    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] ProductDto updatedContent)
     {
         try
         {
