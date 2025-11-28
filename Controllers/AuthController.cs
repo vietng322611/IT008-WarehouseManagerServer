@@ -17,7 +17,11 @@ public class AuthController(IAuthService service) : ControllerBase
         try
         {
             await service.SendVerificationCode(dto.Email, dto.Type);
-            return Ok("Sent recovery code to email: " + dto.Email);
+            return Ok(new
+            {
+                message = "Sent verification code to email: " + dto.Email,
+                type = dto.Type.ToString()
+            });
         }
         catch (Exception e)
         {
@@ -31,8 +35,10 @@ public class AuthController(IAuthService service) : ControllerBase
         try
         {
             var user = await service.VerifyCode(dto.Code, VerificationTypeEnum.Register);
-            if (user == null || dto.Email != user.Email)
+            if (user == null)
                 return BadRequest(new { message = "Invalid verification code" });
+            if (dto.Email != user.Email)
+                return BadRequest(new { message = "This code belonged to another user" });
             
             var result = await service.RegisterUser(dto.FullName, dto.Email, dto.Password);
             return result switch
