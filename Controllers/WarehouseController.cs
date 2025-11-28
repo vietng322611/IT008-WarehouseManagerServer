@@ -80,18 +80,18 @@ public class WarehouseController(
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("{warehouseId:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int warehouseId, [FromBody] Warehouse updatedContent)
+    public async Task<IActionResult> Put([FromRoute] int warehouseId, [FromBody] WarehouseDto updatedContent)
     {
         try
         {
-            if (warehouseId != updatedContent.WarehouseId)
-                return BadRequest();
-
             var existingContent = await service.GetByKeyAsync(warehouseId);
             if (existingContent == null)
                 return NotFound();
 
-            await service.UpdateAsync(updatedContent);
+            await service.UpdateAsync(new Warehouse
+            {
+                Name = updatedContent.Name
+            });
             return NoContent();
         }
         catch (Exception e)
