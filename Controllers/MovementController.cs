@@ -12,9 +12,9 @@ public class MovementController(IMovementService service) : ControllerBase
 {
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
-    public async Task<IActionResult> GetWarehouseMovements([FromRoute] int id)
+    public async Task<IActionResult> GetWarehouseMovements([FromRoute] int warehouseId)
     {
-        var result = await service.GetByWarehouseAsync(id);
+        var result = await service.GetByWarehouseAsync(warehouseId);
         return Ok(result.Select(Serialize));
     }
 

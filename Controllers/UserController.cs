@@ -70,12 +70,13 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
-    [UserPermission(UserPermissionEnum.SameUser)]
-    [HttpGet("{userId:int:min(1)}/warehouses")]
-    public async Task<IActionResult> GetUserWarehouses([FromRoute] int userId)
+    [UserPermission(UserPermissionEnum.Authenticated)]
+    [HttpGet("warehouses")]
+    public async Task<IActionResult> GetUserWarehouses()
     {
         try
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var content = await service.GetUserWarehousesAsync(userId);
             return Ok(content);
         }

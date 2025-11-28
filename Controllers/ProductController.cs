@@ -12,9 +12,9 @@ public class ProductController(IProductService service) : ControllerBase
 {
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
-    public async Task<IActionResult> GetWarehouseProducts([FromRoute] int id)
+    public async Task<IActionResult> GetWarehouseProducts([FromRoute] int warehouseId)
     {
-        var result = await service.GetByWarehouseAsync(id);
+        var result = await service.GetByWarehouseAsync(warehouseId);
         return Ok(result.Select(Serialize));
     }
 
