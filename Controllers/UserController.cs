@@ -86,38 +86,13 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
-    [UserPermission(UserPermissionEnum.SameUser)]
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] User content)
+    [UserPermission(UserPermissionEnum.Authenticated)]
+    [HttpPut]
+    public async Task<IActionResult> Put([FromBody] User updatedContent)
     {
         try
         {
-            content.UserId = 0; // Ignore id in input
-
-            var newContent = await service.AddAsync(content);
-            return CreatedAtAction(
-                nameof(GetById),
-                new { userId = newContent.UserId },
-                new User
-                {
-                    UserId = content.UserId,
-                    FullName = content.FullName,
-                    Email = content.Email,
-                    JoinDate = content.JoinDate
-                });
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
-    [UserPermission(UserPermissionEnum.SameUser)]
-    [HttpPut("{userId:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int userId, [FromBody] User updatedContent)
-    {
-        try
-        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             if (userId != updatedContent.UserId)
                 return BadRequest();
 
@@ -134,12 +109,13 @@ public class UserController(IUserService service) : ControllerBase
         }
     }
 
-    [UserPermission(UserPermissionEnum.SameUser)]
-    [HttpDelete("{userId:int:min(1)}")]
-    public async Task<IActionResult> Delete([FromRoute] int userId)
+    [UserPermission(UserPermissionEnum.Authenticated)]
+    [HttpDelete]
+    public async Task<IActionResult> Delete()
     {
         try
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var success = await service.DeleteAsync(userId);
             if (success)
                 return NoContent();
