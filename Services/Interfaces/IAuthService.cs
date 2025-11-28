@@ -13,7 +13,7 @@ public interface IAuthService
     Task<string> GenerateRefreshToken(User user);
     Task<User?> ValidateRefreshToken(RefreshDto dto);
     Task InvalidateRefreshToken(RefreshToken refreshToken);
-    Task SendVerificationCode(User user, VerificationTypeEnum type);
+    Task SendVerificationCode(string email, VerificationTypeEnum type);
     Task<User?> VerifyCode(string code, VerificationTypeEnum type);
     Task ChangePassword(User user, string newPassword);
 }

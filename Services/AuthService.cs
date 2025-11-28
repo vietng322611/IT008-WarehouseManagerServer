@@ -116,8 +116,8 @@ public class AuthService(
     public async Task InvalidateRefreshToken(RefreshToken refreshToken)
         => await userRepository.InvalidateRefreshToken(refreshToken);
 
-    public async Task SendVerificationCode(User user, VerificationTypeEnum type)
-        => await emailService.SendEmailAsync(user.Email, type);
+    public async Task SendVerificationCode(string email, VerificationTypeEnum type)
+        => await emailService.SendEmailAsync(email, type);
 
     public async Task<User?> VerifyCode(string code, VerificationTypeEnum type)
     {
