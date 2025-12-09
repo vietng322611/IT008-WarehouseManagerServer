@@ -47,6 +47,28 @@ public class WarehouseController(
         }
     }
 
+    [WarehousePermission(PermissionEnum.Read)]
+    [HttpGet("{warehouseId:int:min(1)}/statistics/{day:int:min(1)}/{month:int:min(1)}/{year:int:min(1)}")]
+    public async Task<IActionResult> GetWarehouseStatistics(
+        [FromRoute] int warehouseId,
+        [FromRoute] int day,
+        [FromRoute] int month,
+        [FromRoute] int year)
+    {
+        try
+        {
+            if (!DateTime.TryParse($"{year}-{month:D2}-{day:D2}" ,out _))
+                return BadRequest(new { message = "Invalid date" });
+
+            var content = await service.GetStatisticsAsync(warehouseId, day, month, year);
+            return Ok(content);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
     [UserPermission(UserPermissionEnum.Authenticated)]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] WarehouseDto content)
