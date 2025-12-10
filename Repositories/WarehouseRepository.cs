@@ -2,6 +2,7 @@
 using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Repositories.Interfaces;
 
 namespace WarehouseManagerServer.Repositories;
@@ -57,4 +58,64 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
         await context.SaveChangesAsync();
         return true;
     }
+
+    public async Task<StatisticDto> GetStatisticsAsync(int warehouseId, int day, int month, int year)
+    {
+        var statistic = new StatisticDto();
+
+        var supplierStats = await context.Histories
+            .Include(m => m.Product)
+            .ThenInclude(p => p.Supplier)
+            .Where(m =>
+                m.Product.WarehouseId == warehouseId &&
+                m.ActionType == ActionTypeEnum.In &&
+                m.Date.Year == year
+            )
+            .GroupBy(m => m.Product.Supplier != null ? m.Product.Supplier.Name : "Other")
+            .Select(g => new SupplierStat
+            {
+                Name = g.Key,
+                Count = g.Sum(x => x.Quantity)
+            })
+            .OrderByDescending(x => x.Count)
+            .ToListAsync();
+        
+        var import = await context.Histories
+            .Where(m =>
+                m.Product.WarehouseId == warehouseId &&
+                m.ActionType == ActionTypeEnum.In &&
+                m.Date.Year == year
+            )
+            .SumAsync(m => m.Quantity);
+        
+        var sale = await context.Histories
+            .Include(m => m.Product)
+            .Where(m =>
+                m.Product.WarehouseId == warehouseId &&
+                m.ActionType == ActionTypeEnum.Out &&
+                m.Date.Year == year
+            )
+            .GroupBy(m => m.Date.Month)
+            .Select(g => new
+            {
+                Month = g.Key,
+                TotalValue = g.Sum(x => x.Quantity * x.Product.UnitPrice),
+                ProductCount = g.Sum(x=> x.Quantity),
+                Count = g.Count()
+            })
+            .OrderBy(x => x.Month)
+            .ToListAsync();
+
+        statistic.SupplierStats = supplierStats;
+        statistic.MonthlySale = Enumerable.Range(1, 12)
+            .Select(m => sale.FirstOrDefault(x => x.Month == m)?.TotalValue ?? 0)
+            .ToList();
+        statistic.MonthlySaleCount = Enumerable.Range(1, 12)
+            .Select(m => sale.FirstOrDefault(x => x.Month == m)?.ProductCount ?? 0)
+            .ToList();
+        statistic.Import = import;
+        statistic.Export = sale.Sum(x => x.Count);
+
+        return statistic;
+    } 
 }

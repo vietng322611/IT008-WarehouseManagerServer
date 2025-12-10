@@ -15,4 +15,5 @@ public class User
     [JsonIgnore] public ICollection<Warehouse> Warehouses { get; set; } = new List<Warehouse>();
     [JsonIgnore] public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
     [JsonIgnore] public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+    [JsonIgnore] public ICollection<History> Histories { get; set; } = new List<History>();
 }

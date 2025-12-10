@@ -31,4 +31,9 @@ public class WarehouseService(IWarehouseRepository warehouseRepository) : IWareh
     {
         return warehouseRepository.DeleteAsync(warehouseId);
     }
+
+    public Task<StatisticDto> GetStatisticsAsync(int warehouseId, int day, int month, int year)
+    {
+        return warehouseRepository.GetStatisticsAsync(warehouseId, day, month, year);
+    }
 }

@@ -1,10 +1,8 @@
 ﻿namespace WarehouseManagerServer.Models.Enums;
 
-public enum MovementTypeEnum
+public enum ActionTypeEnum
 {
     In,
     Out,
-    Adjustment,
-    Transfer,
     Remove
 }

@@ -8,7 +8,7 @@ public static class RepositoryExtension
     public static void RegisterRepositories(this IServiceCollection services)
     {
         services.AddScoped<ICategoryRepository, CategoryRepository>();
-        services.AddScoped<IMovementRepository, MovementRepository>();
+        services.AddScoped<IHistoryRepository, HistoryRepository>();
         services.AddScoped<IPermissionRepository, PermissionRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ISupplierRepository, SupplierRepository>();

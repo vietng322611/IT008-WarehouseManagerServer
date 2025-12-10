@@ -18,7 +18,7 @@ public partial class WarehouseContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
-    public virtual DbSet<Movement> Movements { get; set; }
+    public virtual DbSet<History> Histories { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
 
@@ -52,28 +52,33 @@ public partial class WarehouseContext : DbContext
                 .HasConstraintName("category_warehouse_id_fkey");
         });
 
-        modelBuilder.Entity<Movement>(entity =>
+        modelBuilder.Entity<History>(entity =>
         {
-            entity.HasKey(e => e.MovementId).HasName("movements_pkey");
+            entity.HasKey(e => e.HistoryId).HasName("histories_pkey");
 
-            entity.ToTable("movements");
+            entity.ToTable("histories");
 
-            entity.HasIndex(e => e.ProductId, "idx_movements_product");
+            entity.HasIndex(e => e.ProductId, "idx_histories_product");
 
-            entity.Property(e => e.MovementId).HasColumnName("movement_id");
+            entity.Property(e => e.HistoryId).HasColumnName("history_id");
             entity.Property(e => e.Date)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("date");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
-            entity.Property(e => e.MovementType)
-                .HasColumnName("movement_type")
+            entity.Property(e => e.ActionType)
+                .HasColumnName("action_type")
                 .HasConversion<string>();
 
-            entity.HasOne(d => d.Product).WithMany(p => p.Movements)
+            entity.HasOne(d => d.Product).WithMany(p => p.Histories)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("movement_product_id_fkey");
+                .HasConstraintName("history_product_id_fkey");
+            entity.HasOne(d => d.User).WithMany(p => p.Histories)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("history_user_id_fkey");
         });
 
         modelBuilder.Entity<Product>(entity =>
