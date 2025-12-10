@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
 using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
@@ -41,10 +42,11 @@ public class ProductController(IProductService service) : ControllerBase
     {
         try
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             content.ProductId = 0; // Ignore id in input
             content.WarehouseId = warehouseId; // just for safe
             
-            var newContent = await service.AddAsync(content);
+            var newContent = await service.AddAsync(content, userId);
             return CreatedAtAction(
                 nameof(GetById), new { warehouseId, id = newContent.ProductId }, newContent);
         }
@@ -53,25 +55,10 @@ public class ProductController(IProductService service) : ControllerBase
             return StatusCode(500, e.Message);
         }
     }
-    
-    [WarehousePermission(PermissionEnum.Write)]
-    [HttpPost("upsert")]
-    public async Task<IActionResult> Upsert([FromBody] List<ProductDto> contents)
-    {
-        try
-        {
-            await service.UpsertAsync(contents);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
 
     [WarehousePermission(PermissionEnum.Write)]
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] ProductDto updatedContent)
+    [HttpPut("import/{id:int:min(1)}")]
+    public async Task<IActionResult> Import([FromRoute] int id, [FromBody] ProductDto updatedContent)
     {
         try
         {
@@ -82,7 +69,31 @@ public class ProductController(IProductService service) : ControllerBase
             if (existingContent == null)
                 return NotFound();
 
-            await service.UpdateAsync(updatedContent);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            await service.UpdateAsync(updatedContent, userId, ActionTypeEnum.In);
+            return NoContent();
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    [WarehousePermission(PermissionEnum.Write)]
+    [HttpPut("export/{id:int:min(1)}")]
+    public async Task<IActionResult> Export([FromRoute] int id, [FromBody] ProductDto updatedContent)
+    {
+        try
+        {
+            if (id != updatedContent.ProductId)
+                return BadRequest();
+
+            var existingContent = await service.GetByKeyAsync(id);
+            if (existingContent == null)
+                return NotFound();
+
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            await service.UpdateAsync(updatedContent, userId, ActionTypeEnum.Out);
             return NoContent();
         }
         catch (Exception e)
@@ -97,7 +108,8 @@ public class ProductController(IProductService service) : ControllerBase
     {
         try
         {
-            var success = await service.DeleteAsync(id);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var success = await service.DeleteAsync(id, userId);
             if (success)
                 return NoContent();
             return NotFound();

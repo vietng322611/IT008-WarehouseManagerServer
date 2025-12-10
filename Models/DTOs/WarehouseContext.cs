@@ -65,6 +65,7 @@ public partial class WarehouseContext : DbContext
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("date");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.ActionType)
                 .HasColumnName("action_type")
@@ -74,6 +75,10 @@ public partial class WarehouseContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("history_product_id_fkey");
+            entity.HasOne(d => d.User).WithMany(p => p.Histories)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("history_user_id_fkey");
         });
 
         modelBuilder.Entity<Product>(entity =>

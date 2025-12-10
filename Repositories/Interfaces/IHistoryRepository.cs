@@ -9,8 +9,4 @@ public interface IHistoryRepository
     Task<List<History>> GetByWarehouseAsync(int warehouseId);
     Task<History?> GetByKeyAsync(int historyId);
     Task<List<History>> FilterAsync(params Expression<Func<History, bool>>[] filters);
-    Task<History> AddAsync(HistoryDto history);
-    Task<History?> UpdateAsync(HistoryDto history);
-    Task UpsertAsync(List<HistoryDto> histories);
-    Task<bool> DeleteAsync(int historyId);
 }

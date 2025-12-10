@@ -1,4 +1,5 @@
-﻿using WarehouseManagerServer.Models.DTOs.Requests;
+﻿using System.Linq.Expressions;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
@@ -13,18 +14,6 @@ public class HistoryService(IHistoryRepository historyRepository) : IHistoryServ
     public Task<History?> GetByKeyAsync(int movementId)
         => historyRepository.GetByKeyAsync(movementId);
 
-    // public Task<List<Movement>> FilterAsync(params Expression<Func<Movement, bool>>[] filters)
-    //     => movementRepository.FilterAsync(filters);
-
-    public Task<History> AddAsync(HistoryDto history)
-        => historyRepository.AddAsync(history);
-
-    public Task<History?> UpdateAsync(HistoryDto history)
-        => historyRepository.UpdateAsync(history);
-
-    public Task UpsertAsync(List<HistoryDto> movements)
-        => historyRepository.UpsertAsync(movements);
-
-    public Task<bool> DeleteAsync(int movementId)
-        => historyRepository.DeleteAsync(movementId);
+    public Task<List<History>> FilterAsync(params Expression<Func<History, bool>>[] filters)
+        => historyRepository.FilterAsync(filters);
 }

@@ -35,7 +35,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
     //     return await query.ToListAsync();
     // }
 
-    public async Task<Product> AddAsync(ProductDto product)
+    public async Task<Product> AddAsync(ProductDto product, int userId)
     {
         var newProduct = new Product
         {
@@ -61,7 +61,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         return newProduct;
     }
 
-    public async Task<Product?> UpdateAsync(ProductDto product)
+    public async Task<Product?> UpdateAsync(ProductDto product, int userId, ActionTypeEnum actionType)
     {
         var oldProduct = await context.Products.FindAsync(product.ProductId);
         if (oldProduct == null) return null;
@@ -74,20 +74,11 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         oldProduct.ExpiryDate = product.ExpiryDate;
 
         await context.SaveChangesAsync();
+        await LogAsync(product, userId, actionType);
         return oldProduct;
     }
 
-    public async Task UpsertAsync(List<ProductDto> products)
-    {
-        foreach (var product in products)
-        {
-            var existing = await UpdateAsync(product);
-            if (existing is null)
-                await AddAsync(product);
-        }
-    }
-
-    public async Task<bool> DeleteAsync(int productId)
+    public async Task<bool> DeleteAsync(int productId, int userId)
     {
         var oldProduct = await context.Products.FindAsync(productId);
         if (oldProduct == null) return false;
@@ -95,5 +86,18 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         context.Products.Remove(oldProduct);
         await context.SaveChangesAsync();
         return true;
+    }
+
+    private async Task LogAsync(ProductDto product, int userId, ActionTypeEnum actionType)
+    {
+        context.Histories.Add(new History
+        {
+            ProductId = product.ProductId,
+            UserId = userId,
+            Quantity = product.Quantity,
+            ActionType = actionType,
+            Date = DateTime.UtcNow
+        });
+        await context.SaveChangesAsync();
     }
 }

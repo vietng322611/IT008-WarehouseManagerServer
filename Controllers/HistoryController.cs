@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
-using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
@@ -11,6 +10,10 @@ namespace WarehouseManagerServer.Controllers;
 [Route("api/warehouses/{warehouseId:int:min(1)}/histories")]
 public class HistoryController(IHistoryService service) : ControllerBase
 {
+    // This route can only read for now
+    // Endpoint user's cannot directly modify the data in history table
+    // As this is used to log user's actions
+    
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
     public async Task<IActionResult> GetWarehouseHistories([FromRoute] int warehouseId)
@@ -35,90 +38,15 @@ public class HistoryController(IHistoryService service) : ControllerBase
         }
     }
 
-    // [WarehousePermission(PermissionEnum.Write)]
-    // [HttpPost]
-    // public async Task<IActionResult> Post([FromBody] MovementDto content)
-    // {
-    //     try
-    //     {
-    //         content.MovementId = 0; // Ignore id in input
-    //         await service.AddAsync(content);
-    //
-    //         var newContent = await service.GetByKeyAsync(content.MovementId);
-    //         if (newContent == null) return StatusCode(500, "Error adding new content");
-    //
-    //         return CreatedAtAction(
-    //             nameof(GetById),
-    //             new { id = newContent.MovementId },
-    //             Serialize(newContent));
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         return StatusCode(500, e.Message);
-    //     }
-    // }
-    
-    [WarehousePermission(PermissionEnum.Write)]
-    [HttpPost("upsert")]
-    public async Task<IActionResult> Upsert([FromBody] List<HistoryDto> contents)
-    {
-        try
-        {
-            await service.UpsertAsync(contents);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
-    [WarehousePermission(PermissionEnum.Write)]
-    [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] HistoryDto updatedContent)
-    {
-        try
-        {
-            if (id != updatedContent.HistoryId)
-                return BadRequest();
-
-            var existingContent = await service.GetByKeyAsync(id);
-            if (existingContent == null)
-                return NotFound();
-
-            await service.UpdateAsync(updatedContent);
-            return NoContent();
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
-    [WarehousePermission(PermissionEnum.Write)]
-    [HttpDelete("{id:int:min(1)}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
-    {
-        try
-        {
-            var success = await service.DeleteAsync(id);
-            if (success)
-                return NoContent();
-            return NotFound();
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
     private static object Serialize(History content)
     {
         return new
         {
             history_id = content.HistoryId,
             product_id = content.ProductId,
+            user_id = content.UserId,
             product_name = content.Product.Name,
+            user_full_name = content.User.FullName,
             quantity = content.Quantity,
             action_type = content.ActionType,
             date = content.Date

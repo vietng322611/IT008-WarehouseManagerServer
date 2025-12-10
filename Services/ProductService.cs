@@ -1,5 +1,6 @@
 ﻿using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
+using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Repositories.Interfaces;
 using WarehouseManagerServer.Services.Interfaces;
 
@@ -16,15 +17,12 @@ public class ProductService(IProductRepository productRepository) : IProductServ
     // public Task<List<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters)
     //     => productRepository.FilterAsync(filters);
 
-    public Task<Product> AddAsync(ProductDto product)
-        => productRepository.AddAsync(product);
+    public Task<Product> AddAsync(ProductDto product, int userId)
+        => productRepository.AddAsync(product, userId);
 
-    public Task<Product?> UpdateAsync(ProductDto product)
-        => productRepository.UpdateAsync(product);
+    public Task<Product?> UpdateAsync(ProductDto product, int userId, ActionTypeEnum actionType)
+        => productRepository.UpdateAsync(product, userId, actionType);
 
-    public Task UpsertAsync(List<ProductDto> products)
-        => productRepository.UpsertAsync(products);
-
-    public Task<bool> DeleteAsync(int productId)
-        => productRepository.DeleteAsync(productId);
+    public Task<bool> DeleteAsync(int productId, int userId)
+        => productRepository.DeleteAsync(productId, userId);
 }
