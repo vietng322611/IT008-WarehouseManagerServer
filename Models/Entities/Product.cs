@@ -16,5 +16,5 @@ public class Product
     [JsonIgnore] public virtual Warehouse Warehouse { get; set; } = null!;
     [JsonIgnore] public virtual Supplier? Supplier { get; set; }
     [JsonIgnore] public virtual Category? Category { get; set; }
-    [JsonIgnore] public virtual ICollection<Movement> Movements { get; set; } = new List<Movement>();
+    [JsonIgnore] public virtual ICollection<History> Histories { get; set; } = new List<History>();
 }

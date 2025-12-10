@@ -8,12 +8,12 @@ using WarehouseManagerServer.Services.Interfaces;
 namespace WarehouseManagerServer.Controllers;
 
 [ApiController]
-[Route("api/warehouses/{warehouseId:int:min(1)}/movements")]
-public class MovementController(IMovementService service) : ControllerBase
+[Route("api/warehouses/{warehouseId:int:min(1)}/histories")]
+public class HistoryController(IHistoryService service) : ControllerBase
 {
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet]
-    public async Task<IActionResult> GetWarehouseMovements([FromRoute] int warehouseId)
+    public async Task<IActionResult> GetWarehouseHistories([FromRoute] int warehouseId)
     {
         var result = await service.GetByWarehouseAsync(warehouseId);
         return Ok(result.Select(Serialize));
@@ -60,7 +60,7 @@ public class MovementController(IMovementService service) : ControllerBase
     
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPost("upsert")]
-    public async Task<IActionResult> Upsert([FromBody] List<MovementDto> contents)
+    public async Task<IActionResult> Upsert([FromBody] List<HistoryDto> contents)
     {
         try
         {
@@ -75,11 +75,11 @@ public class MovementController(IMovementService service) : ControllerBase
 
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("{id:int:min(1)}")]
-    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] MovementDto updatedContent)
+    public async Task<IActionResult> Put([FromRoute] int id, [FromBody] HistoryDto updatedContent)
     {
         try
         {
-            if (id != updatedContent.MovementId)
+            if (id != updatedContent.HistoryId)
                 return BadRequest();
 
             var existingContent = await service.GetByKeyAsync(id);
@@ -112,15 +112,15 @@ public class MovementController(IMovementService service) : ControllerBase
         }
     }
 
-    private object Serialize(Movement content)
+    private static object Serialize(History content)
     {
         return new
         {
-            movement_id = content.MovementId,
+            history_id = content.HistoryId,
             product_id = content.ProductId,
             product_name = content.Product.Name,
             quantity = content.Quantity,
-            movement_type = content.MovementType,
+            action_type = content.ActionType,
             date = content.Date
         };
     }

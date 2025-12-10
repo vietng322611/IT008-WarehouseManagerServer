@@ -63,12 +63,12 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
     {
         var statistic = new StatisticDto();
 
-        var supplierStats = await context.Movements
+        var supplierStats = await context.Histories
             .Include(m => m.Product)
             .ThenInclude(p => p.Supplier)
             .Where(m =>
                 m.Product.WarehouseId == warehouseId &&
-                m.MovementType == MovementTypeEnum.In &&
+                m.ActionType == ActionTypeEnum.In &&
                 m.Date.Year == year
             )
             .GroupBy(m => m.Product.Supplier != null ? m.Product.Supplier.Name : "Other")
@@ -80,19 +80,19 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
             .OrderByDescending(x => x.Count)
             .ToListAsync();
         
-        var import = await context.Movements
+        var import = await context.Histories
             .Where(m =>
                 m.Product.WarehouseId == warehouseId &&
-                m.MovementType == MovementTypeEnum.In &&
+                m.ActionType == ActionTypeEnum.In &&
                 m.Date.Year == year
             )
             .SumAsync(m => m.Quantity);
         
-        var sale = await context.Movements
+        var sale = await context.Histories
             .Include(m => m.Product)
             .Where(m =>
                 m.Product.WarehouseId == warehouseId &&
-                m.MovementType == MovementTypeEnum.Out &&
+                m.ActionType == ActionTypeEnum.Out &&
                 m.Date.Year == year
             )
             .GroupBy(m => m.Date.Month)

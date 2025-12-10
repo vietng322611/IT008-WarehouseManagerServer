@@ -49,11 +49,11 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         };
         context.Products.Add(newProduct);
         
-        context.Movements.Add(new Movement
+        context.Histories.Add(new History
         {
             Product = newProduct,
             Quantity = newProduct.Quantity,
-            MovementType = MovementTypeEnum.In
+            ActionType = ActionTypeEnum.In
         });
         
         await context.SaveChangesAsync();

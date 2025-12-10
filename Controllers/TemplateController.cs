@@ -168,16 +168,16 @@ public class TemplateController : ControllerBase
         return Ok(model);
     }
 
-    [HttpGet("movement")]
+    [HttpGet("history")]
     public IActionResult GetMovementJson()
     {
         var model = new
         {
-            movement_id = 0,
+            history_id = 0,
             product_id = 0,
             product_name = "Product",
             quantity = 1,
-            movement_type = MovementTypeEnum.In,
+            action_type = ActionTypeEnum.In,
             date = DateTime.Now
         };
         return Ok(model);
