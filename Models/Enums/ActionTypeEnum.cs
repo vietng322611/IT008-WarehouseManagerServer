@@ -4,7 +4,5 @@ public enum ActionTypeEnum
 {
     In,
     Out,
-    Adjustment,
-    Transfer,
     Remove
 }
