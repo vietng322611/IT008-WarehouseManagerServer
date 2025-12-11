@@ -12,6 +12,7 @@ public interface IProductService
 
     // Task<List<Product>> FilterAsync(params Expression<Func<Product, bool>>[] filters);
     Task<Product> AddAsync(ProductDto product, int userId);
-    Task<Product?> UpdateAsync(ProductDto product, int userId, ActionTypeEnum actionType);
+    Task<List<Product>> UpdateQuantityAsync(List<ProductDto> products, int userId, ActionTypeEnum actionType);
+    Task<List<Product>> UpdateMetaAsync(List<ProductDto> products, int userId);
     Task<bool> DeleteAsync(int productId, int userId);
 }

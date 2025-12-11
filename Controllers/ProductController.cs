@@ -48,7 +48,7 @@ public class ProductController(IProductService service) : ControllerBase
             
             var newContent = await service.AddAsync(content, userId);
             return CreatedAtAction(
-                nameof(GetById), new { warehouseId, id = newContent.ProductId }, newContent);
+                nameof(GetById), new { warehouseId, id = newContent.ProductId }, Serialize(newContent));
         }
         catch (Exception e)
         {
@@ -57,21 +57,30 @@ public class ProductController(IProductService service) : ControllerBase
     }
 
     [WarehousePermission(PermissionEnum.Write)]
-    [HttpPut("import/{id:int:min(1)}")]
-    public async Task<IActionResult> Import([FromRoute] int id, [FromBody] ProductDto updatedContent)
+    [HttpPut]
+    public async Task<IActionResult> UpdateMeta([FromRoute] int id, [FromBody] List<ProductDto> products)
     {
         try
         {
-            if (id != updatedContent.ProductId)
-                return BadRequest();
-
-            var existingContent = await service.GetByKeyAsync(id);
-            if (existingContent == null)
-                return NotFound();
-
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            await service.UpdateAsync(updatedContent, userId, ActionTypeEnum.In);
-            return NoContent();
+            var newProducts = await service.UpdateMetaAsync(products, userId);
+            return Ok(newProducts.Select(Serialize));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    [WarehousePermission(PermissionEnum.Write)]
+    [HttpPut("import/{id:int:min(1)}")]
+    public async Task<IActionResult> Import([FromRoute] int id, [FromBody] List<ProductDto> products)
+    {
+        try
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var newProducts = await service.UpdateQuantityAsync(products, userId, ActionTypeEnum.In);
+            return Ok(newProducts.Select(Serialize));
         }
         catch (Exception e)
         {
@@ -81,20 +90,13 @@ public class ProductController(IProductService service) : ControllerBase
     
     [WarehousePermission(PermissionEnum.Write)]
     [HttpPut("export/{id:int:min(1)}")]
-    public async Task<IActionResult> Export([FromRoute] int id, [FromBody] ProductDto updatedContent)
+    public async Task<IActionResult> Export([FromRoute] int id, [FromBody] List<ProductDto> products)
     {
         try
         {
-            if (id != updatedContent.ProductId)
-                return BadRequest();
-
-            var existingContent = await service.GetByKeyAsync(id);
-            if (existingContent == null)
-                return NotFound();
-
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            await service.UpdateAsync(updatedContent, userId, ActionTypeEnum.Out);
-            return NoContent();
+            var newProducts = await service.UpdateQuantityAsync(products, userId, ActionTypeEnum.Out);
+            return Ok(newProducts.Select(Serialize));
         }
         catch (Exception e)
         {
@@ -120,19 +122,17 @@ public class ProductController(IProductService service) : ControllerBase
         }
     }
 
-    private object Serialize(Product content)
+    private static object Serialize(Product content)
     {
         return new
         {
             product_id = content.ProductId,
             name = content.Name,
-            category = content.Category == null ? "" : content.Category.Name,
             supplier = content.Supplier == null ? "" : content.Supplier.Name,
             unit_price = content.UnitPrice,
             quantity = content.Quantity,
             expiry_date = content.ExpiryDate,
             warehouse_id = content.WarehouseId,
-            category_id = content.CategoryId,
             supplier_id = content.SupplierId
         };
     }
