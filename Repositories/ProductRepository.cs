@@ -13,7 +13,6 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
     {
         return await context.Products.AsNoTracking()
             .Include(p => p.Supplier)
-            .Include(p => p.Category)
             .Where(p => p.WarehouseId == warehouseId)
             .OrderBy(p => p.Name)
             .ToListAsync();
@@ -21,9 +20,8 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
 
     public async Task<Product?> GetByKeyAsync(int productId)
     {
-        return await context.Products
+        return await context.Products.AsNoTracking()
             .Include(p => p.Supplier)
-            .Include(p => p.Category)
             .Where(p => p.ProductId == productId)
             .FirstOrDefaultAsync();
     }
@@ -44,38 +42,88 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
             UnitPrice = product.UnitPrice,
             WarehouseId = product.WarehouseId,
             SupplierId = product.SupplierId,
-            CategoryId = product.CategoryId,
             ExpiryDate = product.ExpiryDate
         };
         context.Products.Add(newProduct);
         
-        context.Histories.Add(new History
-        {
-            Product = newProduct,
-            Quantity = newProduct.Quantity,
-            ActionType = ActionTypeEnum.In
-        });
+        Log(newProduct, userId, ActionTypeEnum.In);
         
         await context.SaveChangesAsync();
-        
-        return newProduct;
+        return await context.Products.AsNoTracking()
+            .Include(p => p.Supplier)
+            .FirstAsync(p => p.ProductId == newProduct.ProductId);
     }
 
-    public async Task<Product?> UpdateAsync(ProductDto product, int userId, ActionTypeEnum actionType)
+    public async Task<List<Product>> UpdateQuantityAsync(List<ProductDto> products, int userId, ActionTypeEnum actionType)
     {
-        var oldProduct = await context.Products.FindAsync(product.ProductId);
-        if (oldProduct == null) return null;
+        await using var transaction = await context.Database.BeginTransactionAsync();
+        try
+        {
+            var updatedIds = new List<int>();
+            
+            foreach (var dto in products)
+            {
+                var oldProduct = await context.Products.FindAsync(dto.ProductId);
+                if (oldProduct == null) continue;
 
-        oldProduct.Name = product.Name;
-        oldProduct.Quantity = product.Quantity;
-        oldProduct.UnitPrice = product.UnitPrice;
-        oldProduct.SupplierId = product.SupplierId;
-        oldProduct.CategoryId = product.CategoryId;
-        oldProduct.ExpiryDate = product.ExpiryDate;
+                oldProduct.Quantity = dto.Quantity;
 
-        await context.SaveChangesAsync();
-        await LogAsync(product, userId, actionType);
-        return oldProduct;
+                updatedIds.Add(oldProduct.ProductId);
+                Log(oldProduct, userId, actionType);
+            }
+
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return await context.Products.AsNoTracking()
+                .Include(p => p.Supplier)
+                .Where(p => updatedIds.Contains(p.ProductId))
+                .OrderBy(p => p.Name)
+                .ToListAsync();
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+    
+    public async Task<List<Product>> UpdateMetaAsync(List<ProductDto> products, int userId)
+    {
+        await using var transaction = await context.Database.BeginTransactionAsync();
+        try
+        {
+            var updatedIds = new List<int>();
+            
+            foreach (var dto in products)
+            {
+                var oldProduct = await context.Products.FindAsync(dto.ProductId);
+                if (oldProduct == null) continue;
+
+                oldProduct.Name = dto.Name;
+                oldProduct.UnitPrice = dto.UnitPrice;
+                oldProduct.SupplierId = dto.SupplierId;
+                oldProduct.CategoryId = dto.CategoryId;
+                oldProduct.ExpiryDate = dto.ExpiryDate;
+
+                updatedIds.Add(oldProduct.ProductId);
+                Log(oldProduct, userId, ActionTypeEnum.Modify);
+            }
+
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return await context.Products.AsNoTracking()
+                .Include(p => p.Supplier)
+                .Where(p => updatedIds.Contains(p.ProductId))
+                .OrderBy(p => p.Name)
+                .ToListAsync();
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task<bool> DeleteAsync(int productId, int userId)
@@ -84,11 +132,12 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         if (oldProduct == null) return false;
 
         context.Products.Remove(oldProduct);
+        Log(oldProduct, userId, ActionTypeEnum.Remove);
         await context.SaveChangesAsync();
         return true;
     }
 
-    private async Task LogAsync(ProductDto product, int userId, ActionTypeEnum actionType)
+    private void Log(Product product, int userId, ActionTypeEnum actionType)
     {
         context.Histories.Add(new History
         {
@@ -98,6 +147,5 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
             ActionType = actionType,
             Date = DateTime.UtcNow
         });
-        await context.SaveChangesAsync();
     }
 }

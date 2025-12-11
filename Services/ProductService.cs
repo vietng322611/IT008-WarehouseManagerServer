@@ -20,8 +20,11 @@ public class ProductService(IProductRepository productRepository) : IProductServ
     public Task<Product> AddAsync(ProductDto product, int userId)
         => productRepository.AddAsync(product, userId);
 
-    public Task<Product?> UpdateAsync(ProductDto product, int userId, ActionTypeEnum actionType)
-        => productRepository.UpdateAsync(product, userId, actionType);
+    public Task<List<Product>> UpdateQuantityAsync(List<ProductDto> products, int userId, ActionTypeEnum actionType)
+        => productRepository.UpdateQuantityAsync(products, userId, actionType);
+    
+    public Task<List<Product>> UpdateMetaAsync(List<ProductDto> products, int userId)
+        => productRepository.UpdateMetaAsync(products, userId);
 
     public Task<bool> DeleteAsync(int productId, int userId)
         => productRepository.DeleteAsync(productId, userId);
