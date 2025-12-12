@@ -103,7 +103,6 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
                 oldProduct.Name = dto.Name;
                 oldProduct.UnitPrice = dto.UnitPrice;
                 oldProduct.SupplierId = dto.SupplierId;
-                oldProduct.CategoryId = dto.CategoryId;
                 oldProduct.ExpiryDate = dto.ExpiryDate;
 
                 updatedIds.Add(oldProduct.ProductId);
