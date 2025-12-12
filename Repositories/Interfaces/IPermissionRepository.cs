@@ -10,6 +10,7 @@ public interface IPermissionRepository
     Task<Permission?> GetByKeyAsync(int userId, int warehouseId);
     Task<List<Permission>> FilterAsync(params Expression<Func<Permission, bool>>[] filters);
     Task<Permission> AddAsync(Permission permission);
+    Task<Permission?> AddByEmailAsync(int warehouseId, string email, List<PermissionEnum> permissions);
     Task<Permission?> UpdateAsync(Permission permission);
     Task<bool> DeleteAsync(int userId, int warehouseId);
 }
