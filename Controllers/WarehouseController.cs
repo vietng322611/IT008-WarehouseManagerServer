@@ -48,19 +48,18 @@ public class WarehouseController(
     }
 
     [WarehousePermission(PermissionEnum.Read)]
-    [HttpGet("{warehouseId:int:min(1)}/statistics/{day:int:min(1)}/{month:int:min(1)}/{year:int:min(1)}")]
+    [HttpGet("{warehouseId:int:min(1)}/statistics/{month:int:min(1)}/{year:int:min(1)}")]
     public async Task<IActionResult> GetWarehouseStatistics(
         [FromRoute] int warehouseId,
-        [FromRoute] int day,
         [FromRoute] int month,
         [FromRoute] int year)
     {
         try
         {
-            if (!DateTime.TryParse($"{year}-{month:D2}-{day:D2}" ,out _))
-                return BadRequest(new { message = "Invalid date" });
+            if (!IsValidDate(month, year))
+                return BadRequest();
 
-            var content = await service.GetStatisticsAsync(warehouseId, day, month, year);
+            var content = await service.GetStatisticsAsync(warehouseId, month, year);
             return Ok(content);
         }
         catch (Exception e)
@@ -137,5 +136,20 @@ public class WarehouseController(
         {
             return StatusCode(500, e.Message);
         }
+    }
+
+    private static bool IsValidDate(int month, int year)
+    {
+        if (month is < 1 or > 12)
+            return false;
+
+        if (year < 1 || year > DateTime.Now.Year)
+            return false;
+
+        var inputDate = new DateTime(year, month, 1);
+        var today = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+
+        // must not be in the future
+        return inputDate <= today;
     }
 }

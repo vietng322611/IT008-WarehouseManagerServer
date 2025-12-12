@@ -10,5 +10,5 @@ public interface IWarehouseRepository
     Task<Warehouse> AddAsync(Warehouse warehouse);
     Task<Warehouse?> UpdateAsync(Warehouse warehouse);
     Task<bool> DeleteAsync(int warehouseId);
-    Task<StatisticDto> GetStatisticsAsync(int warehouseId, int day, int month, int year);
+    Task<StatisticDto> GetStatisticsAsync(int warehouseId, int month, int year);
 }

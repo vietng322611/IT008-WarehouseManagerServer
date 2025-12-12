@@ -59,7 +59,7 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
         return true;
     }
 
-    public async Task<StatisticDto> GetStatisticsAsync(int warehouseId, int day, int month, int year)
+    public async Task<StatisticDto> GetStatisticsAsync(int warehouseId, int month, int year)
     {
         var statistic = new StatisticDto();
 
