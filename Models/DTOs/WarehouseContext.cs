@@ -16,8 +16,6 @@ public partial class WarehouseContext : DbContext
     {
     }
 
-    public virtual DbSet<Category> Categories { get; set; }
-
     public virtual DbSet<History> Histories { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
@@ -36,22 +34,6 @@ public partial class WarehouseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Category>(entity =>
-        {
-            entity.HasKey(e => e.CategoryId).HasName("categories_pkey");
-
-            entity.ToTable("categories");
-
-            entity.Property(e => e.CategoryId).HasColumnName("category_id");
-            entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
-            entity.Property(e => e.Name).HasColumnName("name");
-
-            entity.HasOne(d => d.Warehouse).WithMany(p => p.Categories)
-                .HasForeignKey(d => d.WarehouseId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("category_warehouse_id_fkey");
-        });
-
         modelBuilder.Entity<History>(entity =>
         {
             entity.HasKey(e => e.HistoryId).HasName("histories_pkey");
@@ -87,12 +69,9 @@ public partial class WarehouseContext : DbContext
 
             entity.ToTable("products");
 
-            entity.HasIndex(e => e.CategoryId, "idx_products_category");
-
             entity.Property(e => e.ProductId).HasColumnName("product_id");
             entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
             entity.Property(e => e.SupplierId).HasColumnName("supplier_id");
-            entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Quantity)
                 .HasDefaultValue(0)
@@ -108,10 +87,6 @@ public partial class WarehouseContext : DbContext
                 .HasForeignKey(d => d.WarehouseId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("product_warehouse_id_fkey");
-            entity.HasOne(d => d.Category).WithMany(p => p.Products)
-                .HasForeignKey(d => d.CategoryId)
-                .OnDelete(DeleteBehavior.SetNull)
-                .HasConstraintName("product_category_id_fkey");
             entity.HasOne(d => d.Supplier).WithMany(p => p.Products)
                 .HasForeignKey(d => d.SupplierId)
                 .OnDelete(DeleteBehavior.SetNull)

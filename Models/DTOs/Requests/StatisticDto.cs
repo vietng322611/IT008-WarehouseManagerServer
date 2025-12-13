@@ -11,8 +11,8 @@ public class SupplierStat
 public class StatisticDto
 {
     [JsonPropertyName("supplier_stats")] public List<SupplierStat> SupplierStats { get; set; } = [];
-    [JsonPropertyName("monthly_sale")] public List<decimal> MonthlySale { get; set; } = [];
-    [JsonPropertyName("monthly_sale_count")] public List<int> MonthlySaleCount { get; set; } = [];
+    [JsonPropertyName("expired")] public List<int> Expired { get; set; } = [];
+    [JsonPropertyName("sale")] public List<int> Sale { get; set; } = [];
     [JsonPropertyName("import")] public int Import { get; set; }
     [JsonPropertyName("export")] public int Export { get; set; }
 }

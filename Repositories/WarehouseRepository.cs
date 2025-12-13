@@ -59,63 +59,124 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
         return true;
     }
 
-    public async Task<StatisticDto> GetStatisticsAsync(int warehouseId, int day, int month, int year)
+    public async Task<StatisticDto> GetMonthlyStatAsync(int warehouseId, int month, int year)
     {
         var statistic = new StatisticDto();
 
-        var supplierStats = await context.Histories
-            .Include(m => m.Product)
-            .ThenInclude(p => p.Supplier)
+        var start = new DateTime(year, month, 1);
+        var end = start.AddMonths(1);
+        var lastDay = DateTime.DaysInMonth(year, month);
+
+        var raw = await context.Histories.AsNoTracking()
             .Where(m =>
                 m.Product.WarehouseId == warehouseId &&
-                m.ActionType == ActionTypeEnum.In &&
-                m.Date.Year == year
+                m.Date >= start &&
+                m.Date < end
             )
-            .GroupBy(m => m.Product.Supplier != null ? m.Product.Supplier.Name : "Other")
+            .Select(m => new
+            {
+                m.ActionType,
+                m.Date.Day,
+                m.Quantity,
+                SupplierName = m.Product.Supplier.Name
+            })
+            .ToListAsync();
+        
+        statistic.SupplierStats = raw
+            .Where(x => x.ActionType == ActionTypeEnum.In)
+            .GroupBy(x => x.SupplierName)
             .Select(g => new SupplierStat
             {
                 Name = g.Key,
                 Count = g.Sum(x => x.Quantity)
             })
             .OrderByDescending(x => x.Count)
-            .ToListAsync();
+            .ToList();
         
-        var import = await context.Histories
-            .Where(m =>
-                m.Product.WarehouseId == warehouseId &&
-                m.ActionType == ActionTypeEnum.In &&
-                m.Date.Year == year
-            )
-            .SumAsync(m => m.Quantity);
-        
-        var sale = await context.Histories
-            .Include(m => m.Product)
-            .Where(m =>
-                m.Product.WarehouseId == warehouseId &&
-                m.ActionType == ActionTypeEnum.Out &&
-                m.Date.Year == year
-            )
-            .GroupBy(m => m.Date.Month)
-            .Select(g => new
-            {
-                Month = g.Key,
-                TotalValue = g.Sum(x => x.Quantity * x.Product.UnitPrice),
-                ProductCount = g.Sum(x=> x.Quantity),
-                Count = g.Count()
-            })
-            .OrderBy(x => x.Month)
-            .ToListAsync();
+        statistic.Sale = Enumerable.Range(1, lastDay)
+            .Select(day =>
+                raw.Where(x =>
+                        x.ActionType is ActionTypeEnum.Out or ActionTypeEnum.Transfer &&
+                        x.Day == day)
+                    .Sum(x => x.Quantity))
+            .ToList();
 
-        statistic.SupplierStats = supplierStats;
-        statistic.MonthlySale = Enumerable.Range(1, 12)
-            .Select(m => sale.FirstOrDefault(x => x.Month == m)?.TotalValue ?? 0)
+        statistic.Expired = Enumerable.Range(1, lastDay)
+            .Select(day =>
+                raw.Where(x =>
+                        x.ActionType == ActionTypeEnum.Remove &&
+                        x.Day == day)
+                    .Sum(x => x.Quantity))
             .ToList();
-        statistic.MonthlySaleCount = Enumerable.Range(1, 12)
-            .Select(m => sale.FirstOrDefault(x => x.Month == m)?.ProductCount ?? 0)
-            .ToList();
-        statistic.Import = import;
-        statistic.Export = sale.Sum(x => x.Count);
+        
+        statistic.Import = raw
+            .Where(x => x.ActionType == ActionTypeEnum.In)
+            .Sum(x => x.Quantity);
+        
+        statistic.Export = raw.Count(x =>
+            x.ActionType is ActionTypeEnum.Out or ActionTypeEnum.Transfer
+        );
 
         return statistic;
-    } 
+    }
+    
+    public async Task<StatisticDto> GetYearlyStatAsync(int warehouseId, int year)
+    {
+        var statistic = new StatisticDto();
+
+        var start = new DateTime(year, 1, 1);
+        var end = start.AddYears(1);
+
+        var raw = await context.Histories.AsNoTracking()
+            .Where(m =>
+                m.Product.WarehouseId == warehouseId &&
+                m.Date >= start &&
+                m.Date < end
+            )
+            .Select(m => new
+            {
+                m.ActionType,
+                m.Date.Month,
+                m.Quantity,
+                SupplierName = m.Product.Supplier.Name
+            })
+            .ToListAsync();
+        
+        statistic.SupplierStats = raw
+            .Where(x => x.ActionType == ActionTypeEnum.In)
+            .GroupBy(x => x.SupplierName)
+            .Select(g => new SupplierStat
+            {
+                Name = g.Key,
+                Count = g.Sum(x => x.Quantity)
+            })
+            .OrderByDescending(x => x.Count)
+            .ToList();
+        
+        statistic.Sale = Enumerable.Range(1, 12)
+            .Select(month =>
+                raw.Where(x =>
+                        x.ActionType is ActionTypeEnum.Out or ActionTypeEnum.Transfer &&
+                        x.Month == month)
+                    .Sum(x => x.Quantity))
+            .ToList();
+
+        statistic.Expired = Enumerable.Range(1, 12)
+            .Select(month =>
+                raw.Where(x =>
+                        x.ActionType == ActionTypeEnum.Remove &&
+                        x.Month == month)
+                    .Sum(x => x.Quantity))
+            .ToList();
+        
+        statistic.Import = raw
+            .Where(x => x.ActionType == ActionTypeEnum.In)
+            .Sum(x => x.Quantity);
+        
+        statistic.Export = raw.Count(x =>
+            x.ActionType is ActionTypeEnum.Out or ActionTypeEnum.Transfer
+        );
+
+        return statistic;
+    }
 }

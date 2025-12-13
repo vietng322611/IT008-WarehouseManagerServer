@@ -28,6 +28,11 @@ public class PermissionService(IPermissionRepository permissionRepository) : IPe
         return permissionRepository.AddAsync(permission);
     }
 
+    public Task<Permission?> AddByEmailAsync(int warehouseId, string email, List<PermissionEnum> permissions)
+    {
+        return permissionRepository.AddByEmailAsync(warehouseId, email, permissions);
+    }
+
     public Task<Permission?> UpdateAsync(Permission permission)
     {
         return permissionRepository.UpdateAsync(permission);

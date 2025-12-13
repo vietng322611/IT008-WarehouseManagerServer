@@ -1,65 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WarehouseManagerServer.Attributes;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Services.Interfaces;
-using WarehouseManagerServer.Types.Enums;
 
 namespace WarehouseManagerServer.Controllers;
 
-/* Route: api/Permission
- * Endpoints:
- * - POST api/Permission
- * - GET api/Permission/json
- * - GET, PUT, DELETE api/Permission/[userId]-[WarehouseId]
- * - GET api/Permission/user/[UserId]
- * - GET api/Permission/warehouse/[WarehouseId]
- */
-
 [ApiController]
-[Route("api/permissions")]
-public class PermissionController(IPermissionService service) : ControllerBase
+[Route("api/warehouses/{warehouseId:int:min(1)}/permissions")]
+public class PermissionController(IPermissionService service): ControllerBase
 {
-    // [HttpGet]
-    // public async Task<IActionResult> GetAll()
-    // {
-    //     var content = await service.GetAllAsync();
-    //     return Ok(content);
-    // }
-
     [WarehousePermission(PermissionEnum.Read)]
-    [HttpGet("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
-    public async Task<IActionResult> GetByIds([FromRoute] int userId, [FromRoute] int warehouseId)
-    {
-        try
-        {
-            var content = await service.GetByKeyAsync(userId, warehouseId);
-            if (content == null) return NotFound();
-            return Ok(content);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
-    [UserPermission(UserPermissionEnum.SameUser)]
-    [HttpGet("user/{userId:int:min(1)}")]
-    public async Task<IActionResult> GetByUserId([FromRoute] int userId)
-    {
-        try
-        {
-            var contents = await service.FilterAsync(e => e.UserId == userId);
-            return Ok(contents);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(500, e.Message);
-        }
-    }
-
-    [WarehousePermission(PermissionEnum.Read)]
-    [HttpGet("warehouse/{warehouseId:int:min(1)}")]
+    [HttpGet]
     public async Task<IActionResult> GetByWarehouseId([FromRoute] int warehouseId)
     {
         try
@@ -73,16 +26,15 @@ public class PermissionController(IPermissionService service) : ControllerBase
         }
     }
 
-    [WarehousePermission(PermissionEnum.Owner)]
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Permission content)
+    [WarehousePermission(PermissionEnum.Read)]
+    [HttpGet("{userId:int:min(1)}")]
+    public async Task<IActionResult> GetByKey([FromRoute] int warehouseId, [FromRoute] int userId)
     {
         try
         {
-            content.UserId = 0; // Ignore ids in input
-
-            var newContent = await service.AddAsync(content);
-            return CreatedAtAction(nameof(GetByIds), newContent);
+            var content = await service.GetByKeyAsync(userId, warehouseId);
+            if (content == null) return NotFound();
+            return Ok(content);
         }
         catch (Exception e)
         {
@@ -91,10 +43,28 @@ public class PermissionController(IPermissionService service) : ControllerBase
     }
 
     [WarehousePermission(PermissionEnum.Owner)]
-    [HttpPut("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
+    [HttpPost]
+    public async Task<IActionResult> Post([FromRoute] int warehouseId, [FromBody] PermissionDto content)
+    {
+        try
+        {
+            var newContent = await service.AddByEmailAsync(warehouseId, content.Email, content.UserPermissions);
+            if (newContent == null) return BadRequest();
+            
+            return CreatedAtAction(
+                nameof(GetByKey), new {warehouseId, userId = newContent.UserId},  newContent);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+
+    [WarehousePermission(PermissionEnum.Owner)]
+    [HttpPut("{userId:int:min(1)}")]
     public async Task<IActionResult> Put(
-        [FromRoute] int userId,
         [FromRoute] int warehouseId,
+        [FromRoute] int userId,
         [FromBody] Permission updatedContent)
     {
         try
@@ -117,8 +87,8 @@ public class PermissionController(IPermissionService service) : ControllerBase
     }
 
     [WarehousePermission(PermissionEnum.Owner)]
-    [HttpDelete("{userId:int:min(1)}-{warehouseId:int:min(1)}")]
-    public async Task<IActionResult> Delete([FromRoute] int userId, [FromRoute] int warehouseId)
+    [HttpDelete("{userId:int:min(1)}")]
+    public async Task<IActionResult> Delete([FromRoute] int warehouseId, [FromRoute] int userId)
     {
         try
         {

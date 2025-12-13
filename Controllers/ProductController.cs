@@ -128,7 +128,7 @@ public class ProductController(IProductService service) : ControllerBase
         {
             product_id = content.ProductId,
             name = content.Name,
-            supplier = content.Supplier == null ? "" : content.Supplier.Name,
+            supplier = content.Supplier.Name,
             unit_price = content.UnitPrice,
             quantity = content.Quantity,
             expiry_date = content.ExpiryDate,

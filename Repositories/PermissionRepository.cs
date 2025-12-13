@@ -39,6 +39,23 @@ public class PermissionRepository(WarehouseContext context) : IPermissionReposit
         return permission;
     }
 
+    public async Task<Permission?> AddByEmailAsync(int warehouseId, string email, List<PermissionEnum> permissions)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null) return null;
+
+        var newPermission = new Permission
+        {
+            UserId = user.UserId,
+            WarehouseId = warehouseId,
+            UserPermissions = permissions
+        };
+        
+        context.Permissions.Add(newPermission);
+        await context.SaveChangesAsync();
+        return newPermission;
+    }
+
     public async Task<Permission?> UpdateAsync(Permission permission)
     {
         var oldUserPermission = await GetByKeyAsync(permission.UserId, permission.WarehouseId);
