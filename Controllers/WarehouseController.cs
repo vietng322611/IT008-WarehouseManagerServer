@@ -49,7 +49,7 @@ public class WarehouseController(
 
     [WarehousePermission(PermissionEnum.Read)]
     [HttpGet("{warehouseId:int:min(1)}/statistics/{month:int:min(1)}/{year:int:min(1)}")]
-    public async Task<IActionResult> GetWarehouseStatistics(
+    public async Task<IActionResult> GetMonthlyStat(
         [FromRoute] int warehouseId,
         [FromRoute] int month,
         [FromRoute] int year)
@@ -59,7 +59,27 @@ public class WarehouseController(
             if (!IsValidDate(month, year))
                 return BadRequest();
 
-            var content = await service.GetStatisticsAsync(warehouseId, month, year);
+            var content = await service.GetMonthlyStatAsync(warehouseId, month, year);
+            return Ok(content);
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }
+    }
+    
+    [WarehousePermission(PermissionEnum.Read)]
+    [HttpGet("{warehouseId:int:min(1)}/statistics/{year:int:min(1)}")]
+    public async Task<IActionResult> GetYearlyStat(
+        [FromRoute] int warehouseId,
+        [FromRoute] int year)
+    {
+        try
+        {
+            if (!IsValidDate(1, year))
+                return BadRequest();
+
+            var content = await service.GetYearlyStatAsync(warehouseId, year);
             return Ok(content);
         }
         catch (Exception e)
