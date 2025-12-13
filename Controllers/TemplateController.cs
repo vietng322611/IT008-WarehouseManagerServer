@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WarehouseManagerServer.Models.DTOs;
 using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
@@ -179,18 +178,6 @@ public class TemplateController : ControllerBase
             quantity = 1,
             action_type = ActionTypeEnum.In,
             date = DateTime.Now
-        };
-        return Ok(model);
-    }
-
-    [HttpGet("category")]
-    public IActionResult GetCategoryJson()
-    {
-        var model = new Category
-        {
-            CategoryId = 0,
-            WarehouseId = 0,
-            Name = "Category"
         };
         return Ok(model);
     }

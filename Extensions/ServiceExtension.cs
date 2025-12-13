@@ -7,7 +7,6 @@ public static class ServiceExtension
 {
     public static void RegisterServices(this IServiceCollection services)
     {
-        services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IHistoryService, HistoryService>();
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IProductService, ProductService>();
