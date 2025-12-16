@@ -41,11 +41,12 @@ public class Program
             });
 
         // configure Resend email api
+        builder.Services.AddHttpClient<ResendClient>();
         builder.Services.Configure<ResendClientOptions>(options =>
         {
             options.ApiToken = builder.Configuration["Resend:ApiKey"]!;
         });
-        builder.Services.AddHttpClient<IResend, ResendClient>();
+        builder.Services.AddTransient<IResend, ResendClient>();
         
         builder.Services.AddControllers();
 
