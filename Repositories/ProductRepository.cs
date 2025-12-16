@@ -140,7 +140,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
     {
         context.Histories.Add(new History
         {
-            ProductId = product.ProductId,
+            Product = product,
             UserId = userId,
             Quantity = product.Quantity,
             ActionType = actionType,
