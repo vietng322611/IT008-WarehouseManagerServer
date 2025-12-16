@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Resend;
 using WarehouseManagerServer.Extensions;
 using WarehouseManagerServer.Models.DTOs;
 
@@ -39,6 +40,13 @@ public class Program
                 };
             });
 
+        // configure Resend email api
+        builder.Services.Configure<ResendClientOptions>(options =>
+        {
+            options.ApiToken = builder.Configuration["Resend:ApiKey"]!;
+        });
+        builder.Services.AddHttpClient<IResend, ResendClient>();
+        
         builder.Services.AddControllers();
 
         builder.Services.AddOpenApi();
