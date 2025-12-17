@@ -53,7 +53,7 @@ public class SupplierRepository(WarehouseContext context) : ISupplierRepository
 
     public async Task<Supplier?> UpdateAsync(SupplierDto supplier)
     {
-        var oldSupplier = await GetByKeyAsync(supplier.SupplierId);
+        var oldSupplier = await context.Suppliers.FindAsync(supplier.SupplierId);
         if (oldSupplier == null) return null;
 
         oldSupplier.Name = supplier.Name;

@@ -58,7 +58,7 @@ public class PermissionRepository(WarehouseContext context) : IPermissionReposit
 
     public async Task<Permission?> UpdateAsync(Permission permission)
     {
-        var oldUserPermission = await GetByKeyAsync(permission.UserId, permission.WarehouseId);
+        var oldUserPermission = await context.Permissions.FindAsync(permission.UserId, permission.WarehouseId);
         if (oldUserPermission == null) return null;
 
         context.Entry(permission).CurrentValues.SetValues(permission);
@@ -68,7 +68,7 @@ public class PermissionRepository(WarehouseContext context) : IPermissionReposit
 
     public async Task<bool> DeleteAsync(int userId, int warehouseId)
     {
-        var oldUserPermission = await GetByKeyAsync(userId, warehouseId);
+        var oldUserPermission = await context.Permissions.FindAsync(userId, warehouseId);
         if (oldUserPermission == null) return false;
 
         context.Permissions.Remove(oldUserPermission);

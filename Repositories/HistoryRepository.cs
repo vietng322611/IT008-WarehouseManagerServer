@@ -10,7 +10,7 @@ public class HistoryRepository(WarehouseContext context) : IHistoryRepository
 {
     public async Task<List<History>> GetByWarehouseAsync(int warehouseId)
     {
-        return await context.Histories
+        return await context.Histories.AsNoTracking()
             .Include(m => m.Product)
             .Include(m => m.User)
             .Where(m => m.Product.WarehouseId == warehouseId)
@@ -20,7 +20,7 @@ public class HistoryRepository(WarehouseContext context) : IHistoryRepository
 
     public async Task<History?> GetByKeyAsync(int historyId)
     {
-        return await context.Histories
+        return await context.Histories.AsNoTracking()
             .Include(m => m.Product)
             .Include(m => m.User)
             .Where(m => m.HistoryId == historyId)
