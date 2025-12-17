@@ -4,5 +4,5 @@ namespace WarehouseManagerServer.Models.DTOs.Requests;
 
 public class UserDto
 {
-    [JsonPropertyName("full_name")] public  string FullName { get; set; }
+    [JsonPropertyName("full_name")] public string FullName { get; set; }
 }

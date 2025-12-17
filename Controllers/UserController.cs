@@ -35,13 +35,7 @@ public class UserController(IUserService service) : ControllerBase
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
             var content = await service.GetByKeyAsync(userId);
             if (content == null) return NotFound();
-            return Ok(new User
-            {
-                UserId = content.UserId,
-                FullName = content.FullName,
-                Email = content.Email,
-                JoinDate = content.JoinDate
-            });
+            return Ok(content);
         }
         catch (Exception e)
         {
@@ -57,13 +51,7 @@ public class UserController(IUserService service) : ControllerBase
         {
             var content = await service.GetByKeyAsync(userId);
             if (content == null) return NotFound();
-            return Ok(new User
-            {
-                UserId = content.UserId,
-                FullName = content.FullName,
-                Email = content.Email,
-                JoinDate = content.JoinDate
-            });
+            return Ok(content);
         }
         catch (Exception e)
         {
@@ -94,15 +82,11 @@ public class UserController(IUserService service) : ControllerBase
         try
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            var existingContent = await service.GetByKeyAsync(userId);
-            if (existingContent == null)
+            var newUser = await service.UpdateAsync(userId, updatedContent.FullName);
+            if (newUser == null)
                 return NotFound();
-
-            await service.UpdateAsync(new User
-            {
-                FullName = updatedContent.FullName,
-            });
-            return NoContent();
+            
+            return Ok(newUser);
         }
         catch (Exception e)
         {

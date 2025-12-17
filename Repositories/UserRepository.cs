@@ -11,13 +11,14 @@ public class UserRepository(WarehouseContext context) : IUserRepository
 {
     public async Task<List<User>> GetAllAsync()
     {
-        return await context.Users.Select(user => new User
-        {
-            UserId = user.UserId,
-            Email = user.Email,
-            FullName = user.FullName,
-            JoinDate = user.JoinDate
-        }).ToListAsync();
+        return await context.Users.AsNoTracking()
+            .Select(user => new User
+            {
+                UserId = user.UserId,
+                Email = user.Email,
+                FullName = user.FullName,
+                JoinDate = user.JoinDate
+            }).ToListAsync();
     }
 
     public async Task<User?> GetByKeyAsync(int userId)
@@ -28,7 +29,7 @@ public class UserRepository(WarehouseContext context) : IUserRepository
 
     public async Task<List<UserWarehousesDto>> GetUserWarehousesAsync(int userId)
     {
-        return await context.Permissions
+        return await context.Permissions.AsNoTracking()
             .Where(e => e.UserId == userId)
             .Select(e => new UserWarehousesDto
             {
@@ -47,14 +48,15 @@ public class UserRepository(WarehouseContext context) : IUserRepository
         return user;
     }
 
-    public async Task<User?> UpdateAsync(User user)
+    public async Task<User?> UpdateAsync(int userId, string fullName)
     {
-        var oldUser = await context.Users.FindAsync(user.UserId);
+        var oldUser = await context.Users.FindAsync(userId);
         if (oldUser == null) return null;
 
-        context.Users.Update(user);
+        oldUser.FullName = fullName;
+        
         await context.SaveChangesAsync();
-        return user;
+        return oldUser;
     }
 
     public async Task<bool> DeleteAsync(int userId)
