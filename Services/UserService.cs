@@ -33,9 +33,9 @@ public class UserService(IUserRepository userRepository) : IUserService
         return userRepository.AddAsync(user);
     }
 
-    public Task<User?> UpdateAsync(User user)
+    public Task<User?> UpdateAsync(int userId, string fullName)
     {
-        return userRepository.UpdateAsync(user);
+        return userRepository.UpdateAsync(userId, fullName);
     }
 
     public Task<bool> DeleteAsync(int userId)
