@@ -21,7 +21,7 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
 
     public async Task<List<WarehouseUsersDto>> GetWarehouseUsersAsync(int warehouseId)
     {
-        return await context.Permissions
+        return await context.Permissions.AsNoTracking()
             .Where(e => e.WarehouseId == warehouseId)
             .Select(u => new WarehouseUsersDto
             {
