@@ -8,7 +8,7 @@ public class Product
     [JsonPropertyName("name")] public string Name { get; set; } = null!;
     [JsonPropertyName("unit_price")] public decimal UnitPrice { get; set; }
     [JsonPropertyName("quantity")] public int Quantity { get; set; }
-    [JsonPropertyName("expiry_date")] public DateTime ExpiryDate { get; set; }
+    [JsonPropertyName("expiry_date")] public DateTime ExpiryDate { get; set; } = DateTime.UtcNow;
     [JsonPropertyName("warehouse_id")] public int WarehouseId { get; set; }
     [JsonPropertyName("supplier_id")] public int SupplierId { get; set; }
 
