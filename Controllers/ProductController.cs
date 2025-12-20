@@ -73,8 +73,8 @@ public class ProductController(IProductService service) : ControllerBase
     }
     
     [WarehousePermission(PermissionEnum.Write)]
-    [HttpPut("import/{id:int:min(1)}")]
-    public async Task<IActionResult> Import([FromRoute] int id, [FromBody] List<ProductDto> products)
+    [HttpPut("import")]
+    public async Task<IActionResult> Import([FromBody] List<ProductDto> products)
     {
         try
         {
@@ -89,8 +89,8 @@ public class ProductController(IProductService service) : ControllerBase
     }
     
     [WarehousePermission(PermissionEnum.Write)]
-    [HttpPut("export/{id:int:min(1)}")]
-    public async Task<IActionResult> Export([FromRoute] int id, [FromBody] List<ProductDto> products)
+    [HttpPut("export")]
+    public async Task<IActionResult> Export([FromBody] List<ProductDto> products)
     {
         try
         {
