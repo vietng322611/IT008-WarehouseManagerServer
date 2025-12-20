@@ -63,15 +63,17 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
     {
         var statistic = new StatisticDto();
 
-        var start = new DateTime(year, month, 1);
-        var end = start.AddMonths(1);
+        var startUtc = new DateTimeOffset(
+                year, month, 1, 0, 0, 0, TimeSpan.FromHours(7)
+                ).UtcDateTime;
+        var endUtc = startUtc.AddMonths(1);
         var lastDay = DateTime.DaysInMonth(year, month);
 
         var raw = await context.Histories.AsNoTracking()
             .Where(m =>
                 m.Product.WarehouseId == warehouseId &&
-                m.Date >= start &&
-                m.Date < end
+                m.Date >= startUtc &&
+                m.Date < endUtc
             )
             .Select(m => new
             {
@@ -124,14 +126,16 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
     {
         var statistic = new StatisticDto();
 
-        var start = new DateTime(year, 1, 1);
-        var end = start.AddYears(1);
+        var startUtc = new DateTimeOffset(
+            year, 1, 1, 0, 0, 0, TimeSpan.FromHours(7)
+        ).UtcDateTime;
+        var endUtc = startUtc.AddYears(1);
 
         var raw = await context.Histories.AsNoTracking()
             .Where(m =>
                 m.Product.WarehouseId == warehouseId &&
-                m.Date >= start &&
-                m.Date < end
+                m.Date >= startUtc &&
+                m.Date < endUtc
             )
             .Select(m => new
             {
