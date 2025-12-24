@@ -46,7 +46,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         };
         context.Products.Add(newProduct);
         
-        Log(newProduct, userId, ActionTypeEnum.In);
+        Log(newProduct, userId, ActionTypeEnum.In, newProduct.Quantity);
         
         await context.SaveChangesAsync();
         return await context.Products.AsNoTracking()
@@ -66,10 +66,11 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
                 var oldProduct = await context.Products.FindAsync(dto.ProductId);
                 if (oldProduct == null) continue;
 
+                var quantity = Math.Abs(oldProduct.Quantity - dto.Quantity);
                 oldProduct.Quantity = dto.Quantity;
 
                 updatedIds.Add(oldProduct.ProductId);
-                Log(oldProduct, userId, actionType);
+                Log(oldProduct, userId, actionType, quantity);
             }
 
             await context.SaveChangesAsync();
@@ -106,7 +107,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
                 oldProduct.ExpiryDate = dto.ExpiryDate;
 
                 updatedIds.Add(oldProduct.ProductId);
-                Log(oldProduct, userId, ActionTypeEnum.Modify);
+                Log(oldProduct, userId, ActionTypeEnum.Modify, oldProduct.Quantity);
             }
 
             await context.SaveChangesAsync();
@@ -131,18 +132,18 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         if (oldProduct == null) return false;
 
         context.Products.Remove(oldProduct);
-        Log(oldProduct, userId, ActionTypeEnum.Remove);
+        Log(oldProduct, userId, ActionTypeEnum.Remove, oldProduct.Quantity);
         await context.SaveChangesAsync();
         return true;
     }
 
-    private void Log(Product product, int userId, ActionTypeEnum actionType)
+    private void Log(Product product, int userId, ActionTypeEnum actionType, int quantity)
     {
         context.Histories.Add(new History
         {
             Product = product,
             UserId = userId,
-            Quantity = product.Quantity,
+            Quantity = quantity,
             ActionType = actionType,
             Date = DateTime.UtcNow
         });
