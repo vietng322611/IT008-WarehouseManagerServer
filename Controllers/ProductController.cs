@@ -16,8 +16,15 @@ public class ProductController(IProductService service) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetWarehouseProducts([FromRoute] int warehouseId)
     {
-        var result = await service.GetByWarehouseAsync(warehouseId);
-        return Ok(result.Select(Serialize));
+        try
+        {
+            var result = await service.GetByWarehouseAsync(warehouseId);
+            return Ok(result.Select(Serialize));
+        }
+        catch (Exception e)
+        {
+            return StatusCode(500, e.Message);
+        }        
     }
 
     [WarehousePermission(PermissionEnum.Read)]
