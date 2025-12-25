@@ -73,12 +73,10 @@ public class PermissionController(IPermissionService service): ControllerBase
                 warehouseId != updatedContent.WarehouseId)
                 return BadRequest();
 
-            var existingContent = await service.GetByKeyAsync(userId, warehouseId);
-            if (existingContent == null)
+            var newContent = await service.UpdateAsync(updatedContent);
+            if (newContent == null)
                 return NotFound();
-
-            await service.UpdateAsync(updatedContent);
-            return NoContent();
+            return Ok(newContent);
         }
         catch (Exception e)
         {
