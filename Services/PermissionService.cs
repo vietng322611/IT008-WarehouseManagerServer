@@ -33,9 +33,9 @@ public class PermissionService(IPermissionRepository permissionRepository) : IPe
         return permissionRepository.AddByEmailAsync(warehouseId, email, permissions);
     }
 
-    public Task<Permission?> UpdateAsync(Permission permission)
+    public Task<List<Permission>> UpdateAsync(int warehouseId, List<Permission> permissions)
     {
-        return permissionRepository.UpdateAsync(permission);
+        return permissionRepository.UpdateAsync(warehouseId, permissions);
     }
 
     public Task<bool> DeleteAsync(int userId, int warehouseId)

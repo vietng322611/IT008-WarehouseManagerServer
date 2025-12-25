@@ -61,21 +61,14 @@ public class PermissionController(IPermissionService service): ControllerBase
     }
 
     [WarehousePermission(PermissionEnum.Owner)]
-    [HttpPut("{userId:int:min(1)}")]
+    [HttpPut]
     public async Task<IActionResult> Put(
         [FromRoute] int warehouseId,
-        [FromRoute] int userId,
-        [FromBody] Permission updatedContent)
+        [FromBody] List<Permission> permissions)
     {
         try
         {
-            if (userId != updatedContent.UserId ||
-                warehouseId != updatedContent.WarehouseId)
-                return BadRequest();
-
-            var newContent = await service.UpdateAsync(updatedContent);
-            if (newContent == null)
-                return NotFound();
+            var newContent = await service.UpdateAsync(warehouseId, permissions);
             return Ok(newContent);
         }
         catch (Exception e)
