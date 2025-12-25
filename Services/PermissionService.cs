@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Repositories.Interfaces;
@@ -33,7 +34,7 @@ public class PermissionService(IPermissionRepository permissionRepository) : IPe
         return permissionRepository.AddByEmailAsync(warehouseId, email, permissions);
     }
 
-    public Task<List<Permission>> UpdateAsync(int warehouseId, List<Permission> permissions)
+    public Task<List<Permission>> UpdateAsync(int warehouseId, List<PermissionUpdDto> permissions)
     {
         return permissionRepository.UpdateAsync(warehouseId, permissions);
     }
