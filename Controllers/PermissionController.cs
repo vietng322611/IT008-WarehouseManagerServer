@@ -64,7 +64,7 @@ public class PermissionController(IPermissionService service): ControllerBase
     [HttpPut]
     public async Task<IActionResult> Put(
         [FromRoute] int warehouseId,
-        [FromBody] List<Permission> permissions)
+        [FromBody] List<PermissionUpdDto> permissions)
     {
         try
         {

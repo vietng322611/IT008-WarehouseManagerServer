@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WarehouseManagerServer.Models.DTOs;
+using WarehouseManagerServer.Models.DTOs.Requests;
 using WarehouseManagerServer.Models.Entities;
 using WarehouseManagerServer.Models.Enums;
 using WarehouseManagerServer.Repositories.Interfaces;
@@ -57,16 +58,16 @@ public class PermissionRepository(WarehouseContext context) : IPermissionReposit
         return newPermission;
     }
 
-    public async Task<List<Permission>> UpdateAsync(int warehouseId, List<Permission> permissions)
+    public async Task<List<Permission>> UpdateAsync(int warehouseId, List<PermissionUpdDto> permissions)
     {
-        foreach (var permission in permissions
-                     .Where(permission => warehouseId == permission.WarehouseId)) // filter for safe data
+        foreach (var dto in permissions
+                     .Where(p => warehouseId == p.WarehouseId)) // filter for safe data
         {
             var oldPermission = await context.Permissions
-                .FirstOrDefaultAsync(p => p.UserId == permission.UserId && p.WarehouseId == permission.WarehouseId);
+                .FirstOrDefaultAsync(p => p.UserId == dto.UserId && p.WarehouseId == dto.WarehouseId);
             if (oldPermission == null) continue;
             
-            context.Entry(permissions).CurrentValues.SetValues(permissions);
+            oldPermission.UserPermissions = dto.UserPermissions;
         }
         
         await context.SaveChangesAsync();
