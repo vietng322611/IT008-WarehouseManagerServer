@@ -11,6 +11,6 @@ public interface IPermissionService
     Task<List<Permission>> FilterAsync(params Expression<Func<Permission, bool>>[] filters);
     Task<Permission> AddAsync(Permission permission);
     Task<Permission?> AddByEmailAsync(int warehouseId, string email, List<PermissionEnum> permissions);
-    Task<Permission?> UpdateAsync(Permission permission);
+    Task<List<Permission>> UpdateAsync(int warehouseId, List<Permission> permissions);
     Task<bool> DeleteAsync(int userId, int warehouseId);
 }

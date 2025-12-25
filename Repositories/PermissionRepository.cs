@@ -57,15 +57,20 @@ public class PermissionRepository(WarehouseContext context) : IPermissionReposit
         return newPermission;
     }
 
-    public async Task<Permission?> UpdateAsync(Permission permission)
+    public async Task<List<Permission>> UpdateAsync(int warehouseId, List<Permission> permissions)
     {
-        var oldUserPermission = await context.Permissions
-            .FirstOrDefaultAsync(p => p.UserId == permission.UserId && p.WarehouseId == permission.WarehouseId);
-        if (oldUserPermission == null) return null;
-
-        context.Entry(permission).CurrentValues.SetValues(permission);
+        foreach (var permission in permissions
+                     .Where(permission => warehouseId == permission.WarehouseId)) // filter for safe data
+        {
+            var oldPermission = await context.Permissions
+                .FirstOrDefaultAsync(p => p.UserId == permission.UserId && p.WarehouseId == permission.WarehouseId);
+            if (oldPermission == null) continue;
+            
+            context.Entry(permissions).CurrentValues.SetValues(permissions);
+        }
+        
         await context.SaveChangesAsync();
-        return permission;
+        return await context.Permissions.Where(p => p.WarehouseId == warehouseId).ToListAsync();
     }
 
     public async Task<bool> DeleteAsync(int userId, int warehouseId)
