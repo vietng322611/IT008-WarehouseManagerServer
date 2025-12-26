@@ -10,4 +10,4 @@ public class PermissionUpdDto
 
     [JsonPropertyName("user_permissions")]
     public ICollection<PermissionEnum> UserPermissions { get; set; } = new List<PermissionEnum>();
-}
+}   
