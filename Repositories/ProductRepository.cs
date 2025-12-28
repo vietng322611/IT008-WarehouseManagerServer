@@ -105,6 +105,10 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
                 oldProduct.UnitPrice = dto.UnitPrice;
                 oldProduct.SupplierId = dto.SupplierId;
                 oldProduct.ExpiryDate = dto.ExpiryDate;
+                
+                var entry = context.Entry(oldProduct);
+                if (!entry.Properties.Any(p => p.IsModified))
+                    continue;
 
                 updatedIds.Add(oldProduct.ProductId);
                 Log(oldProduct, userId, ActionTypeEnum.Modify, oldProduct.Quantity);
