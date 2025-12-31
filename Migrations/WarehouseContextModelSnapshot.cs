@@ -98,27 +98,48 @@ namespace WarehouseManagerServer.Migrations
                         .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasAnnotation("Relational:JsonPropertyName", "date");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer")
-                        .HasColumnName("product_id")
-                        .HasAnnotation("Relational:JsonPropertyName", "product_id");
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("product_name")
+                        .HasAnnotation("Relational:JsonPropertyName", "product_name");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
                         .HasColumnName("quantity")
                         .HasAnnotation("Relational:JsonPropertyName", "quantity");
 
-                    b.Property<int>("UserId")
+                    b.Property<string>("SupplierName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("supplier_name")
+                        .HasAnnotation("Relational:JsonPropertyName", "supplier_name");
+
+                    b.Property<string>("UserFullName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_full_name")
+                        .HasAnnotation("Relational:JsonPropertyName", "user_full_name");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WarehouseId")
                         .HasColumnType("integer")
-                        .HasColumnName("user_id")
-                        .HasAnnotation("Relational:JsonPropertyName", "user_id");
+                        .HasColumnName("warehouse_id")
+                        .HasAnnotation("Relational:JsonPropertyName", "warehouse_id");
 
                     b.HasKey("HistoryId")
                         .HasName("histories_pkey");
 
+                    b.HasIndex("ProductId");
+
                     b.HasIndex("UserId");
 
-                    b.HasIndex(new[] { "ProductId" }, "idx_histories_product");
+                    b.HasIndex("WarehouseId");
 
                     b.ToTable("histories", (string)null);
                 });
@@ -361,23 +382,22 @@ namespace WarehouseManagerServer.Migrations
 
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.History", b =>
                 {
-                    b.HasOne("WarehouseManagerServer.Models.Entities.Product", "Product")
+                    b.HasOne("WarehouseManagerServer.Models.Entities.Product", null)
                         .WithMany("Histories")
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ProductId");
+
+                    b.HasOne("WarehouseManagerServer.Models.Entities.User", null)
+                        .WithMany("Histories")
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("WarehouseManagerServer.Models.Entities.Warehouse", "Warehouse")
+                        .WithMany("Histories")
+                        .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("history_product_id_fkey");
+                        .HasConstraintName("history_warehouse_id_fkey");
 
-                    b.HasOne("WarehouseManagerServer.Models.Entities.User", "User")
-                        .WithMany("Histories")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("history_user_id_fkey");
-
-                    b.Navigation("Product");
-
-                    b.Navigation("User");
+                    b.Navigation("Warehouse");
                 });
 
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.Permission", b =>
@@ -466,6 +486,8 @@ namespace WarehouseManagerServer.Migrations
 
             modelBuilder.Entity("WarehouseManagerServer.Models.Entities.Warehouse", b =>
                 {
+                    b.Navigation("Histories");
+
                     b.Navigation("Permissions");
 
                     b.Navigation("Products");

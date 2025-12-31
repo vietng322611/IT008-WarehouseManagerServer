@@ -12,4 +12,5 @@ public class Warehouse
     [JsonIgnore] public virtual ICollection<Product> Products { get; set; } = new List<Product>();
     [JsonIgnore] public virtual ICollection<User> Users { get; set; } = new List<User>();
     [JsonIgnore] public virtual ICollection<Permission> Permissions { get; set; } = new List<Permission>();
+    [JsonIgnore] public virtual ICollection<History> Histories { get; set; } = new List<History>();
 }

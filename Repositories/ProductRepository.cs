@@ -46,7 +46,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
         };
         context.Products.Add(newProduct);
         
-        Log(newProduct, userId, ActionTypeEnum.In, newProduct.Quantity);
+        await Log(newProduct, userId, ActionTypeEnum.In, newProduct.Quantity);
         
         await context.SaveChangesAsync();
         return await context.Products.AsNoTracking()
@@ -63,14 +63,17 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
             
             foreach (var dto in products)
             {
-                var oldProduct = await context.Products.FindAsync(dto.ProductId);
+                var oldProduct = await context.Products
+                    .Include(p => p.Supplier)
+                    .Where(p => p.ProductId == dto.ProductId)
+                    .FirstOrDefaultAsync();
                 if (oldProduct == null) continue;
 
                 var quantity = Math.Abs(oldProduct.Quantity - dto.Quantity);
                 oldProduct.Quantity = dto.Quantity;
 
                 updatedIds.Add(oldProduct.ProductId);
-                Log(oldProduct, userId, actionType, quantity);
+                await Log(oldProduct, userId, actionType, quantity);
             }
 
             await context.SaveChangesAsync();
@@ -98,7 +101,10 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
             
             foreach (var dto in products)
             {
-                var oldProduct = await context.Products.FindAsync(dto.ProductId);
+                var oldProduct = await context.Products
+                    .Include(p => p.Supplier)
+                    .Where(p => p.ProductId == dto.ProductId)
+                    .FirstOrDefaultAsync();
                 if (oldProduct == null) continue;
 
                 oldProduct.Name = dto.Name;
@@ -111,7 +117,7 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
                     continue;
 
                 updatedIds.Add(oldProduct.ProductId);
-                Log(oldProduct, userId, ActionTypeEnum.Modify, oldProduct.Quantity);
+                await Log(oldProduct, userId, ActionTypeEnum.Modify, oldProduct.Quantity);
             }
 
             await context.SaveChangesAsync();
@@ -132,21 +138,40 @@ public class ProductRepository(WarehouseContext context) : IProductRepository
 
     public async Task<bool> DeleteAsync(int productId, int userId)
     {
-        var oldProduct = await context.Products.FindAsync(productId);
+        var oldProduct = await context.Products
+            .Include(p => p.Supplier)
+            .Where(p => p.ProductId == productId)
+            .FirstOrDefaultAsync();
         if (oldProduct == null) return false;
 
         context.Products.Remove(oldProduct);
-        Log(oldProduct, userId, ActionTypeEnum.Remove, oldProduct.Quantity);
+        await Log(oldProduct, userId, ActionTypeEnum.Remove, oldProduct.Quantity);
         await context.SaveChangesAsync();
         return true;
     }
 
-    private void Log(Product product, int userId, ActionTypeEnum actionType, int quantity)
+    private async Task Log(Product product, int userId, ActionTypeEnum actionType, int quantity)
     {
+        var userFullName = await context.Users.AsNoTracking()
+            .Where(u => u.UserId == userId)
+            .Select(u => u.FullName)
+            .FirstOrDefaultAsync();
+        if (userFullName == null)
+            throw new Exception("User not found");
+
+        var supplierName = await context.Suppliers.AsNoTracking()
+            .Where(s => s.SupplierId == product.SupplierId)
+            .Select(s => s.Name)
+            .FirstOrDefaultAsync();
+        if (supplierName == null)
+            throw new Exception("Supplier not found");
+        
         context.Histories.Add(new History
         {
-            Product = product,
-            UserId = userId,
+            WarehouseId = product.WarehouseId,
+            ProductName = product.Name,
+            SupplierName = supplierName,
+            UserFullName = userFullName,
             Quantity = quantity,
             ActionType = actionType,
             Date = DateTime.UtcNow

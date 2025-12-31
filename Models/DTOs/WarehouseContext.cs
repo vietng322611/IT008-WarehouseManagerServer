@@ -40,27 +40,23 @@ public partial class WarehouseContext : DbContext
 
             entity.ToTable("histories");
 
-            entity.HasIndex(e => e.ProductId, "idx_histories_product");
-
             entity.Property(e => e.HistoryId).HasColumnName("history_id");
             entity.Property(e => e.Date)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnName("date");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
+            entity.Property(e => e.ProductName).HasColumnName("product_name");
+            entity.Property(e => e.SupplierName).HasColumnName("supplier_name");
+            entity.Property(e => e.UserFullName).HasColumnName("user_full_name");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.ActionType)
                 .HasColumnName("action_type")
                 .HasConversion<string>();
-
-            entity.HasOne(d => d.Product).WithMany(p => p.Histories)
-                .HasForeignKey(d => d.ProductId)
+            
+            entity.HasOne(d => d.Warehouse).WithMany(p => p.Histories)
+                .HasForeignKey(d => d.WarehouseId)
                 .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("history_product_id_fkey");
-            entity.HasOne(d => d.User).WithMany(p => p.Histories)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("history_user_id_fkey");
+                .HasConstraintName("history_warehouse_id_fkey");
         });
 
         modelBuilder.Entity<Product>(entity =>
