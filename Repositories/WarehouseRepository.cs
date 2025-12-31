@@ -71,7 +71,7 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
 
         var raw = await context.Histories.AsNoTracking()
             .Where(m =>
-                m.Product.WarehouseId == warehouseId &&
+                m.WarehouseId == warehouseId &&
                 m.Date >= startUtc &&
                 m.Date < endUtc
             )
@@ -80,7 +80,7 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
                 m.ActionType,
                 m.Date.Day,
                 m.Quantity,
-                SupplierName = m.Product.Supplier.Name
+                m.SupplierName
             })
             .ToListAsync();
         
@@ -133,7 +133,7 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
 
         var raw = await context.Histories.AsNoTracking()
             .Where(m =>
-                m.Product.WarehouseId == warehouseId &&
+                m.WarehouseId == warehouseId &&
                 m.Date >= startUtc &&
                 m.Date < endUtc
             )
@@ -142,7 +142,7 @@ public class WarehouseRepository(WarehouseContext context) : IWarehouseRepositor
                 m.ActionType,
                 m.Date.Month,
                 m.Quantity,
-                SupplierName = m.Product.Supplier.Name
+                m.SupplierName
             })
             .ToListAsync();
         

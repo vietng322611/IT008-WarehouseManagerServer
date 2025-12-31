@@ -43,10 +43,9 @@ public class HistoryController(IHistoryService service) : ControllerBase
         return new
         {
             history_id = content.HistoryId,
-            product_id = content.ProductId,
-            user_id = content.UserId,
-            product_name = content.Product.Name,
-            user_full_name = content.User.FullName,
+            warehouse_id = content.WarehouseId,
+            product_name = content.ProductName,
+            user_full_name = content.UserFullName,
             quantity = content.Quantity,
             action_type = content.ActionType,
             date = content.Date
